@@ -1,0 +1,51 @@
+<div class="mx-auto flex w-full max-w-[720px] flex-col gap-4 p-4">
+	<div class="flex items-center justify-between gap-3">
+		<h1 class="m-0 text-xl font-semibold" translate>My events</h1>
+		<button pButton type="button" (click)="createEvent()">
+			<i class="pi pi-plus"></i>
+			<span translate>Create event</span>
+		</button>
+	</div>
+
+	@if (!events().length) {
+		<p-card>
+			<span translate>You don't have any events yet.</span>
+		</p-card>
+	}
+
+	@for (
+		group of [
+			{ label: 'Live', items: liveEvents() },
+			{ label: 'Draft', items: draftEvents() },
+			{ label: 'Ended', items: endedEvents() },
+		];
+		track group.label
+	) {
+		@if (group.items.length) {
+			<div class="flex flex-col gap-2">
+				<div class="text-sm font-semibold opacity-70" [translate]="group.label"></div>
+				@for (event of group.items; track event._id) {
+					<p-card>
+						<div class="flex items-center justify-between gap-3">
+							<div>
+								<div class="font-semibold">{{ event.title || 'Untitled event' }}</div>
+								@if (event.speaker) {
+									<small class="opacity-70">{{ event.speaker }}</small>
+								}
+							</div>
+							<div class="flex items-center gap-2">
+								<p-tag [value]="event.state"></p-tag>
+								<button pButton type="button" [text]="true" (click)="editEvent(event.slug)">
+									<i class="pi pi-pencil"></i>
+								</button>
+								<button pButton type="button" [text]="true" (click)="openManage(event.slug)">
+									<span translate>Manage</span>
+								</button>
+							</div>
+						</div>
+					</p-card>
+				}
+			</div>
+		}
+	}
+</div>

@@ -1,0 +1,66 @@
+<div class="mx-auto flex w-full max-w-[720px] flex-col gap-4 p-4">
+	<h1 class="m-0 text-xl font-semibold">
+		<span translate>{{ isNew() ? 'Create event' : 'Edit event' }}</span>
+	</h1>
+
+	<p-card>
+		<div class="text-sm font-semibold" translate>Basic information</div>
+		<div class="mt-2 flex flex-col gap-2">
+			<input pInputText [(ngModel)]="title" [placeholder]="'Event title'" />
+			<input pInputText [(ngModel)]="speaker" [placeholder]="'Speaker'" />
+			<textarea pTextarea [(ngModel)]="description" [placeholder]="'Description'" rows="3"></textarea>
+		</div>
+	</p-card>
+
+	@if (isNew()) {
+		<p-card>
+			<div class="text-sm font-semibold" translate>Chapters</div>
+			<div class="mt-2 flex flex-col gap-2">
+				@for (title of chapterTitles(); track $index) {
+					<div class="flex gap-2">
+						<input
+							pInputText
+							class="w-full"
+							[ngModel]="title"
+							(ngModelChange)="setChapterTitle($index, $event)"
+							[placeholder]="'Chapter title'"
+						/>
+						<button pButton type="button" severity="danger" [text]="true" (click)="removeChapterField($index)">
+							<i class="pi pi-trash"></i>
+						</button>
+					</div>
+				}
+				<button pButton type="button" [text]="true" (click)="addChapterField()">
+					<i class="pi pi-plus"></i>
+					<span translate>Add chapter</span>
+				</button>
+			</div>
+		</p-card>
+
+		<p-card>
+			<div class="text-sm font-semibold" translate>Initial poll (optional)</div>
+			<div class="mt-2 flex flex-col gap-2">
+				<input pInputText [(ngModel)]="initialPollQuestion" [placeholder]="'Poll question'" />
+				<input pInputText [(ngModel)]="initialPollOptions" [placeholder]="'Options, comma separated'" />
+			</div>
+		</p-card>
+
+		<p-card>
+			<div class="text-sm font-semibold" translate>Initial quiz (optional)</div>
+			<div class="mt-2 flex flex-col gap-2">
+				<input pInputText [(ngModel)]="initialQuizQuestion" [placeholder]="'Quiz question'" />
+				<input pInputText [(ngModel)]="initialQuizOptions" [placeholder]="'Options, comma separated'" />
+				<input
+					pInputText
+					type="number"
+					[(ngModel)]="initialQuizCorrectIndex"
+					[placeholder]="'Correct option index (0-based)'"
+				/>
+			</div>
+		</p-card>
+	}
+
+	<button pButton type="button" (click)="save()">
+		<span translate>{{ isNew() ? 'Create' : 'Save changes' }}</span>
+	</button>
+</div>
