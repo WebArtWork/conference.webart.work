@@ -1,5 +1,6 @@
 import { Component, computed, effect, inject, input, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MetaService } from '@wawjs/ngx-core';
 import { ButtonModule } from '@wawjs/ngx-prime/button';
 import { CardModule } from '@wawjs/ngx-prime/card';
 import { DialogModule } from '@wawjs/ngx-prime/dialog';
@@ -45,6 +46,7 @@ export class EventPublicComponent {
 	private readonly _pollAnswerService = inject(PollAnswerService);
 	private readonly _quizService = inject(QuizService);
 	private readonly _quizAnswerService = inject(QuizAnswerService);
+	private readonly _metaService = inject(MetaService);
 	readonly deviceIdService = inject(DeviceIdService);
 
 	readonly slug = input.required<string>();
@@ -88,6 +90,21 @@ export class EventPublicComponent {
 	constructor() {
 		effect(() => {
 			this.nameDraft.set(this.deviceIdService.visitorName());
+		});
+
+		// Shareable event links get posted before anyone joins, so the page's
+		// own title/description/OG tags should reflect this specific event,
+		// not the generic static route title.
+		effect(() => {
+			const eventDoc = this.event();
+			if (!eventDoc) {
+				return;
+			}
+
+			this._metaService.applyMeta({
+				title: eventDoc.speaker ? `${eventDoc.title} — ${eventDoc.speaker}` : eventDoc.title,
+				description: eventDoc.description || undefined,
+			});
 		});
 	}
 
