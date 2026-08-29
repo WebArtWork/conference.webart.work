@@ -1,0 +1,9 @@
+{
+	"_id": "",
+	"name": "Conference",
+	"title": "Conference",
+	"description": "Live companion for conferences, talks, and workshops — audience Q&A, polls, quizzes, and real-time chapter feedback.",
+	"image": "https://conference.webart.work/logo.png",
+	"favicon": "https://conference.webart.work/favicon.png",
+	"siteUrl": "https://conference.webart.work"
+}

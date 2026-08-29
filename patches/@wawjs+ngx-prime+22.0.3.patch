@@ -1,0 +1,13 @@
+diff --git a/node_modules/@wawjs/ngx-prime/fesm2022/wawjs-ngx-prime-select.mjs b/node_modules/@wawjs/ngx-prime/fesm2022/wawjs-ngx-prime-select.mjs
+index 615f2e5..08f2426 100644
+--- a/node_modules/@wawjs/ngx-prime/fesm2022/wawjs-ngx-prime-select.mjs
++++ b/node_modules/@wawjs/ngx-prime/fesm2022/wawjs-ngx-prime-select.mjs
+@@ -78,7 +78,7 @@ const classes = {
+         'p-select-option',
+         {
+             'p-select-option-selected': instance.selected && !instance.checkmark,
+-            'p-disabled': instance.disabled,
++            'p-disabled': instance.disabled(),
+             'p-focus': instance.focused
+         }
+     ],
