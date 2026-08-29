@@ -135,6 +135,32 @@ export const routes: Routes = [
 		],
 	},
 	{
+		path: 'event/:slug',
+		canActivate: [MetaGuard],
+		data: {
+			meta: {
+				title: 'Подія',
+			},
+		},
+		loadComponent: () =>
+			import('./pages/event/public/event-public.component').then(
+				(m) => m.EventPublicComponent,
+			),
+	},
+	{
+		path: 'event/:slug/manage',
+		canActivate: [authenticatedGuard, MetaGuard],
+		data: {
+			meta: {
+				title: 'Керування подією',
+			},
+		},
+		loadComponent: () =>
+			import('./pages/event/manage/event-manage.component').then(
+				(m) => m.EventManageComponent,
+			),
+	},
+	{
 		path: '**',
 		redirectTo: 'profile',
 		pathMatch: 'full',

@@ -7,7 +7,7 @@ import { Question } from './question.interface';
 
 @Injectable({ providedIn: 'root' })
 export class QuestionService extends CrudService<Question> {
-	private readonly _httpService = inject(HttpService);
+	private readonly _httpApi = inject(HttpService);
 	private readonly _deviceIdService = inject(DeviceIdService);
 
 	constructor() {
@@ -25,7 +25,7 @@ export class QuestionService extends CrudService<Question> {
 	 * Custom (non-CRUD) action via `HttpService`.
 	 */
 	like(question: Question): Observable<unknown> {
-		return this._httpService.post('/api/question/like', {
+		return this._httpApi.post('/api/question/like', {
 			questionId: question._id,
 			deviceId: this._deviceIdService.deviceId,
 		});

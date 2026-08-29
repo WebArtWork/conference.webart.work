@@ -1,0 +1,140 @@
+@if (event(); as eventDoc) {
+	<div class="mx-auto flex w-full max-w-[720px] flex-col gap-4 p-4">
+		<div class="flex items-center justify-between gap-3">
+			<h1 class="m-0 text-xl font-semibold">{{ eventDoc.title }}</h1>
+			<p-tag [value]="eventDoc.state"></p-tag>
+		</div>
+
+		@if (eventDoc.description) {
+			<p class="m-0 text-sm opacity-80">{{ eventDoc.description }}</p>
+		}
+
+		@if (!isLive()) {
+			<p-card>
+				<span translate>Подія зараз не активна для взаємодії.</span>
+			</p-card>
+		}
+
+		@if (activeChapter(); as chapter) {
+			<p-card>
+				<div class="flex items-center justify-between gap-3">
+					<div class="font-semibold">{{ chapter.title }}</div>
+					<p-tag severity="success" value="Активно"></p-tag>
+				</div>
+
+				@if (isLive()) {
+					<div class="mt-3 flex gap-2">
+						@for (value of [1, 2, 3, 4, 5]; track value) {
+							<button
+								pButton
+								type="button"
+								[text]="true"
+								[disabled]="reactedChapterIds().has(chapter._id)"
+								(click)="reactToChapter(value)"
+							>
+								{{ value }}
+							</button>
+						}
+					</div>
+
+					@if (reactedChapterIds().has(chapter._id)) {
+						<small translate>Дякуємо за відгук!</small>
+					}
+				}
+			</p-card>
+		}
+
+		@if (previousChapters().length) {
+			<div class="flex flex-col gap-2">
+				<div class="text-sm font-semibold opacity-70" translate>Попередні розділи</div>
+				@for (chapter of previousChapters(); track chapter._id) {
+					<div class="rounded-card border border-[var(--c-border)] px-3 py-2 text-sm">
+						{{ chapter.title }}
+					</div>
+				}
+			</div>
+		}
+
+		@for (poll of activePolls(); track poll._id) {
+			<p-card>
+				<div class="font-semibold">{{ poll.question }}</div>
+				<div class="mt-2 flex flex-col gap-2">
+					@for (option of poll.options; track $index) {
+						<label class="flex items-center gap-2 text-sm">
+							<p-radiobutton
+								[name]="'poll-' + poll._id"
+								[value]="$index"
+								[disabled]="answeredPollIds().has(poll._id)"
+								(onClick)="answerPoll(poll, $index)"
+							></p-radiobutton>
+							{{ option }}
+						</label>
+					}
+				</div>
+				@if (answeredPollIds().has(poll._id)) {
+					<small translate>Дякуємо за відповідь!</small>
+				}
+			</p-card>
+		}
+
+		@for (quiz of activeQuizzes(); track quiz._id) {
+			<p-card>
+				<div class="font-semibold">{{ quiz.question }}</div>
+				<div class="mt-2 flex flex-col gap-2">
+					@for (option of quiz.options; track $index) {
+						<label class="flex items-center gap-2 text-sm">
+							<p-radiobutton
+								[name]="'quiz-' + quiz._id"
+								[value]="$index"
+								[disabled]="answeredQuizIds().has(quiz._id)"
+								(onClick)="answerQuiz(quiz, $index)"
+							></p-radiobutton>
+							{{ option }}
+						</label>
+					}
+				</div>
+				@if (answeredQuizIds().has(quiz._id)) {
+					<small translate>Дякуємо за відповідь!</small>
+				}
+			</p-card>
+		}
+
+		<p-card>
+			<div class="text-sm font-semibold" translate>Питання від аудиторії</div>
+
+			@if (isLive()) {
+				<div class="mt-2 flex gap-2">
+					<input
+						pInputText
+						class="w-full"
+						[(ngModel)]="newQuestionText"
+						[placeholder]="'Ваше питання...'"
+					/>
+					<button pButton type="button" (click)="submitQuestion()">
+						<span translate>Надіслати</span>
+					</button>
+				</div>
+			}
+
+			<div class="mt-3 flex flex-col gap-2">
+				@for (question of questions(); track question._id) {
+					<div
+						class="flex items-center justify-between gap-3 rounded-card border border-[var(--c-border)] px-3 py-2 text-sm"
+					>
+						<span>{{ question.text }}</span>
+						<button
+							pButton
+							type="button"
+							[text]="true"
+							[disabled]="!isLive() || likedQuestionIds().has(question._id)"
+							(click)="likeQuestion(question)"
+						>
+							<i class="pi pi-thumbs-up"></i>
+							{{ question.likes }}
+						</button>
+					</div>
+				}
+			</div>
+		</p-card>
+	</div>
+}

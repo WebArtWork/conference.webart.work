@@ -7,7 +7,7 @@ import { Chapter, ChapterReactionSummary } from './chapter.interface';
 
 @Injectable({ providedIn: 'root' })
 export class ChapterService extends CrudService<Chapter> {
-	private readonly _httpService = inject(HttpService);
+	private readonly _httpApi = inject(HttpService);
 	private readonly _deviceIdService = inject(DeviceIdService);
 
 	constructor() {
@@ -33,7 +33,7 @@ export class ChapterService extends CrudService<Chapter> {
 	 * Custom (non-CRUD) action via `HttpService`, per `@wawjs/ngx-crud` guidance.
 	 */
 	react(chapterId: string, value: number): Observable<unknown> {
-		return this._httpService.post('/api/chapter/react', {
+		return this._httpApi.post('/api/chapter/react', {
 			chapterId,
 			value,
 			deviceId: this._deviceIdService.deviceId,
@@ -42,7 +42,7 @@ export class ChapterService extends CrudService<Chapter> {
 
 	/** Owner-only read of private reaction analytics for one chapter. */
 	reactionSummary(chapterId: string): Observable<ChapterReactionSummary> {
-		return this._httpService.get(
+		return this._httpApi.get(
 			`/api/chapter/${chapterId}/reactions`,
 		) as Observable<ChapterReactionSummary>;
 	}
