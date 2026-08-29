@@ -1,38 +1,49 @@
 import { Injectable, inject } from '@angular/core';
-import { CrudService } from '@wawjs/ngx-crud';
-import { HttpService } from '@wawjs/ngx-http';
-import { Observable } from 'rxjs';
+import { SEED_QUESTIONS } from '../../../data/conference/seed';
+import { LocalStoreService } from '../local-store';
 import { DeviceIdService } from '../device-id.service';
 import { Question } from './question.interface';
 
 @Injectable({ providedIn: 'root' })
-export class QuestionService extends CrudService<Question> {
-	private readonly _httpApi = inject(HttpService);
+export class QuestionService extends LocalStoreService<Question> {
+	protected readonly storageKey = 'conference:questions';
+	protected readonly seed = SEED_QUESTIONS;
+
 	private readonly _deviceIdService = inject(DeviceIdService);
 
-	constructor() {
-		super({ name: 'question' });
-	}
-
 	/** Public questions for an event, ordered by like count descending. */
-	byEvent(eventId: string): Observable<Question[]> {
-		return this.get({ query: `eventId=${eventId}&sort=-likes` });
+	byEvent(eventId: string): Question[] {
+		return this.all()
+			.filter((question) => question.eventId === eventId)
+			.sort((a, b) => b.likes - a.likes);
 	}
 
-	/**
-	 * Upvotes a question. Only one like per device is allowed; the backend is
-	 * expected to dedupe using the device id (visitors have no accounts).
-	 * Custom (non-CRUD) action via `HttpService`.
-	 */
-	like(question: Question): Observable<unknown> {
-		return this._httpApi.post('/api/question/like', {
-			questionId: question._id,
-			deviceId: this._deviceIdService.deviceId,
+	ask(eventId: string, text: string, authorName: string): Question {
+		return this.create({
+			eventId,
+			text,
+			authorName,
+			likes: 0,
+			likedBy: [],
+			createdAt: new Date().toISOString(),
+		});
+	}
+
+	/** Upvotes a question. Only one like per device id is allowed. */
+	like(question: Question): void {
+		const deviceId = this._deviceIdService.deviceId;
+		if (question.likedBy.includes(deviceId)) {
+			return;
+		}
+
+		this.update(question._id, {
+			likes: question.likes + 1,
+			likedBy: [...question.likedBy, deviceId],
 		});
 	}
 
 	/** Owner-only moderation: removes a question from the public page. */
-	remove(question: Question): Observable<Question> {
-		return this.delete(question);
+	removeQuestion(question: Question): void {
+		this.remove(question._id);
 	}
 }

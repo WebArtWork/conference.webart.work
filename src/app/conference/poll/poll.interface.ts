@@ -1,11 +1,18 @@
-import { CrudDocument } from '@wawjs/ngx-crud';
+import { StoredEntity } from '../local-store';
 
 /** Owner-created poll: question + options, no correct answer. */
-export interface Poll extends CrudDocument<Poll> {
+export interface Poll extends StoredEntity {
 	eventId: string;
 	question: string;
 	options: string[];
 	active: boolean;
+}
+
+/** A single visitor answer. Owner-only, never exposed to visitors. */
+export interface PollAnswer extends StoredEntity {
+	pollId: string;
+	optionIndex: number;
+	deviceId: string;
 }
 
 /** Owner-only aggregate result for one poll option. */
