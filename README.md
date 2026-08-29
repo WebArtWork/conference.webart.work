@@ -83,7 +83,7 @@ guaranteed interval-polling fallback via the existing CRUD `get` calls.
 
 ```sh
 npm install   # install dependencies
-npm start     # serve on http://localhost:4200 with proxy.conf.json
+npm start     # serve on http://localhost:4200
 ```
 
 Environments live in `src/environments/`:
@@ -94,8 +94,8 @@ Environments live in `src/environments/`:
 
 ## Scripts
 
-- `npm start` — dev server with proxying to the configured API URL
-  (`proxy.conf.json`)
+- `npm start` — dev server (no backend proxy — the Conference domain is
+  entirely static/local; see [Core concepts](#core-concepts))
 - `npm run build` — production app build to `dist/`, plus static
   `sitemap.xml`/`robots.txt` generation
 - `npm run start:uikit` / `npm run build:uikit` — serve/build `projects/uikit`

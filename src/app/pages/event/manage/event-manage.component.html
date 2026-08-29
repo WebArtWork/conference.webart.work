@@ -224,5 +224,21 @@
 				</div>
 			</p-card>
 		</div>
+	} @else {
+		<div class="mx-auto flex w-full max-w-[480px] flex-col items-center gap-3 p-8 text-center">
+			<i class="pi pi-lock text-3xl opacity-60"></i>
+			<h1 class="m-0 text-xl font-semibold" translate>Not your event</h1>
+			<p class="m-0 text-sm opacity-70" translate>
+				You're signed in, but you're not the owner of this event.
+			</p>
+		</div>
 	}
+} @else {
+	<div class="mx-auto flex w-full max-w-[480px] flex-col items-center gap-3 p-8 text-center">
+		<i class="pi pi-search text-3xl opacity-60"></i>
+		<h1 class="m-0 text-xl font-semibold" translate>Event not found</h1>
+		<p class="m-0 text-sm opacity-70" translate>
+			We couldn't find an event for this link.
+		</p>
+	</div>
 }

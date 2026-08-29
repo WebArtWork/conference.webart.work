@@ -96,5 +96,10 @@
 	"Edit event",
 	"Save changes",
 	"Event title",
-	"Ask a question..."
+	"Ask a question...",
+	"Event not found",
+	"We couldn't find an event for this link. Double-check the URL with the organizer.",
+	"Not your event",
+	"You're signed in, but you're not the owner of this event.",
+	"We couldn't find an event for this link."
 ]
