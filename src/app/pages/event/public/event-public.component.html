@@ -1,7 +1,12 @@
 @if (event(); as eventDoc) {
 	<div class="mx-auto flex w-full max-w-[720px] flex-col gap-4 p-4">
 		<div class="flex items-center justify-between gap-3">
-			<h1 class="m-0 text-xl font-semibold">{{ eventDoc.title }}</h1>
+			<div>
+				<h1 class="m-0 text-xl font-semibold">{{ eventDoc.title }}</h1>
+				@if (eventDoc.speaker) {
+					<p class="m-0 text-sm opacity-70">{{ eventDoc.speaker }}</p>
+				}
+			</div>
 			<p-tag [value]="eventDoc.state"></p-tag>
 		</div>
 
@@ -11,7 +16,7 @@
 
 		@if (!isLive()) {
 			<p-card>
-				<span translate>Подія зараз не активна для взаємодії.</span>
+				<span translate>This event is not currently open for interaction.</span>
 			</p-card>
 		}
 
@@ -19,7 +24,7 @@
 			<p-card>
 				<div class="flex items-center justify-between gap-3">
 					<div class="font-semibold">{{ chapter.title }}</div>
-					<p-tag severity="success" value="Активно"></p-tag>
+					<p-tag severity="success" value="Now"></p-tag>
 				</div>
 
 				@if (isLive()) {
@@ -38,18 +43,24 @@
 					</div>
 
 					@if (reactedChapterIds().has(chapter._id)) {
-						<small translate>Дякуємо за відгук!</small>
+						<small translate>Thanks for the feedback!</small>
 					}
 				}
 			</p-card>
 		}
 
-		@if (previousChapters().length) {
+		@if (chapters().length) {
 			<div class="flex flex-col gap-2">
-				<div class="text-sm font-semibold opacity-70" translate>Попередні розділи</div>
-				@for (chapter of previousChapters(); track chapter._id) {
-					<div class="rounded-card border border-[var(--c-border)] px-3 py-2 text-sm">
-						{{ chapter.title }}
+				<div class="text-sm font-semibold opacity-70" translate>Chapters</div>
+				@for (chapter of chapters(); track chapter._id) {
+					<div
+						class="flex items-center justify-between rounded-card border border-[var(--c-border)] px-3 py-2 text-sm"
+						[class.opacity-60]="!chapter.isActive"
+					>
+						<span>{{ chapter.title }}</span>
+						@if (chapter.isActive) {
+							<p-tag severity="success" value="Now"></p-tag>
+						}
 					</div>
 				}
 			</div>
@@ -64,15 +75,15 @@
 							<p-radiobutton
 								[name]="'poll-' + poll._id"
 								[value]="$index"
-								[disabled]="answeredPollIds().has(poll._id)"
+								[disabled]="hasAnsweredPoll(poll._id)"
 								(onClick)="answerPoll(poll, $index)"
 							></p-radiobutton>
 							{{ option }}
 						</label>
 					}
 				</div>
-				@if (answeredPollIds().has(poll._id)) {
-					<small translate>Дякуємо за відповідь!</small>
+				@if (hasAnsweredPoll(poll._id)) {
+					<small translate>Thanks for answering!</small>
 				}
 			</p-card>
 		}
@@ -86,21 +97,21 @@
 							<p-radiobutton
 								[name]="'quiz-' + quiz._id"
 								[value]="$index"
-								[disabled]="answeredQuizIds().has(quiz._id)"
+								[disabled]="hasAnsweredQuiz(quiz._id)"
 								(onClick)="answerQuiz(quiz, $index)"
 							></p-radiobutton>
 							{{ option }}
 						</label>
 					}
 				</div>
-				@if (answeredQuizIds().has(quiz._id)) {
-					<small translate>Дякуємо за відповідь!</small>
+				@if (hasAnsweredQuiz(quiz._id)) {
+					<small translate>Thanks for answering!</small>
 				}
 			</p-card>
 		}
 
 		<p-card>
-			<div class="text-sm font-semibold" translate>Питання від аудиторії</div>
+			<div class="text-sm font-semibold" translate>Audience questions</div>
 
 			@if (isLive()) {
 				<div class="mt-2 flex gap-2">
@@ -108,10 +119,10 @@
 						pInputText
 						class="w-full"
 						[(ngModel)]="newQuestionText"
-						[placeholder]="'Ваше питання...'"
+						[placeholder]="'Ask a question...'"
 					/>
 					<button pButton type="button" (click)="submitQuestion()">
-						<span translate>Надіслати</span>
+						<span translate>Send</span>
 					</button>
 				</div>
 			}
@@ -121,12 +132,15 @@
 					<div
 						class="flex items-center justify-between gap-3 rounded-card border border-[var(--c-border)] px-3 py-2 text-sm"
 					>
-						<span>{{ question.text }}</span>
+						<div class="flex flex-col">
+							<span>{{ question.text }}</span>
+							<small class="opacity-60">{{ question.authorName }}</small>
+						</div>
 						<button
 							pButton
 							type="button"
 							[text]="true"
-							[disabled]="!isLive() || likedQuestionIds().has(question._id)"
+							[disabled]="!isLive() || question.likedBy.includes(deviceIdService.deviceId)"
 							(click)="likeQuestion(question)"
 						>
 							<i class="pi pi-thumbs-up"></i>
@@ -137,4 +151,27 @@
 			</div>
 		</p-card>
 	</div>
+
+	<p-dialog
+		[visible]="showNamePrompt()"
+		[modal]="true"
+		[closable]="false"
+		[header]="'Welcome!'"
+	>
+		<p class="m-0 mb-3 text-sm" translate>
+			What's your name? Other attendees will see it next to your questions.
+		</p>
+		<div class="flex gap-2">
+			<input
+				pInputText
+				class="w-full"
+				[(ngModel)]="nameDraft"
+				[placeholder]="'Your name...'"
+				(keyup.enter)="confirmName()"
+			/>
+			<button pButton type="button" (click)="confirmName()">
+				<span translate>Continue</span>
+			</button>
+		</div>
+	</p-dialog>
 }
