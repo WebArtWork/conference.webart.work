@@ -6,10 +6,11 @@ import { Question } from './question.interface';
 
 @Injectable({ providedIn: 'root' })
 export class QuestionService extends LocalStoreService<Question> {
-	protected readonly storageKey = 'conference:questions';
-	protected readonly seed = SEED_QUESTIONS;
-
 	private readonly _deviceIdService = inject(DeviceIdService);
+
+	constructor() {
+		super('conference:questions', SEED_QUESTIONS);
+	}
 
 	/** Public questions for an event, ordered by like count descending. */
 	byEvent(eventId: string): Question[] {

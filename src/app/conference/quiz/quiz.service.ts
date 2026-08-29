@@ -6,8 +6,9 @@ import { Quiz, QuizAnswer, QuizResult } from './quiz.interface';
 
 @Injectable({ providedIn: 'root' })
 export class QuizService extends LocalStoreService<Quiz> {
-	protected readonly storageKey = 'conference:quizzes';
-	protected readonly seed = SEED_QUIZZES;
+	constructor() {
+		super('conference:quizzes', SEED_QUIZZES);
+	}
 
 	byEvent(eventId: string): Quiz[] {
 		return this.all().filter((quiz) => quiz.eventId === eventId);
@@ -16,10 +17,11 @@ export class QuizService extends LocalStoreService<Quiz> {
 
 @Injectable({ providedIn: 'root' })
 export class QuizAnswerService extends LocalStoreService<QuizAnswer> {
-	protected readonly storageKey = 'conference:quiz-answers';
-	protected readonly seed = SEED_QUIZ_ANSWERS;
-
 	private readonly _deviceIdService = inject(DeviceIdService);
+
+	constructor() {
+		super('conference:quiz-answers', SEED_QUIZ_ANSWERS);
+	}
 
 	/** Visitor write-only action. Correctness is never returned from this call. */
 	answer(quiz: Quiz, optionIndex: number): void {

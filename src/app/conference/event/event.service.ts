@@ -5,8 +5,9 @@ import { Event } from './event.interface';
 
 @Injectable({ providedIn: 'root' })
 export class EventService extends LocalStoreService<Event> {
-	protected readonly storageKey = 'conference:events';
-	protected readonly seed = SEED_EVENTS;
+	constructor() {
+		super('conference:events', SEED_EVENTS);
+	}
 
 	/** Resolves an event by its public slug (`1234-5678`). */
 	bySlug(slug: string): Event | undefined {

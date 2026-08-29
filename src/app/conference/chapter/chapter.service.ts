@@ -6,8 +6,9 @@ import { Chapter, ChapterReaction, ChapterReactionSummary } from './chapter.inte
 
 @Injectable({ providedIn: 'root' })
 export class ChapterService extends LocalStoreService<Chapter> {
-	protected readonly storageKey = 'conference:chapters';
-	protected readonly seed = SEED_CHAPTERS;
+	constructor() {
+		super('conference:chapters', SEED_CHAPTERS);
+	}
 
 	byEvent(eventId: string): Chapter[] {
 		return this.all()
@@ -29,10 +30,11 @@ export class ChapterService extends LocalStoreService<Chapter> {
 
 @Injectable({ providedIn: 'root' })
 export class ChapterReactionService extends LocalStoreService<ChapterReaction> {
-	protected readonly storageKey = 'conference:chapter-reactions';
-	protected readonly seed = SEED_CHAPTER_REACTIONS;
-
 	private readonly _deviceIdService = inject(DeviceIdService);
+
+	constructor() {
+		super('conference:chapter-reactions', SEED_CHAPTER_REACTIONS);
+	}
 
 	/** Visitor write-only action: submits a reaction/rating for a chapter. */
 	react(chapterId: string, value: number): void {

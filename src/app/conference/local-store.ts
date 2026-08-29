@@ -1,4 +1,4 @@
-import { signal } from '@angular/core';
+import { WritableSignal, signal } from '@angular/core';
 
 /** Minimal shape every static-store entity needs. */
 export interface StoredEntity {
@@ -11,19 +11,22 @@ export interface StoredEntity {
  * a reload. There is no backend for the Conference domain — every entity
  * service (`EventService`, `ChapterService`, ...) extends this instead of
  * `@wawjs/ngx-crud`'s `CrudService`.
+ *
+ * The store is loaded eagerly in the constructor (not lazily on first read):
+ * writing a signal the first time it's read would throw NG0600 whenever that
+ * first read happens to occur inside a caller's `computed()`/`effect()`.
  */
 export abstract class LocalStoreService<T extends StoredEntity> {
-	protected abstract readonly storageKey: string;
-	protected abstract readonly seed: readonly T[];
+	private readonly _items: WritableSignal<T[]>;
 
-	private _items = signal<T[] | null>(null);
+	constructor(
+		private readonly storageKey: string,
+		private readonly seed: readonly T[],
+	) {
+		this._items = signal(this._load());
+	}
 
-	readonly items = () => {
-		if (this._items() === null) {
-			this._items.set(this._load());
-		}
-		return this._items() as T[];
-	};
+	readonly items = () => this._items();
 
 	all(): T[] {
 		return this.items();

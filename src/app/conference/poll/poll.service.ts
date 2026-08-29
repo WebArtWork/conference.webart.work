@@ -6,8 +6,9 @@ import { Poll, PollAnswer, PollResult } from './poll.interface';
 
 @Injectable({ providedIn: 'root' })
 export class PollService extends LocalStoreService<Poll> {
-	protected readonly storageKey = 'conference:polls';
-	protected readonly seed = SEED_POLLS;
+	constructor() {
+		super('conference:polls', SEED_POLLS);
+	}
 
 	byEvent(eventId: string): Poll[] {
 		return this.all().filter((poll) => poll.eventId === eventId);
@@ -16,10 +17,11 @@ export class PollService extends LocalStoreService<Poll> {
 
 @Injectable({ providedIn: 'root' })
 export class PollAnswerService extends LocalStoreService<PollAnswer> {
-	protected readonly storageKey = 'conference:poll-answers';
-	protected readonly seed = SEED_POLL_ANSWERS;
-
 	private readonly _deviceIdService = inject(DeviceIdService);
+
+	constructor() {
+		super('conference:poll-answers', SEED_POLL_ANSWERS);
+	}
 
 	/** Visitor write-only action: submits an answer while the poll is active. One per device. */
 	answer(poll: Poll, optionIndex: number): void {
