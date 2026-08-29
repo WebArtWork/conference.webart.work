@@ -1,5 +1,5 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, computed, inject, input, signal } from '@angular/core';
+import { Component, DestroyRef, computed, inject, input, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { interval } from 'rxjs';
@@ -33,11 +33,17 @@ const REFRESH_INTERVAL_MS = 5000;
  * every piece of audience analytics that visitors never see (chapter
  * reaction summaries, poll/quiz results).
  *
- * Live-update note: `@wawjs/ngx-socket` has no pre-defined event names for
- * this domain, so real-time refresh is attempted best-effort over
+ * Live-update note: `@wawjs/ngx-socket`'s `SocketService` is a thin transport
+ * wrapper (`on`/`emit`/`setUrl`/`disconnect`) with no pre-defined event
+ * catalogue and, notably, no `off()` — a registered listener cannot be
+ * unsubscribed. Real-time refresh is therefore attempted best-effort over
  * `SocketService.on('event:<eventId>')` (assumption — confirm the actual
- * server event name), backed by a guaranteed interval-polling fallback via
- * the existing CRUD `get`/`list` calls either way.
+ * server event name once a backend exists), with a `_destroyed` guard so the
+ * callback becomes a no-op after this component is destroyed since the
+ * listener itself can't be torn down. Interval polling is the *guaranteed*
+ * refresh path — kept short and torn down deterministically via
+ * `takeUntilDestroyed()` — so live updates work even if the socket event
+ * never fires.
  */
 @Component({
 	selector: 'app-event-manage',
@@ -101,8 +107,13 @@ export class EventManageComponent {
 	);
 
 	private _lastLoadedSlug: string | null = null;
+	private _destroyed = false;
 
 	constructor() {
+		inject(DestroyRef).onDestroy(() => {
+			this._destroyed = true;
+		});
+
 		interval(REFRESH_INTERVAL_MS)
 			.pipe(takeUntilDestroyed())
 			.subscribe(() => this._refreshAll());
@@ -276,10 +287,13 @@ export class EventManageComponent {
 			this._loadQuizzes(eventDoc._id);
 
 			// Best-effort live refresh; falls back silently to interval polling
-			// above if the server never emits this event.
-			this._socketService.on(`event:${eventDoc._id}`, () =>
-				this._refreshAll(),
-			);
+			// above if the server never emits this event. Guarded by `_destroyed`
+			// since `SocketService` exposes no `off()` to unsubscribe this listener.
+			this._socketService.on(`event:${eventDoc._id}`, () => {
+				if (!this._destroyed) {
+					this._refreshAll();
+				}
+			});
 		});
 	}
 
