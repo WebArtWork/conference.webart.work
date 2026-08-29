@@ -11,8 +11,8 @@ export class EventService extends CrudService<Event> {
 
 	/**
 	 * Resolves an event by its public slug (`1234-5678`).
-	 * Assumption: the API's `fetch` endpoint accepts `{ slug }` as a lookup query,
-	 * mirroring how `fetch(query)` is used elsewhere for single-document reads.
+	 * Confirmed against `@wawjs/ngx-crud`'s `CrudService.fetch(query)`: it issues a single-document
+	 * read against `/api/{name}` with `query` as the lookup params, so `{ slug }` is the correct shape.
 	 */
 	bySlug(slug: string): Observable<Event> {
 		return this.fetch({ slug });

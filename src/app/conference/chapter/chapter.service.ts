@@ -20,17 +20,28 @@ export class ChapterService extends CrudService<Chapter> {
 
 	/**
 	 * Owner-only: marks a chapter as the currently active one.
-	 * Assumption: the backend deactivates any other active chapter for the
-	 * same event when this update is received; no explicit "deactivate all" call is made here.
+	 * `@wawjs/ngx-crud` has no server-side "deactivate siblings" guarantee mechanism, so this
+	 * also flips any other locally-known active chapter for the same event to inactive via the
+	 * `documents` signal, purely so the UI never shows two "active" chapters at once while the
+	 * request is in flight. The server remains the source of truth: it is expected to deactivate
+	 * every other chapter for `chapter.eventId` when it receives this update, and the next `get()`
+	 * refresh reconciles local state with whatever the server actually persisted.
 	 */
 	activate(chapter: Chapter): Observable<Chapter> {
+		for (const sibling of this.documents()) {
+			if (sibling._id !== chapter._id && sibling.eventId === chapter.eventId && sibling.isActive) {
+				this.getSignal(sibling).update((doc) => ({ ...doc, isActive: false }));
+			}
+		}
+
 		return this.update({ ...chapter, isActive: true });
 	}
 
 	/**
 	 * Visitor write-only action: submits a reaction/rating for a chapter.
 	 * No aggregate is requested or returned here — visitors never see totals.
-	 * Custom (non-CRUD) action via `HttpService`, per `@wawjs/ngx-crud` guidance.
+	 * Custom (non-CRUD) action via `HttpService`, following the `/api/{name}/{action}` convention
+	 * already used by this app (see `sign.component.ts`'s `/api/user/login`, `/api/user/status`, etc.).
 	 */
 	react(chapterId: string, value: number): Observable<unknown> {
 		return this._httpApi.post('/api/chapter/react', {
