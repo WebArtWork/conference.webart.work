@@ -1,0 +1,55 @@
+<div class="min-h-dvh bg-[var(--c-bg-primary)]">
+	<div class="mx-auto flex w-full max-w-[880px] flex-col gap-10 px-6 py-16">
+		<header class="flex items-center justify-between gap-3">
+			<span class="text-lg font-bold text-[var(--c-text-secondary)]">{{ company.name }}</span>
+			<a pButton [text]="true" routerLink="/sign">
+				<span translate>Sign in</span>
+			</a>
+		</header>
+
+		<section class="flex flex-col gap-4 text-center">
+			<h1 class="m-0 text-3xl font-bold text-[var(--c-text-secondary)] sm:text-4xl">
+				<span translate>The live companion for your talk</span>
+			</h1>
+			<p class="m-0 text-base opacity-80 sm:text-lg">{{ company.description }}</p>
+
+			<div class="mt-2 flex flex-wrap justify-center gap-3">
+				<button pButton type="button" (click)="openDemoEvent()">
+					<i class="pi pi-play"></i>
+					<span translate>Try a live demo</span>
+				</button>
+				<a pButton [outlined]="true" routerLink="/sign">
+					<span translate>Create your event</span>
+				</a>
+			</div>
+		</section>
+
+		<section class="grid gap-4 sm:grid-cols-3">
+			<p-card>
+				<i class="pi pi-comments text-xl"></i>
+				<div class="mt-2 font-semibold" translate>Audience Q&A</div>
+				<p class="mt-1 text-sm opacity-80" translate>
+					Visitors ask and upvote questions in real time — no account needed.
+				</p>
+			</p-card>
+			<p-card>
+				<i class="pi pi-chart-bar text-xl"></i>
+				<div class="mt-2 font-semibold" translate>Polls & quizzes</div>
+				<p class="mt-1 text-sm opacity-80" translate>
+					Gauge opinions and knowledge on the spot. Results stay private to you.
+				</p>
+			</p-card>
+			<p-card>
+				<i class="pi pi-book text-xl"></i>
+				<div class="mt-2 font-semibold" translate>Chapter feedback</div>
+				<p class="mt-1 text-sm opacity-80" translate>
+					Get honest per-chapter reactions the audience never sees aggregated.
+				</p>
+			</p-card>
+		</section>
+
+		<footer class="text-center text-sm opacity-60">
+			<span translate>One link, one page — visitors join instantly.</span>
+		</footer>
+	</div>
+</div>

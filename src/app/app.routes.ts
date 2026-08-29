@@ -5,17 +5,25 @@ import { adminsGuard, authenticatedGuard, guestGuard } from '@wawjs/ngx-bos';
 export const routes: Routes = [
 	{
 		path: '',
-		redirectTo: 'sign',
-		pathMatch: 'full',
-	},
-	{
-		path: '',
 		canActivate: [guestGuard],
 		loadComponent: () =>
 			import('./layouts/guest/guest.component').then(
 				(m) => m.GuestComponent,
 			),
 		children: [
+			{
+				path: '',
+				canActivate: [MetaGuard],
+				data: {
+					meta: {
+						title: 'Conference',
+					},
+				},
+				loadComponent: () =>
+					import('./pages/guest/landing/landing.component').then(
+						(m) => m.LandingComponent,
+					),
+			},
 			{
 				path: 'sign',
 				canActivate: [MetaGuard],
