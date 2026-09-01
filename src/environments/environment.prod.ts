@@ -3,6 +3,9 @@ export const environment = {
 	production: true,
 	appId: 'conference',
 	url: 'https://it.webart.work',
+	contact: {
+		slug: 'conference.webart.work',
+	},
 	sign: {
 		logo: '',
 		email: '',

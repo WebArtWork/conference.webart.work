@@ -99,6 +99,76 @@ export const routes: Routes = [
 						(m) => m.routes,
 					),
 			},
+			{
+				path: 'feedback',
+				canActivate: [MetaGuard],
+				data: {
+					meta: {
+						title: 'Зворотний зв\'язок',
+					},
+				},
+				loadChildren: () =>
+					import('./pages/user/feedback/feedback.routes').then(
+						(m) => m.routes,
+					),
+			},
+			{
+				path: 'for-attendees',
+				canActivate: [MetaGuard],
+				data: {
+					meta: {
+						title: 'Для учасників',
+					},
+				},
+				loadChildren: () =>
+					import('./pages/user/for-attendees/for-attendees.routes').then(
+						(m) => m.routes,
+					),
+			},
+			{
+				path: 'for-hosts',
+				canActivate: [MetaGuard],
+				data: {
+					meta: {
+						title: 'Для організаторів',
+					},
+				},
+				loadChildren: () =>
+					import('./pages/user/for-hosts/for-hosts.routes').then(
+						(m) => m.routes,
+					),
+			},
+			{
+				path: 'share-profile',
+				canActivate: [MetaGuard],
+				data: {
+					shareKind: 'profile',
+					meta: {
+						title: 'Поділитися профілем',
+						description: 'Відскануйте QR-код, щоб відкрити мій профіль Conference.',
+						index: false,
+					},
+				},
+				loadChildren: () =>
+					import('./pages/user/share/share.routes').then(
+						(m) => m.routes,
+					),
+			},
+			{
+				path: 'share',
+				canActivate: [MetaGuard],
+				data: {
+					shareKind: 'app',
+					meta: {
+						title: 'Поділитися Conference',
+						description: 'Відскануйте QR-код, щоб приєднатися до Conference за кілька секунд.',
+					},
+				},
+				loadChildren: () =>
+					import('./pages/user/share/share.routes').then(
+						(m) => m.routes,
+					),
+			},
 		],
 	},
 	{

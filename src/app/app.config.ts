@@ -21,7 +21,27 @@ import { provideNgxSocket } from '@wawjs/ngx-socket';
 import { provideNgxTinymce } from '@wawjs/ngx-tinymce';
 import { provideTranslate } from '@wawjs/ngx-translate';
 import { provideNgxPrime } from '@wawjs/ngx-prime/config';
+import { definePreset } from '@wawjs/css-prime-styled';
 import Aura from '@wawjs/css-prime-themes/aura';
+
+/** Conference brand coral, matched to the logo's speaker/audience accent color. */
+const ConferencePreset = definePreset(Aura, {
+	semantic: {
+		primary: {
+			50: '#fef1f1',
+			100: '#fddede',
+			200: '#fbb9b8',
+			300: '#f88d8b',
+			400: '#f4605d',
+			500: '#ea3b38',
+			600: '#c92826',
+			700: '#a3211f',
+			800: '#841e1d',
+			900: '#6e1e1e',
+			950: '#3c0c0c',
+		},
+	},
+});
 import { NgxBosConfig, ngxBosProvide } from '@wawjs/ngx-bos';
 import { io } from 'socket.io-client';
 import { environment } from '@env';
@@ -74,7 +94,7 @@ export const appConfig: ApplicationConfig = {
 		}),
 		provideNgxPrime({
 			theme: {
-				preset: Aura,
+				preset: ConferencePreset,
 				options: { darkModeSelector: "[data-mode='dark']" },
 			},
 		}),

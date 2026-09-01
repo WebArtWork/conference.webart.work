@@ -44,11 +44,56 @@
 
 	<app-nav-icon
 		[class.sidebar--minimized-icon]="!showNames()"
+		[name]="showNames() ? translateService.translate('Шер профілю')() : ''"
+		[ariaLabel]="translateService.translate('Шер профілю')()"
+		(click)="closeIfOverlay()"
+		routerLink="/share-profile"
+		icon="id-card"
+	/>
+
+	<app-nav-icon
+		[class.sidebar--minimized-icon]="!showNames()"
 		[name]="showNames() ? translateService.translate('Settings')() : ''"
 		[ariaLabel]="translateService.translate('Settings')()"
 		(click)="closeIfOverlay()"
 		routerLink="/settings"
 		icon="cog"
+	/>
+
+	<app-nav-icon
+		[class.sidebar--minimized-icon]="!showNames()"
+		[name]="showNames() ? translateService.translate('Feedback')() : ''"
+		[ariaLabel]="translateService.translate('Feedback')()"
+		(click)="closeIfOverlay()"
+		routerLink="/feedback"
+		icon="comment"
+	/>
+
+	<app-nav-icon
+		[class.sidebar--minimized-icon]="!showNames()"
+		[name]="showNames() ? translateService.translate('Шер Conference')() : ''"
+		[ariaLabel]="translateService.translate('Шер Conference')()"
+		(click)="closeIfOverlay()"
+		routerLink="/share"
+		icon="qrcode"
+	/>
+
+	<app-nav-icon
+		[class.sidebar--minimized-icon]="!showNames()"
+		[name]="showNames() ? translateService.translate('Для учасників')() : ''"
+		[ariaLabel]="translateService.translate('Для учасників')()"
+		(click)="closeIfOverlay()"
+		routerLink="/for-attendees"
+		icon="user-plus"
+	/>
+
+	<app-nav-icon
+		[class.sidebar--minimized-icon]="!showNames()"
+		[name]="showNames() ? translateService.translate('Для організаторів')() : ''"
+		[ariaLabel]="translateService.translate('Для організаторів')()"
+		(click)="closeIfOverlay()"
+		routerLink="/for-hosts"
+		icon="megaphone"
 	/>
 
 	<hr class="my-2 border-0 border-t-2 border-t-[var(--c-text-primary)]" />
