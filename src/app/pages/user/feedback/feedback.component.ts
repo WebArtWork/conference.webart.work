@@ -16,6 +16,7 @@ import {
 import { FeedbackService } from './feedback.service';
 
 const CONTACT_STORAGE_KEY = 'feedback:contact';
+const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024;
 
 @Component({
 	imports: [FormsModule, ButtonModule, TranslateDirective],
@@ -98,6 +99,10 @@ export class FeedbackComponent {
 
 		for (const file of picked) {
 			if (!/^image\/|^video\//.test(file.type)) continue;
+			if (file.size > MAX_FILE_SIZE_BYTES) {
+				this.uploadError.set(true);
+				continue;
+			}
 
 			this.uploadingFiles.update((n) => n + 1);
 			this._feedbackService.uploadFile(file).subscribe({

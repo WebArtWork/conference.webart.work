@@ -117,7 +117,7 @@
 								[attr.aria-pressed]="feedbackModel().wouldUse === option"
 								(click)="setWouldUse(option)"
 							>
-								{{ option }}
+								{{ translateService.translate(option)() }}
 							</button>
 						}
 					</div>

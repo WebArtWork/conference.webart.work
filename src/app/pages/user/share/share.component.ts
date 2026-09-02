@@ -49,11 +49,19 @@ export class SharePageComponent {
 	);
 
 	copyLink(): void {
-		navigator.clipboard?.writeText(this.shareUrl()).then(() => {
-			this._messageService.add({
-				severity: 'success',
-				detail: this.translateService.translate('Посилання скопійовано')(),
+		navigator.clipboard
+			?.writeText(this.shareUrl())
+			.then(() => {
+				this._messageService.add({
+					severity: 'success',
+					detail: this.translateService.translate('Посилання скопійовано')(),
+				});
+			})
+			.catch(() => {
+				this._messageService.add({
+					severity: 'error',
+					detail: this.translateService.translate('Не вдалося скопіювати посилання')(),
+				});
 			});
-		});
 	}
 }
