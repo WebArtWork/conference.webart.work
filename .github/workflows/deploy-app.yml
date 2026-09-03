@@ -13,20 +13,19 @@ jobs:
             - name: Checkout repository
               uses: actions/checkout@v4
 
-            - name: Install pnpm
-              uses: pnpm/action-setup@v4
-
             - name: Install Node.js
               uses: actions/setup-node@v4
               with:
                   node-version: '24'
-                  cache: 'pnpm'
 
             - name: Install dependencies
-              run: pnpm install --frozen-lockfile
+              run: npm ci
+
+            - name: Rebuild lightningcss
+              run: npm rebuild lightningcss
 
             - name: Build Angular app
-              run: pnpm run build
+              run: npm run build
 
             - name: Copy CNAME file
               run: cp CNAME dist/app/browser/
