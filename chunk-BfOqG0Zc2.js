@@ -1,0 +1,1 @@
+var t=[{path:``,loadComponent:()=>import(`./chunk-Bl_OffBN2.js`).then(o=>o.ForAttendeesPageComponent)}];export{t as routes};

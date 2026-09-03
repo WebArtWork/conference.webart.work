@@ -1,0 +1,1 @@
+var e={_id:``,eventId:``,title:``,order:0,isActive:!1};var o={_id:``,eventId:``,question:``,options:[``,``],active:!1};var n={_id:``,eventId:``,question:``,options:[``,``],correctOptionIndex:0,active:!1};export{n,o as r,e as t};

@@ -1,0 +1,1 @@
+var e={_id:``,slug:``,owner:``,title:``,speaker:``,description:``,state:`draft`};function r(){let t=()=>Math.floor(1e3+Math.random()*9e3);return`${t()}-${t()}`}export{r as n,e as t};

@@ -1,0 +1,1 @@
+import{Bt as Yp,qt as _E}from"./chunk-BGIC4sMI.js";import{t as Qn}from"./chunk-D1HyGICr.js";var c=(()=>{class e{static{this.ɵfac=function(t){return new(t||e)}}static{this.ɵcmp=_E({type:e,selectors:[[`ng-component`]],decls:1,vars:0,template:function(t,p){t&1&&Yp(0,`router-outlet`)},dependencies:[Qn],encapsulation:2})}}return e})();export{c as GuestComponent};

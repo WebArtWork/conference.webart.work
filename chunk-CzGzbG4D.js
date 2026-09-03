@@ -1,0 +1,1 @@
+var t=[{path:``,loadComponent:()=>import(`./chunk-CX4DruCS.js`).then(o=>o.SignComponent)}];export{t as routes};
