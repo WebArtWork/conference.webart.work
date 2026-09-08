@@ -66,26 +66,24 @@ export class SharePageComponent {
 
 	readonly title = computed(() => {
 		if (this.kind() === 'profile') {
-			return this.translateService.translate('Поділитися профілем')();
+			return this.translateService.translate('Share profile')();
 		}
 
-		return this.translateService.translate('Поділитися конференцією')();
+		return this.translateService.translate('Share conference')();
 	});
 
 	readonly description = computed(() => {
 		if (this.kind() === 'profile') {
-			return this.translateService.translate(
-				'Дайте людям відсканувати цей код, щоб відкрити мій профіль Conference.',
-			)();
+			return this.translateService.translate('Let people scan this code to open my Conference profile.')();
 		}
 
 		const title = this.conference()?.title;
 		return title
 			? this.translateService.interpolate(
-					this.translateService.translate('Відскануйте код, щоб переглянути програму конференції «{{title}}».')(),
+					this.translateService.translate('Scan the code to view the schedule for «{{title}}».')(),
 					{ title },
 				)
-			: this.translateService.translate('Відскануйте код, щоб переглянути програму конференції.')();
+			: this.translateService.translate('Scan the code to view the conference schedule.')();
 	});
 
 	copyLink(): void {
@@ -94,13 +92,13 @@ export class SharePageComponent {
 			.then(() => {
 				this._messageService.add({
 					severity: 'success',
-					detail: this.translateService.translate('Посилання скопійовано')(),
+					detail: this.translateService.translate('Link copied')(),
 				});
 			})
 			.catch(() => {
 				this._messageService.add({
 					severity: 'error',
-					detail: this.translateService.translate('Не вдалося скопіювати посилання')(),
+					detail: this.translateService.translate('Failed to copy the link')(),
 				});
 			});
 	}

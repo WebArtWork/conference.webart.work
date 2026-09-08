@@ -92,7 +92,12 @@
 			>
 				<span class="settings__flag" aria-hidden="true">{{ languageFlagEmoji(languageService.language()) }}</span>
 				<span [translate]="languageService.getLanguage(languageService.language())?.name ?? ''"></span>
-				<i class="pi pi-chevron-down" aria-hidden="true"></i>
+				<i
+					class="pi"
+					[class.pi-chevron-up]="isLanguageListOpen()"
+					[class.pi-chevron-down]="!isLanguageListOpen()"
+					aria-hidden="true"
+				></i>
 			</button>
 			@if (isLanguageListOpen()) {
 				<ul class="settings__languages">
