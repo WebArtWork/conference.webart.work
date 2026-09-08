@@ -5,12 +5,13 @@
 		class="m-0 flex w-full list-none items-center gap-2 p-0 max-md:justify-between max-md:gap-0"
 	>
 		<li class="inline-flex items-center">
-			<span
+			<a
+				routerLink="/"
 				class="inline-flex h-9 w-9 items-center justify-center overflow-hidden p-1 text-[var(--c-text-secondary)]"
 				[attr.aria-label]="translateService.translate('Logo')()"
 			>
 				<icon-spider style="--spider-w: 28px; --spider-h: 28px" />
-			</span>
+			</a>
 		</li>
 
 		@if (sidebarToggler()) {

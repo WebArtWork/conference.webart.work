@@ -35,7 +35,7 @@ export const SEED_EVENTS: Event[] = [
 
 export const SEED_LECTURES: Lecture[] = [
 	{
-		_id: 'lec-ai-in-product-development',
+		_id: 'conf-kpnu-2026-2027-1',
 		conferenceId: 'conf-kpnu-2026-2027',
 		title: 'Штучний інтелект у продуктовій розробці',
 		speaker: 'Олена Коваль',
@@ -49,7 +49,7 @@ export const SEED_LECTURES: Lecture[] = [
 			'типові помилки та метрики, за якими можна оцінити ефект від впровадження.',
 	},
 	{
-		_id: 'lec-scaling-angular-apps',
+		_id: 'conf-kpnu-2026-2027-2',
 		conferenceId: 'conf-kpnu-2026-2027',
 		title: 'Масштабування Angular-застосунків',
 		speaker: 'Андрій Петренко',
@@ -63,7 +63,7 @@ export const SEED_LECTURES: Lecture[] = [
 			'команди на високому рівні при зростанні кодової бази.',
 	},
 	{
-		_id: 'lec-resilient-microservices',
+		_id: 'conf-kpnu-2026-2027-3',
 		conferenceId: 'conf-kpnu-2026-2027',
 		title: 'Побудова відмовостійких мікросервісів',
 		speaker: 'Марія Іванова',

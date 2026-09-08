@@ -9,7 +9,7 @@
 		}
 
 		@for (lecture of lectures(); track lecture._id; let i = $index) {
-			<p-card class="cursor-pointer" (click)="toggleLecture(lecture._id)">
+			<p-card class="cursor-pointer" [routerLink]="['/lect']" [fragment]="lecture._id">
 				<div class="flex items-center justify-between gap-3 text-[var(--c-text-primary)]">
 					<div class="min-w-0 flex-1">
 						<div class="flex flex-wrap items-center gap-2">
@@ -29,104 +29,11 @@
 							}
 						}
 					</div>
-					<i
-						class="pi shrink-0 opacity-60"
-						[class.pi-chevron-down]="expandedLectureId() !== lecture._id"
-						[class.pi-chevron-up]="expandedLectureId() === lecture._id"
-					></i>
+					<i class="pi pi-chevron-right shrink-0 opacity-60"></i>
 				</div>
-
-				@if (expandedLectureId() === lecture._id) {
-					<div class="mt-3 flex flex-col gap-3 border-t border-[var(--c-border)] pt-3 text-sm" (click)="$event.stopPropagation()">
-						@if (lecture.content) {
-							<p class="m-0 leading-relaxed">{{ lecture.content }}</p>
-						}
-
-						@if (lecture.link) {
-							<a
-								[href]="lecture.link"
-								target="_blank"
-								rel="noopener"
-								class="flex items-center gap-2 self-start rounded-card border border-[var(--c-border)] p-2"
-							>
-								<i class="pi pi-link"></i>
-								<span translate>Go to lecture</span>
-							</a>
-						}
-
-						@if (lecture.fileName && lecture.fileDataUrl) {
-							<a
-								[href]="lecture.fileDataUrl"
-								[download]="lecture.fileName"
-								class="flex items-center gap-2 self-start rounded-card border border-[var(--c-border)] p-2"
-							>
-								<i class="pi pi-file"></i>
-								<span translate>Download materials</span>
-								<span class="opacity-70">({{ lecture.fileName }})</span>
-							</a>
-						}
-
-						<div class="flex flex-col gap-2 border-t border-[var(--c-border)] pt-3">
-							<div class="text-xs font-semibold tracking-wide uppercase opacity-70" translate>Audience questions</div>
-
-							<div class="flex gap-2">
-								<input
-									pInputText
-									class="w-full"
-									[(ngModel)]="newQuestionText"
-									[placeholder]="translateService.translate('Ask a question...')()"
-								/>
-								<button pButton type="button" (click)="submitQuestion(lecture)">
-									<span translate>Send</span>
-								</button>
-							</div>
-
-							<div class="flex flex-col gap-2">
-								@for (question of questions(lecture); track question._id) {
-									<div
-										class="flex items-center justify-between gap-3 rounded-card border border-[var(--c-border)] px-3 py-2 text-sm"
-									>
-										<div class="flex flex-col">
-											<span>{{ question.text }}</span>
-											<small class="opacity-60">{{ question.authorName }}</small>
-										</div>
-										<button
-											pButton
-											type="button"
-											[text]="true"
-											[disabled]="question.likedBy.includes(deviceIdService.deviceId)"
-											(click)="likeQuestion(question)"
-										>
-											<i class="pi pi-thumbs-up"></i>
-											{{ question.likes }}
-										</button>
-									</div>
-								}
-							</div>
-						</div>
-					</div>
-				}
 			</p-card>
 		}
 	</div>
-
-	<p-dialog [visible]="showNamePrompt()" [modal]="true" [closable]="false" [header]="translateService.translate('Welcome!')()">
-		<p class="m-0 mb-3 text-sm" translate>
-			What's your name? Other attendees will see it next to your questions.
-		</p>
-		<div class="flex gap-2">
-			<input
-				pInputText
-				class="w-full"
-				[(ngModel)]="nameDraft"
-				[placeholder]="translateService.translate('Your name...')()"
-				(keyup.enter)="confirmName()"
-			/>
-			<button pButton type="button" (click)="confirmName()">
-				<span translate>Continue</span>
-			</button>
-		</div>
-	</p-dialog>
 } @else {
 	<div class="mx-auto flex w-full max-w-[720px] flex-col gap-3 p-3 sm:p-4">
 		<p-card>

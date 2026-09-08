@@ -5,7 +5,6 @@ import { authenticatedGuard, guestGuard } from '@wawjs/ngx-bos';
 export const routes: Routes = [
 	{
 		path: '',
-		canActivate: [guestGuard],
 		loadComponent: () =>
 			import('./layouts/guest/guest.component').then(
 				(m) => m.GuestComponent,
@@ -26,7 +25,7 @@ export const routes: Routes = [
 			},
 			{
 				path: 'sign',
-				canActivate: [MetaGuard],
+				canActivate: [guestGuard, MetaGuard],
 				data: {
 					meta: {
 						title: 'Вхід',
@@ -229,6 +228,19 @@ export const routes: Routes = [
 					),
 			},
 			{
+				path: 'lect',
+				canActivate: [MetaGuard],
+				data: {
+					meta: {
+						title: 'Лекція',
+					},
+				},
+				loadComponent: () =>
+					import('./pages/lecture/public/lecture-public.component').then(
+						(m) => m.LecturePublicComponent,
+					),
+			},
+			{
 				path: 'event/:slug/manage',
 				canActivate: [MetaGuard],
 				data: {
@@ -267,6 +279,19 @@ export const routes: Routes = [
 		loadComponent: () =>
 			import('./pages/event/public/event-public.component').then(
 				(m) => m.EventPublicComponent,
+			),
+	},
+	{
+		path: 'lect',
+		canActivate: [MetaGuard],
+		data: {
+			meta: {
+				title: 'Лекція',
+			},
+		},
+		loadComponent: () =>
+			import('./pages/lecture/public/lecture-public.component').then(
+				(m) => m.LecturePublicComponent,
 			),
 	},
 	{
