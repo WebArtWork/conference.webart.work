@@ -6,207 +6,211 @@
 				<span translate>Керування лекціями</span>
 			</button>
 
-			<p-card>
-				<div class="flex items-center justify-between gap-3">
-					<h1 class="m-0 text-xl font-semibold" translate>Manage event</h1>
-					<p-selectButton
-						[options]="stateOptions"
-						[ngModel]="eventDoc.state"
-						(ngModelChange)="setEventState($event)"
-						optionLabel="label"
-						optionValue="value"
-					></p-selectButton>
-				</div>
+			@if (fragment() === 'questions') {
+				<h1 class="m-0 text-xl font-semibold" translate>Audience Q&A</h1>
 
-				<div class="mt-3 text-sm font-semibold" translate>Дата та час лекції</div>
-				<div class="mt-2 grid grid-cols-1 gap-3 sm:grid-cols-3">
-					<div class="flex flex-1 flex-col gap-1">
-						<small class="opacity-70" translate>Дата</small>
-						<div class="flex flex-1">
-							<input pInputText type="date" lang="uk-UA" class="h-full w-full" [(ngModel)]="eventDateDraft" />
+				<p-card>
+					<div class="text-sm font-semibold" translate>Live audience stats</div>
+					<div class="mt-2 grid grid-cols-3 gap-3">
+						<div class="rounded-card border border-[var(--c-border)] p-3 text-center">
+							<div class="text-lg font-semibold">{{ stats().questionCount }}</div>
+							<small translate>Questions</small>
+						</div>
+						<div class="rounded-card border border-[var(--c-border)] p-3 text-center">
+							<div class="text-lg font-semibold">{{ stats().totalLikes }}</div>
+							<small translate>Question likes</small>
+						</div>
+						<div class="rounded-card border border-[var(--c-border)] p-3 text-center">
+							<div class="text-lg font-semibold">{{ stats().pollAnswerCount + stats().quizAnswerCount }}</div>
+							<small translate>Poll/quiz answers</small>
 						</div>
 					</div>
-					<div class="flex flex-col gap-1">
-						<small class="opacity-70" translate>Початок</small>
-						<app-time-scroll-input [(ngModel)]="eventStartTimeDraft" class="w-full" />
-					</div>
-					<div class="flex flex-col gap-1">
-						<small class="opacity-70" translate>Кінець</small>
-						<app-time-scroll-input [(ngModel)]="eventEndTimeDraft" class="w-full" />
-					</div>
-				</div>
+				</p-card>
 
-				<div class="mt-3 text-sm font-semibold" translate>Лекція</div>
-				<div class="mt-2 flex flex-col gap-2">
-					<p-select
-						[options]="lectures()"
-						optionLabel="title"
-						optionValue="_id"
-						[(ngModel)]="eventLectureIdDraft"
-						[placeholder]="'Оберіть лекцію'"
-						[showClear]="true"
-						class="w-full"
-					></p-select>
+				<p-card>
+					<div class="text-sm font-semibold" translate>Audience questions</div>
+					<div class="mt-2 flex flex-col gap-2">
+						@for (question of questions(); track question._id) {
+							<div
+								class="flex items-center justify-between gap-3 rounded-card border border-[var(--c-border)] px-3 py-2 text-sm"
+							>
+								<div class="flex flex-col">
+									<span>{{ question.text }}</span>
+									<small class="opacity-60">{{ question.authorName }} · {{ question.likes }} <span translate>likes</span></small>
+								</div>
+								<button pButton type="button" severity="danger" [text]="true" (click)="deleteQuestion(question)">
+									<i class="pi pi-trash"></i>
+								</button>
+							</div>
+						}
+					</div>
+				</p-card>
+			} @else {
+				<p-card>
+					<div class="flex items-center justify-between gap-3">
+						<h1 class="m-0 text-xl font-semibold" translate>Manage event</h1>
+						<p-selectButton
+							[options]="stateOptions"
+							[ngModel]="eventDoc.state"
+							(ngModelChange)="setEventState($event)"
+							optionLabel="label"
+							optionValue="value"
+						></p-selectButton>
+					</div>
 
-					@if (!isAddingLecture()) {
-						<button pButton type="button" [text]="true" class="self-start" (click)="toggleAddLecture()">
-							<i class="pi pi-plus"></i>
-							<span translate>Додати нову лекцію</span>
-						</button>
-					} @else {
-						<div class="flex flex-col gap-2 sm:flex-row">
-							<input
-								pInputText
-								class="w-full"
-								[(ngModel)]="newLectureTitle"
-								[placeholder]="'Назва лекції'"
-							/>
-							<div class="flex gap-2">
-								<button pButton type="button" (click)="createLecture()">
-									<span translate>Додати</span>
-								</button>
-								<button pButton type="button" [text]="true" (click)="toggleAddLecture()">
-									<span translate>Скасувати</span>
-								</button>
+					<div class="mt-3 text-sm font-semibold" translate>Дата та час лекції</div>
+					<div class="mt-2 grid grid-cols-1 gap-3 sm:grid-cols-3">
+						<div class="flex flex-1 flex-col gap-1">
+							<small class="opacity-70" translate>Дата</small>
+							<div class="flex flex-1">
+								<input pInputText type="date" lang="uk-UA" class="h-full w-full" [(ngModel)]="eventDateDraft" />
 							</div>
 						</div>
-					}
-				</div>
-
-				<div class="mt-3 flex flex-col gap-2">
-					<input pInputText [(ngModel)]="eventTitleDraft" [placeholder]="'Title'" />
-					<input pInputText [(ngModel)]="eventSpeakerDraft" [placeholder]="'Speaker'" />
-					<textarea
-						pTextarea
-						[(ngModel)]="eventDescriptionDraft"
-						[placeholder]="'Description'"
-						rows="2"
-					></textarea>
-					<button pButton type="button" (click)="saveEventInfo()">
-						<span translate>Save</span>
-					</button>
-				</div>
-
-				<div class="mt-3 flex items-center gap-2 rounded-card border border-[var(--c-border)] p-2 text-sm">
-					<span class="truncate opacity-70">{{ joinUrl() }}</span>
-					<button pButton type="button" [text]="true" (click)="copyJoinLink()">
-						<i class="pi pi-copy"></i>
-						<span translate>Copy link</span>
-					</button>
-				</div>
-			</p-card>
-
-			<p-card>
-				<div class="text-sm font-semibold" translate>Live audience stats</div>
-				<div class="mt-2 grid grid-cols-3 gap-3">
-					<div class="rounded-card border border-[var(--c-border)] p-3 text-center">
-						<div class="text-lg font-semibold">{{ stats().questionCount }}</div>
-						<small translate>Questions</small>
+						<div class="flex flex-col gap-1">
+							<small class="opacity-70" translate>Початок</small>
+							<app-time-scroll-input [(ngModel)]="eventStartTimeDraft" class="w-full" />
+						</div>
+						<div class="flex flex-col gap-1">
+							<small class="opacity-70" translate>Кінець</small>
+							<app-time-scroll-input [(ngModel)]="eventEndTimeDraft" class="w-full" />
+						</div>
 					</div>
-					<div class="rounded-card border border-[var(--c-border)] p-3 text-center">
-						<div class="text-lg font-semibold">{{ stats().totalLikes }}</div>
-						<small translate>Question likes</small>
-					</div>
-					<div class="rounded-card border border-[var(--c-border)] p-3 text-center">
-						<div class="text-lg font-semibold">{{ stats().pollAnswerCount + stats().quizAnswerCount }}</div>
-						<small translate>Poll/quiz answers</small>
-					</div>
-				</div>
-			</p-card>
 
-			<p-card id="questions">
-				<div class="text-sm font-semibold" translate>Audience questions</div>
-				<div class="mt-2 flex flex-col gap-2">
-					@for (question of questions(); track question._id) {
-						<div
-							class="flex items-center justify-between gap-3 rounded-card border border-[var(--c-border)] px-3 py-2 text-sm"
-						>
-							<div class="flex flex-col">
-								<span>{{ question.text }}</span>
-								<small class="opacity-60">{{ question.authorName }} · {{ question.likes }} <span translate>likes</span></small>
-							</div>
-							<button pButton type="button" severity="danger" [text]="true" (click)="deleteQuestion(question)">
-								<i class="pi pi-trash"></i>
+					<div class="mt-3 text-sm font-semibold" translate>Лекція</div>
+					<div class="mt-2 flex flex-col gap-2">
+						<p-select
+							[options]="lectures()"
+							optionLabel="title"
+							optionValue="_id"
+							[(ngModel)]="eventLectureIdDraft"
+							[placeholder]="'Оберіть лекцію'"
+							[showClear]="true"
+							class="w-full"
+						></p-select>
+
+						@if (!isAddingLecture()) {
+							<button pButton type="button" [text]="true" class="self-start" (click)="toggleAddLecture()">
+								<i class="pi pi-plus"></i>
+								<span translate>Додати нову лекцію</span>
 							</button>
-						</div>
-					}
-				</div>
-			</p-card>
-
-			<p-card>
-				<div class="text-sm font-semibold" translate>Polls</div>
-				<div class="mt-2 flex flex-col gap-2">
-					<input pInputText [(ngModel)]="newPollQuestion" [placeholder]="'Poll question'" />
-					<input pInputText [(ngModel)]="newPollOptions" [placeholder]="'Options, comma separated'" />
-					<button pButton type="button" (click)="createPoll()">
-						<span translate>Create poll</span>
-					</button>
-				</div>
-
-				<div class="mt-3 flex flex-col gap-3">
-					@for (poll of polls(); track poll._id) {
-						<div class="rounded-card border border-[var(--c-border)] p-3">
-							<div class="flex items-center justify-between gap-3">
-								<span class="font-semibold">{{ poll.question }}</span>
-								<button pButton type="button" [text]="true" (click)="togglePoll(poll)">
-									<span>{{ poll.active ? 'Deactivate' : 'Activate' }}</span>
-								</button>
+						} @else {
+							<div class="flex flex-col gap-2 sm:flex-row">
+								<input
+									pInputText
+									class="w-full"
+									[(ngModel)]="newLectureTitle"
+									[placeholder]="'Назва лекції'"
+								/>
+								<div class="flex gap-2">
+									<button pButton type="button" (click)="createLecture()">
+										<span translate>Додати</span>
+									</button>
+									<button pButton type="button" [text]="true" (click)="toggleAddLecture()">
+										<span translate>Скасувати</span>
+									</button>
+								</div>
 							</div>
-							<div class="mt-2 flex flex-col gap-1 text-sm">
-								@for (result of pollResults(poll); track result.optionIndex) {
-									<div class="flex justify-between">
-										<span>{{ poll.options[result.optionIndex] }}</span>
-										<span>{{ result.votes }}</span>
-									</div>
-								}
-							</div>
-						</div>
-					}
-				</div>
-			</p-card>
+						}
+					</div>
 
-			<p-card>
-				<div class="text-sm font-semibold" translate>Quizzes</div>
-				<div class="mt-2 flex flex-col gap-2">
-					<input pInputText [(ngModel)]="newQuizQuestion" [placeholder]="'Quiz question'" />
-					<input pInputText [(ngModel)]="newQuizOptions" [placeholder]="'Options, comma separated'" />
-					<input
-						pInputText
-						type="number"
-						[(ngModel)]="newQuizCorrectIndex"
-						[placeholder]="'Correct option index (0-based)'"
-					/>
-					<button pButton type="button" (click)="createQuiz()">
-						<span translate>Create quiz</span>
-					</button>
-				</div>
+					<div class="mt-3 flex flex-col gap-2">
+						<input pInputText [(ngModel)]="eventTitleDraft" [placeholder]="'Title'" />
+						<input pInputText [(ngModel)]="eventSpeakerDraft" [placeholder]="'Speaker'" />
+						<textarea
+							pTextarea
+							[(ngModel)]="eventDescriptionDraft"
+							[placeholder]="'Description'"
+							rows="2"
+						></textarea>
+						<button pButton type="button" (click)="saveEventInfo()">
+							<span translate>Save</span>
+						</button>
+					</div>
 
-				<div class="mt-3 flex flex-col gap-3">
-					@for (quiz of quizzes(); track quiz._id) {
-						<div class="rounded-card border border-[var(--c-border)] p-3">
-							<div class="flex items-center justify-between gap-3">
-								<span class="font-semibold">{{ quiz.question }}</span>
-								<button pButton type="button" [text]="true" (click)="toggleQuiz(quiz)">
-									<span>{{ quiz.active ? 'Deactivate' : 'Activate' }}</span>
-								</button>
-							</div>
-							<div class="mt-2 flex flex-col gap-1 text-sm">
-								@for (result of quizResults(quiz); track result.optionIndex) {
-									<div class="flex justify-between" [class.font-semibold]="result.isCorrect">
-										<span>{{ quiz.options[result.optionIndex] }}</span>
-										<span>{{ result.votes }}</span>
-									</div>
-								}
-							</div>
-						</div>
-					}
-				</div>
-			</p-card>
+					<div class="mt-3 flex items-center gap-2 rounded-card border border-[var(--c-border)] p-2 text-sm">
+						<span class="truncate opacity-70">{{ joinUrl() }}</span>
+						<button pButton type="button" [text]="true" (click)="copyJoinLink()">
+							<i class="pi pi-copy"></i>
+							<span translate>Copy link</span>
+						</button>
+					</div>
+				</p-card>
 
-			<button pButton type="button" class="w-full" (click)="startSession()">
-				<i class="pi pi-check"></i>
-				<span translate>Готово</span>
-			</button>
+				<p-card>
+					<div class="text-sm font-semibold" translate>Polls</div>
+					<div class="mt-2 flex flex-col gap-2">
+						<input pInputText [(ngModel)]="newPollQuestion" [placeholder]="'Poll question'" />
+						<input pInputText [(ngModel)]="newPollOptions" [placeholder]="'Options, comma separated'" />
+						<button pButton type="button" (click)="createPoll()">
+							<span translate>Create poll</span>
+						</button>
+					</div>
+
+					<div class="mt-3 flex flex-col gap-3">
+						@for (poll of polls(); track poll._id) {
+							<div class="rounded-card border border-[var(--c-border)] p-3">
+								<div class="flex items-center justify-between gap-3">
+									<span class="font-semibold">{{ poll.question }}</span>
+									<button pButton type="button" [text]="true" (click)="togglePoll(poll)">
+										<span>{{ poll.active ? 'Deactivate' : 'Activate' }}</span>
+									</button>
+								</div>
+								<div class="mt-2 flex flex-col gap-1 text-sm">
+									@for (result of pollResults(poll); track result.optionIndex) {
+										<div class="flex justify-between">
+											<span>{{ poll.options[result.optionIndex] }}</span>
+											<span>{{ result.votes }}</span>
+										</div>
+									}
+								</div>
+							</div>
+						}
+					</div>
+				</p-card>
+
+				<p-card>
+					<div class="text-sm font-semibold" translate>Quizzes</div>
+					<div class="mt-2 flex flex-col gap-2">
+						<input pInputText [(ngModel)]="newQuizQuestion" [placeholder]="'Quiz question'" />
+						<input pInputText [(ngModel)]="newQuizOptions" [placeholder]="'Options, comma separated'" />
+						<input
+							pInputText
+							type="number"
+							[(ngModel)]="newQuizCorrectIndex"
+							[placeholder]="'Correct option index (0-based)'"
+						/>
+						<button pButton type="button" (click)="createQuiz()">
+							<span translate>Create quiz</span>
+						</button>
+					</div>
+
+					<div class="mt-3 flex flex-col gap-3">
+						@for (quiz of quizzes(); track quiz._id) {
+							<div class="rounded-card border border-[var(--c-border)] p-3">
+								<div class="flex items-center justify-between gap-3">
+									<span class="font-semibold">{{ quiz.question }}</span>
+									<button pButton type="button" [text]="true" (click)="toggleQuiz(quiz)">
+										<span>{{ quiz.active ? 'Deactivate' : 'Activate' }}</span>
+									</button>
+								</div>
+								<div class="mt-2 flex flex-col gap-1 text-sm">
+									@for (result of quizResults(quiz); track result.optionIndex) {
+										<div class="flex justify-between" [class.font-semibold]="result.isCorrect">
+											<span>{{ quiz.options[result.optionIndex] }}</span>
+											<span>{{ result.votes }}</span>
+										</div>
+									}
+								</div>
+							</div>
+						}
+					</div>
+				</p-card>
+
+				<button pButton type="button" class="w-full" (click)="startSession()">
+					<i class="pi pi-check"></i>
+					<span translate>Готово</span>
+				</button>
+			}
 		</div>
 	} @else {
 		<div class="mx-auto flex w-full max-w-[480px] flex-col items-center gap-3 p-8 text-center">

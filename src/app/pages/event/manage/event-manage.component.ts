@@ -1,5 +1,6 @@
 import { Component, OnInit, computed, inject, input, signal } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '@wawjs/ngx-bos';
 import { ButtonModule } from '@wawjs/ngx-prime/button';
@@ -52,6 +53,7 @@ import { TimeScrollInputComponent } from '../../../shared/time-scroll-input/time
 })
 export class EventManageComponent implements OnInit {
 	private readonly _router = inject(Router);
+	private readonly _route = inject(ActivatedRoute);
 	private readonly _messageService = inject(MessageService);
 	private readonly _userService = inject(UserService);
 	private readonly _eventService = inject(EventService);
@@ -63,6 +65,9 @@ export class EventManageComponent implements OnInit {
 	private readonly _quizAnswerService = inject(QuizAnswerService);
 
 	readonly slug = input.required<string>();
+
+	/** `#questions` shows the audience Q&A dashboard instead of the event setup form. */
+	readonly fragment = toSignal(this._route.fragment, { initialValue: this._route.snapshot.fragment });
 
 	readonly event = computed(() => this._eventService.bySlug(this.slug()) ?? null);
 
