@@ -1,31 +1,31 @@
 @switch (status()) {
 	@case ('success') {
 		<div class="lead-form lead-form--success">
-			<p>{{ translateService.translate('Дякуємо! Ми отримали ваше повідомлення і скоро зв\'яжемося.')() }}</p>
+			<p>{{ translateService.translate("Thank you! We've received your message and will be in touch soon.")() }}</p>
 		</div>
 	}
 	@default {
 		<form class="lead-form" novalidate #leadForm="ngForm" (ngSubmit)="submit(leadForm)">
 			<div class="lead-form__field">
-				<label>{{ translateService.translate('Ім\'я')() }}</label>
+				<label>{{ translateService.translate('Name')() }}</label>
 				<input #nameInput pInputText type="text" name="name" required [ngModel]="name()" (ngModelChange)="name.set($event)" />
 			</div>
 			<div class="lead-form__field">
-				<label>{{ translateService.translate('Email або телефон')() }}</label>
+				<label>{{ translateService.translate('Email or phone')() }}</label>
 				<input pInputText type="text" name="contact" required [ngModel]="contact()" (ngModelChange)="contact.set($event)" />
 			</div>
 			<div class="lead-form__field">
-				<label>{{ translateService.translate('Повідомлення')() }}</label>
+				<label>{{ translateService.translate('Message')() }}</label>
 				<textarea pTextarea rows="3" name="message" [ngModel]="message()" (ngModelChange)="message.set($event)"></textarea>
 			</div>
 			@if (status() === 'error') {
 				<p class="lead-form__error">
-					{{ translateService.translate('Щось пішло не так — спробуйте ще раз.')() }}
-					<button type="button" class="lead-form__retry" (click)="retry()">{{ translateService.translate('Спробувати ще раз')() }}</button>
+					{{ translateService.translate('Something went wrong — please try again.')() }}
+					<button type="button" class="lead-form__retry" (click)="retry()">{{ translateService.translate('Try again')() }}</button>
 				</p>
 			}
 			<button pButton type="submit" [disabled]="leadForm.invalid || status() === 'sending'">
-				{{ submitLabel() || translateService.translate('Надіслати')() }}
+				{{ submitLabel() || translateService.translate('Send')() }}
 			</button>
 		</form>
 	}

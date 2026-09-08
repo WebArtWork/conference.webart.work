@@ -6,7 +6,7 @@
 			(click)="toggle.emit()"
 		>
 			<div class="flex items-center gap-2">
-				<span class="truncate font-semibold">{{ lecture().title || translateService.translate('Без назви')() }}</span>
+				<span class="truncate font-semibold">{{ lecture().title || translateService.translate('Untitled')() }}</span>
 				@if (lecture().link) {
 					<i class="pi pi-link text-sm opacity-70"></i>
 				}
@@ -28,7 +28,7 @@
 							pButton
 							type="button"
 							[text]="true"
-							[attr.aria-label]="translateService.translate('Керувати подією')()"
+							[attr.aria-label]="translateService.translate('Manage event')()"
 							[routerLink]="['/event', event.slug, 'manage']"
 						>
 							<i class="pi pi-pencil"></i>
@@ -37,7 +37,7 @@
 							pButton
 							type="button"
 							[text]="true"
-							[attr.aria-label]="translateService.translate('Питання від студентів')()"
+							[attr.aria-label]="translateService.translate('Questions from students')()"
 							[routerLink]="['/event', event.slug, 'manage']"
 							fragment="questions"
 						>
@@ -48,7 +48,7 @@
 							pButton
 							type="button"
 							[text]="true"
-							[attr.aria-label]="translateService.translate('Завершити створення події')()"
+							[attr.aria-label]="translateService.translate('Finish creating event')()"
 							[routerLink]="['/event', event.slug, 'manage']"
 						>
 							<i class="pi pi-plus"></i>
@@ -59,7 +59,7 @@
 						pButton
 						type="button"
 						[text]="true"
-						[attr.aria-label]="translateService.translate('Створити подію')()"
+						[attr.aria-label]="translateService.translate('Create event')()"
 						(click)="createEvent.emit()"
 					>
 						<i class="pi pi-plus"></i>
@@ -71,7 +71,7 @@
 			}
 			<button pButton type="button" severity="danger" [text]="true" (click)="remove()">
 				@if (isNew()) {
-					<span translate>Скасувати</span>
+					<span translate>Cancel</span>
 				} @else {
 					<i class="pi pi-trash"></i>
 				}
@@ -81,9 +81,9 @@
 
 	@if (expanded()) {
 		<div class="mt-3 flex flex-col gap-2">
-			<input pInputText [(ngModel)]="title" [placeholder]="translateService.translate('Назва лекції')()" />
+			<input pInputText [(ngModel)]="title" [placeholder]="translateService.translate('Lecture title')()" />
 
-			<input pInputText [(ngModel)]="link" type="url" [placeholder]="translateService.translate('Покликання на лекцію')()" />
+			<input pInputText [(ngModel)]="link" type="url" [placeholder]="translateService.translate('Lecture link')()" />
 
 			<p-select
 				[(ngModel)]="conferenceId"
@@ -91,12 +91,12 @@
 				optionLabel="title"
 				optionValue="_id"
 				[showClear]="true"
-				[placeholder]="translateService.translate('Конференція')()"
+				[placeholder]="translateService.translate('Conference')()"
 				class="w-full"
 			/>
 
 			<div class="flex flex-col gap-1">
-				<small class="opacity-70" translate>Файл лекції (презентація, PDF тощо)</small>
+				<small class="opacity-70" translate>Lecture file (presentation, PDF, etc.)</small>
 
 				@if (fileName()) {
 					<div class="flex items-center justify-between gap-2 rounded-card border border-[var(--c-border)] p-2 text-sm">
@@ -119,9 +119,9 @@
 
 			<button pButton type="button" [disabled]="!hasChanges()" (click)="save()">
 				@if (isNew()) {
-					<span translate>Додати лекцію</span>
+					<span translate>Add lecture</span>
 				} @else {
-					<span translate>Зберегти</span>
+					<span translate>Save</span>
 				}
 			</button>
 		</div>

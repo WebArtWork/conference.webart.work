@@ -91,13 +91,13 @@
 	<hr class="my-2 border-0 border-t-2 border-t-[var(--c-text-primary)]" />
 
 	@if (showNames()) {
-	<div class="px-2 text-xs font-semibold tracking-wide uppercase opacity-60" translate>Для організаторів</div>
+	<div class="px-2 text-xs font-semibold tracking-wide uppercase opacity-60" translate>For hosts</div>
 	}
 
 	<app-nav-icon
 		[class.sidebar--minimized-icon]="!showNames()"
-		[name]="showNames() ? translateService.translate('Керування лекціями')() : ''"
-		[ariaLabel]="translateService.translate('Керування лекціями')()"
+		[name]="showNames() ? translateService.translate('Manage lectures')() : ''"
+		[ariaLabel]="translateService.translate('Manage lectures')()"
 		(click)="closeIfOverlay()"
 		routerLink="/lectures-manage"
 		icon="pencil"
@@ -105,8 +105,8 @@
 
 	<app-nav-icon
 		[class.sidebar--minimized-icon]="!showNames()"
-		[name]="showNames() ? translateService.translate('Поділитися конференцією')() : ''"
-		[ariaLabel]="translateService.translate('Поділитися конференцією')()"
+		[name]="showNames() ? translateService.translate('Share conference')() : ''"
+		[ariaLabel]="translateService.translate('Share conference')()"
 		(click)="closeIfOverlay()"
 		routerLink="/share"
 		icon="qrcode"
@@ -115,13 +115,13 @@
 	<hr class="my-2 border-0 border-t-2 border-t-[var(--c-text-primary)]" />
 
 	@if (showNames()) {
-	<div class="px-2 text-xs font-semibold tracking-wide uppercase opacity-60" translate>Адміністрування</div>
+	<div class="px-2 text-xs font-semibold tracking-wide uppercase opacity-60" translate>Administration</div>
 	}
 
 	<app-nav-icon
 		[class.sidebar--minimized-icon]="!showNames()"
-		[name]="showNames() ? translateService.translate('Користувачі')() : ''"
-		[ariaLabel]="translateService.translate('Користувачі')()"
+		[name]="showNames() ? translateService.translate('Users')() : ''"
+		[ariaLabel]="translateService.translate('Users')()"
 		(click)="closeIfOverlay()"
 		routerLink="/users"
 		icon="users"
@@ -129,8 +129,8 @@
 
 	<app-nav-icon
 		[class.sidebar--minimized-icon]="!showNames()"
-		[name]="showNames() ? translateService.translate('Форми')() : ''"
-		[ariaLabel]="translateService.translate('Форми')()"
+		[name]="showNames() ? translateService.translate('Forms')() : ''"
+		[ariaLabel]="translateService.translate('Forms')()"
 		(click)="closeIfOverlay()"
 		routerLink="/forms"
 		icon="file-edit"
@@ -138,8 +138,8 @@
 
 	<app-nav-icon
 		[class.sidebar--minimized-icon]="!showNames()"
-		[name]="showNames() ? translateService.translate('Переклади')() : ''"
-		[ariaLabel]="translateService.translate('Переклади')()"
+		[name]="showNames() ? translateService.translate('Translations')() : ''"
+		[ariaLabel]="translateService.translate('Translations')()"
 		(click)="closeIfOverlay()"
 		routerLink="/translations"
 		icon="language"

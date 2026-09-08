@@ -6,7 +6,7 @@
 	>
 		<button
 			(click)="themeService.nextTheme()"
-			[attr.aria-label]="translateService.translate('Перемкнути тему')()"
+			[attr.aria-label]="translateService.translate('Toggle theme')()"
 			class="grid place-items-center rounded-xl focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
 			type="button"
 		>
@@ -14,7 +14,7 @@
 			<img
 				class="block w-[min(320px,70vw)] h-auto object-contain"
 				[src]="logo"
-				[attr.alt]="translateService.translate('Логотип')()"
+				[attr.alt]="translateService.translate('Logo')()"
 			/>
 			} @else {
 			<icon-spider
@@ -37,7 +37,7 @@
 			></i>
 
 			<h1 class="m-0 text-2xl font-bold text-[var(--c-text-secondary)]" translate>
-				Увійти / Зареєструватися
+				Sign In / Sign Up
 			</h1>
 
 			<form
@@ -49,7 +49,7 @@
 						<input
 							pInputText
 							class="w-full"
-							[placeholder]="translateService.translate('Введіть email...')()"
+							[placeholder]="translateService.translate('Enter your email...')()"
 							[formField]="signForm.email"
 							autofocus
 							type="email"
@@ -63,15 +63,15 @@
 								pPassword
 								#passwordInput="pPassword"
 								class="w-full pr-10"
-								[placeholder]="translateService.translate('Введіть пароль...')()"
+								[placeholder]="translateService.translate('Enter your password...')()"
 								[formField]="signForm.password"
 								[feedback]="false"
 							/>
 							<button
 								type="button"
 								[pPasswordToggleMask]="passwordInput"
-								[showLabel]="translateService.translate('Показати пароль')()"
-								[hideLabel]="translateService.translate('Приховати пароль')()"
+								[showLabel]="translateService.translate('Show password')()"
+								[hideLabel]="translateService.translate('Hide password')()"
 								class="absolute right-3 top-1/2 grid -translate-y-1/2 place-items-center border-0 bg-transparent p-0 text-[var(--c-text-muted)]"
 							>
 								<i class="pi" [class.pi-eye]="!passwordInput.visible()" [class.pi-eye-slash]="passwordInput.visible()"></i>
@@ -85,7 +85,7 @@
 						<input
 							pInputText
 							class="w-full"
-							[placeholder]="translateService.translate('Введіть код з пошти...')()"
+							[placeholder]="translateService.translate('Enter code from mailbox...')()"
 							[formField]="signForm.resetPin"
 							type="number"
 						/>
@@ -101,7 +101,7 @@
 						[disabled]="isSubmitDisabled()"
 						class="w-full"
 					>
-						<span translate>Почати</span>
+						<span translate>Start</span>
 					</button>
 				</div>
 			</form>

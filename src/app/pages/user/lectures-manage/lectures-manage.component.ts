@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { UserService } from '@wawjs/ngx-bos';
 import { ButtonModule } from '@wawjs/ngx-prime/button';
 import { CardModule } from '@wawjs/ngx-prime/card';
-import { TranslateDirective } from '@wawjs/ngx-translate';
+import { TranslateDirective, TranslateService } from '@wawjs/ngx-translate';
 import { ConferenceService } from '../../../conference/conference.service';
 import { NEW_EVENT, generateEventSlug } from '../../../conference/event/event.const';
 import { EventService } from '../../../conference/event/event.service';
@@ -21,6 +21,7 @@ import { LectureEditCardComponent } from './lecture-edit-card.component';
 	styleUrl: './lectures-manage.component.scss',
 })
 export class LecturesManageComponent {
+	readonly translateService = inject(TranslateService);
 	private readonly _lectureService = inject(LectureService);
 	private readonly _conferenceService = inject(ConferenceService);
 	private readonly _eventService = inject(EventService);
@@ -54,7 +55,10 @@ export class LecturesManageComponent {
 	}
 
 	deleteLecture(lecture: Lecture): void {
-		if (!confirm(`Видалити лекцію "${lecture.title || 'Без назви'}"?`)) {
+		const message = this.translateService.interpolate(this.translateService.translate('Delete lecture "{{title}}"?')(), {
+			title: lecture.title || this.translateService.translate('Untitled')(),
+		});
+		if (!confirm(message)) {
 			return;
 		}
 		this._lectureService.remove(lecture._id);

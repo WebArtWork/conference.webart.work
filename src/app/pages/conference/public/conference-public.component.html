@@ -1,10 +1,10 @@
 @if (conference(); as conferenceDoc) {
 	<div class="conference-public-page mx-auto flex w-full max-w-[720px] flex-col gap-3 p-3 sm:gap-4 sm:p-4">
-		<h1 class="m-0 text-lg font-semibold sm:text-xl">{{ conferenceDoc.title || translateService.translate('Без назви')() }}</h1>
+		<h1 class="m-0 text-lg font-semibold sm:text-xl">{{ conferenceDoc.title || translateService.translate('Untitled')() }}</h1>
 
 		@if (!lectures().length) {
 			<p-card>
-				<span translate>Лекцій поки немає.</span>
+				<span translate>No lectures yet.</span>
 			</p-card>
 		}
 
@@ -14,7 +14,7 @@
 					<div class="min-w-0 flex-1">
 						<div class="flex flex-wrap items-center gap-2">
 							<span class="text-xs font-semibold tracking-wide uppercase opacity-70">
-								<span translate>Лекція</span> {{ i + 1 }}
+								<span translate>Lecture</span> {{ i + 1 }}
 							</span>
 							@if (lecture.topic) {
 								<p-tag [value]="lecture.topic"></p-tag>
@@ -50,7 +50,7 @@
 								class="flex items-center gap-2 self-start rounded-card border border-[var(--c-border)] p-2"
 							>
 								<i class="pi pi-link"></i>
-								<span translate>Перейти до лекції</span>
+								<span translate>Go to lecture</span>
 							</a>
 						}
 
@@ -61,23 +61,23 @@
 								class="flex items-center gap-2 self-start rounded-card border border-[var(--c-border)] p-2"
 							>
 								<i class="pi pi-file"></i>
-								<span translate>Завантажити матеріали</span>
+								<span translate>Download materials</span>
 								<span class="opacity-70">({{ lecture.fileName }})</span>
 							</a>
 						}
 
 						<div class="flex flex-col gap-2 border-t border-[var(--c-border)] pt-3">
-							<div class="text-xs font-semibold tracking-wide uppercase opacity-70" translate>Питання від аудиторії</div>
+							<div class="text-xs font-semibold tracking-wide uppercase opacity-70" translate>Audience questions</div>
 
 							<div class="flex gap-2">
 								<input
 									pInputText
 									class="w-full"
 									[(ngModel)]="newQuestionText"
-									[placeholder]="translateService.translate('Задати питання...')()"
+									[placeholder]="translateService.translate('Ask a question...')()"
 								/>
 								<button pButton type="button" (click)="submitQuestion(lecture)">
-									<span translate>Надіслати</span>
+									<span translate>Send</span>
 								</button>
 							</div>
 
@@ -110,27 +110,27 @@
 		}
 	</div>
 
-	<p-dialog [visible]="showNamePrompt()" [modal]="true" [closable]="false" [header]="translateService.translate('Вітаємо!')()">
+	<p-dialog [visible]="showNamePrompt()" [modal]="true" [closable]="false" [header]="translateService.translate('Welcome!')()">
 		<p class="m-0 mb-3 text-sm" translate>
-			Як вас звати? Інші учасники бачитимуть це ім'я біля ваших питань.
+			What's your name? Other attendees will see it next to your questions.
 		</p>
 		<div class="flex gap-2">
 			<input
 				pInputText
 				class="w-full"
 				[(ngModel)]="nameDraft"
-				[placeholder]="translateService.translate('Ваше ім\'я...')()"
+				[placeholder]="translateService.translate('Your name...')()"
 				(keyup.enter)="confirmName()"
 			/>
 			<button pButton type="button" (click)="confirmName()">
-				<span translate>Продовжити</span>
+				<span translate>Continue</span>
 			</button>
 		</div>
 	</p-dialog>
 } @else {
 	<div class="mx-auto flex w-full max-w-[720px] flex-col gap-3 p-3 sm:p-4">
 		<p-card>
-			<span translate>Конференцію не знайдено.</span>
+			<span translate>Conference not found.</span>
 		</p-card>
 	</div>
 }

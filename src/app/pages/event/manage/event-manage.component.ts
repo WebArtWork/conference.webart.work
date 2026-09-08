@@ -157,7 +157,7 @@ export class EventManageComponent implements OnInit {
 
 	copyJoinLink(): void {
 		navigator.clipboard?.writeText(this.joinUrl()).then(() => {
-			this._messageService.add({ severity: 'success', detail: 'Посилання скопійовано' });
+			this._messageService.add({ severity: 'success', detail: this.translateService.translate('Link copied')() });
 		});
 	}
 
@@ -213,7 +213,7 @@ export class EventManageComponent implements OnInit {
 		if (this.event()?.state === 'draft') {
 			this.setEventState('live');
 		}
-		this._messageService.add({ severity: 'success', detail: 'Збережено' });
+		this._messageService.add({ severity: 'success', detail: this.translateService.translate('Saved')() });
 		this._router.navigateByUrl('/lectures-manage');
 	}
 

@@ -1,7 +1,7 @@
 <div class="lectures-page mx-auto flex h-full w-full max-w-[720px] flex-col gap-2 overflow-hidden p-3 sm:gap-3 sm:p-4">
 	<button pButton type="button" [text]="true" class="shrink-0 self-start" routerLink="../">
 		<i class="pi pi-arrow-left"></i>
-		<span translate>Назад до лекцій</span>
+		<span translate>Back to lectures</span>
 	</button>
 
 	@if (lecture(); as lecture) {
@@ -17,7 +17,7 @@
 				<div class="min-w-0 flex-1">
 					<div class="flex flex-wrap items-center gap-2">
 						<span class="text-xs font-semibold tracking-wide uppercase opacity-70">
-							<span translate>Лекція</span> {{ lectureNumber() }}
+							<span translate>Lecture</span> {{ lectureNumber() }}
 						</span>
 						<p-tag [value]="lecture.topic"></p-tag>
 					</div>
@@ -47,7 +47,7 @@
 							class="flex items-center gap-2 self-start rounded-card border border-[var(--c-border)] p-2 text-sm"
 						>
 							<i class="pi pi-link"></i>
-							<span translate>Перейти до лекції</span>
+							<span translate>Go to lecture</span>
 						</a>
 					}
 
@@ -58,7 +58,7 @@
 							class="flex items-center gap-2 self-start rounded-card border border-[var(--c-border)] p-2 text-sm"
 						>
 							<i class="pi pi-file"></i>
-							<span translate>Завантажити матеріали</span>
+							<span translate>Download materials</span>
 							<span class="opacity-70">({{ lecture.fileName }})</span>
 						</a>
 					}
@@ -67,7 +67,7 @@
 		</div>
 	} @else {
 		<p-card>
-			<span translate>Лекцію не знайдено.</span>
+			<span translate>Lecture not found.</span>
 		</p-card>
 	}
 </div>

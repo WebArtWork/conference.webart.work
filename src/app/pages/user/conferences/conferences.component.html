@@ -1,12 +1,12 @@
 <div class="mx-auto flex w-full max-w-[720px] flex-col gap-3 p-3 sm:gap-4 sm:p-4">
 	<div class="flex items-center justify-between gap-3">
-		<h1 class="m-0 text-lg font-semibold sm:text-xl" translate>Конференції</h1>
+		<h1 class="m-0 text-lg font-semibold sm:text-xl" translate>Conferences</h1>
 		@if (isOrganizer()) {
 			<button
 				pButton
 				type="button"
 				[text]="true"
-				[attr.aria-label]="translateService.translate('Створити конференцію')()"
+				[attr.aria-label]="translateService.translate('Create conference')()"
 				(click)="toggleCreateForm()"
 			>
 				<i class="pi pi-plus"></i>
@@ -21,13 +21,13 @@
 					pInputText
 					class="w-full"
 					[(ngModel)]="newTitle"
-					[placeholder]="translateService.translate('Назва конференції')()"
+					[placeholder]="translateService.translate('Conference title')()"
 					(keyup.enter)="createConference()"
 					autofocus
 				/>
 				<button pButton type="button" (click)="createConference()">
 					<i class="pi pi-plus"></i>
-					<span translate>Створити</span>
+					<span translate>Create</span>
 				</button>
 			</div>
 		</p-card>
@@ -35,14 +35,14 @@
 
 	@if (!conferences().length) {
 		<p-card>
-			<span translate>Конференцій поки немає.</span>
+			<span translate>No conferences yet.</span>
 		</p-card>
 	}
 
 	@for (conference of conferences(); track conference._id) {
 		<p-card [routerLink]="['/conf']" [fragment]="conference._id" class="cursor-pointer">
 			<div class="flex items-center justify-between gap-3 text-[var(--c-text-primary)]">
-				<span class="font-semibold">{{ conference.title || translateService.translate('Без назви')() }}</span>
+				<span class="font-semibold">{{ conference.title || translateService.translate('Untitled')() }}</span>
 				<div class="flex items-center gap-1">
 					@if (isOrganizer()) {
 						<button

@@ -16,16 +16,18 @@ export class ForAttendeesPageComponent {
 	readonly showForm = signal(false);
 	readonly faq = [
 		{
-			question: 'Чи потрібна реєстрація, щоб долучитися до події?',
-			answer: 'Для більшості подій достатньо посилання від організатора — реєстрація потрібна лише якщо цього вимагає конкретна подія.',
+			question: 'Do I need to register to join an event?',
+			answer:
+				'For most events, a link from the organizer is enough — registration is only needed if a specific event requires it.',
 		},
 		{
-			question: 'Чи бачать спікери мої запитання одразу?',
-			answer: 'Так, запитання з\'являються у списку миттєво, а організатор або спікер може відповісти або підняти його наживо.',
+			question: 'Do speakers see my questions right away?',
+			answer:
+				'Yes, questions appear in the list instantly, and the organizer or speaker can answer or raise it live.',
 		},
 		{
-			question: 'Чи залишаються результати опитувань доступними після події?',
-			answer: 'Так, результати опитувань і квізів зберігаються і залишаються доступними для перегляду після завершення події.',
+			question: 'Do poll results stay available after the event?',
+			answer: 'Yes, poll and quiz results are saved and remain available to view after the event ends.',
 		},
 	];
 }

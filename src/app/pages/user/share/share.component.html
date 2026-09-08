@@ -12,14 +12,14 @@
 		<code>{{ shareUrl() }}</code>
 		<button pButton type="button" severity="secondary" size="small" (click)="copyLink()">
 			<i class="pi pi-copy"></i>
-			{{ translateService.translate('Копіювати посилання')() }}
+			{{ translateService.translate('Copy link')() }}
 		</button>
 	</div>
 
 	@if (kind() === 'app') {
 	<a pButton type="button" severity="secondary" size="small" routerLink="/sign">
 		<i class="pi pi-user-plus"></i>
-		{{ translateService.translate('Зареєструватися')() }}
+		{{ translateService.translate('Register')() }}
 	</a>
 	}
 </div>

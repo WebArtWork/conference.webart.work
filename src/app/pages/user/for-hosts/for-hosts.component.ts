@@ -16,16 +16,16 @@ export class ForHostsPageComponent {
 	readonly showForm = signal(false);
 	readonly faq = [
 		{
-			question: 'Скільки подій я можу створити?',
-			answer: 'Кількість подій не обмежена — створюйте стільки подій, скільки потрібно для вашої аудиторії.',
+			question: 'How many events can I create?',
+			answer: 'There\'s no limit on the number of events — create as many as your audience needs.',
 		},
 		{
-			question: 'Чи можна модерувати запитання перед публікацією?',
-			answer: 'Так, ви можете переглядати запитання учасників і публікувати лише ті, що вважаєте доречними.',
+			question: 'Can I moderate questions before they\'re published?',
+			answer: 'Yes, you can review attendees\' questions and publish only the ones you consider appropriate.',
 		},
 		{
-			question: 'Чи зберігаються результати опитувань після завершення події?',
-			answer: 'Так, усі результати опитувань і квізів зберігаються і залишаються доступними для аналізу після події.',
+			question: 'Are poll results saved after the event ends?',
+			answer: 'Yes, all poll and quiz results are saved and remain available for analysis after the event.',
 		},
 	];
 }

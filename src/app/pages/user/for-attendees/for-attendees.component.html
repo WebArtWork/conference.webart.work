@@ -1,31 +1,31 @@
 @if (showForm()) {
 	<div class="landing-page">
 		<header class="landing-page__hero">
-			<h1>{{ translateService.translate('Приєднатися до Conference')() }}</h1>
+			<h1>{{ translateService.translate('Join Conference')() }}</h1>
 		</header>
-		<app-lead-form kind="attendee" [submitLabel]="translateService.translate('Надіслати заявку')()" />
+		<app-lead-form kind="attendee" [submitLabel]="translateService.translate('Submit request')()" />
 	</div>
 } @else {
 	<div class="landing-page">
 		<header class="landing-page__hero">
-			<h1>{{ translateService.translate('Беріть участь у подіях наживо')() }}</h1>
-			<p>{{ translateService.translate('Слідкуйте за розкладом і розділами події, ставте запитання спікерам та голосуйте в опитуваннях і квізах у режимі реального часу.')() }}</p>
-			<button pButton type="button" (click)="showForm.set(true)">{{ translateService.translate('Приєднатися')() }}</button>
+			<h1>{{ translateService.translate('Take part in live events')() }}</h1>
+			<p>{{ translateService.translate("Follow the event's schedule and chapters, ask speakers questions, and vote in polls and quizzes in real time.")() }}</p>
+			<button pButton type="button" (click)="showForm.set(true)">{{ translateService.translate('Join')() }}</button>
 		</header>
 		<section class="landing-page__section">
-			<h2>{{ translateService.translate('Як це працює')() }}</h2>
+			<h2>{{ translateService.translate('How it works')() }}</h2>
 			<ul class="landing-page__list">
-				<li>{{ translateService.translate('Відкрийте подію за посиланням від організатора і переглядайте розділи (chapters) у реальному часі.')() }}</li>
-				<li>{{ translateService.translate('Задавайте запитання спікерам і голосуйте за питання інших учасників.')() }}</li>
-				<li>{{ translateService.translate('Беріть участь в опитуваннях і квізах прямо під час події.')() }}</li>
+				<li>{{ translateService.translate("Open the event via the organizer's link and follow the chapters in real time.")() }}</li>
+				<li>{{ translateService.translate("Ask speakers questions and upvote other attendees' questions.")() }}</li>
+				<li>{{ translateService.translate('Take part in polls and quizzes right during the event.')() }}</li>
 			</ul>
 		</section>
 		<section class="landing-page__section">
-			<h2>{{ translateService.translate('Чому Conference')() }}</h2>
-			<p>{{ translateService.translate('Conference об\'єднує учасників і спікерів в одному просторі: жодних загублених запитань, живі результати опитувань і зручний розклад події завжди під рукою.')() }}</p>
+			<h2>{{ translateService.translate('Why Conference')() }}</h2>
+			<p>{{ translateService.translate("Conference brings attendees and speakers together in one place: no lost questions, live poll results, and a handy event schedule always at hand.")() }}</p>
 		</section>
 		<section class="landing-page__section">
-			<h2>{{ translateService.translate('Питання')() }}</h2>
+			<h2>{{ translateService.translate('Questions')() }}</h2>
 			<p-accordion [multiple]="true">
 				@for (item of faq; track item.question) {
 					<p-accordionpanel [value]="item.question">
@@ -36,7 +36,7 @@
 			</p-accordion>
 		</section>
 		<footer class="landing-page__cta">
-			<button pButton type="button" (click)="showForm.set(true)">{{ translateService.translate('Приєднатися')() }}</button>
+			<button pButton type="button" (click)="showForm.set(true)">{{ translateService.translate('Join')() }}</button>
 		</footer>
 	</div>
 }

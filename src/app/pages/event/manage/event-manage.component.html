@@ -3,7 +3,7 @@
 		<div class="mx-auto flex w-full max-w-[960px] flex-col gap-4 p-4">
 			<button pButton type="button" [text]="true" class="self-start" routerLink="/lectures-manage">
 				<i class="pi pi-arrow-left"></i>
-				<span translate>Керування лекціями</span>
+				<span translate>Manage lectures</span>
 			</button>
 
 			@if (fragment() === 'questions') {
@@ -58,32 +58,32 @@
 						></p-selectButton>
 					</div>
 
-					<div class="mt-3 text-sm font-semibold" translate>Дата та час лекції</div>
+					<div class="mt-3 text-sm font-semibold" translate>Lecture date and time</div>
 					<div class="mt-2 grid grid-cols-1 gap-3 sm:grid-cols-3">
 						<div class="flex flex-1 flex-col gap-1">
-							<small class="opacity-70" translate>Дата</small>
+							<small class="opacity-70" translate>Date</small>
 							<div class="flex flex-1">
 								<input pInputText type="date" lang="uk-UA" class="h-full w-full" [(ngModel)]="eventDateDraft" />
 							</div>
 						</div>
 						<div class="flex flex-col gap-1">
-							<small class="opacity-70" translate>Початок</small>
+							<small class="opacity-70" translate>Start</small>
 							<app-time-scroll-input [(ngModel)]="eventStartTimeDraft" class="w-full" />
 						</div>
 						<div class="flex flex-col gap-1">
-							<small class="opacity-70" translate>Кінець</small>
+							<small class="opacity-70" translate>End</small>
 							<app-time-scroll-input [(ngModel)]="eventEndTimeDraft" class="w-full" />
 						</div>
 					</div>
 
-					<div class="mt-3 text-sm font-semibold" translate>Лекція</div>
+					<div class="mt-3 text-sm font-semibold" translate>Lecture</div>
 					<div class="mt-2 flex flex-col gap-2">
 						<p-select
 							[options]="lectures()"
 							optionLabel="title"
 							optionValue="_id"
 							[(ngModel)]="eventLectureIdDraft"
-							[placeholder]="translateService.translate('Оберіть лекцію')()"
+							[placeholder]="translateService.translate('Choose a lecture')()"
 							[showClear]="true"
 							class="w-full"
 						></p-select>
@@ -91,7 +91,7 @@
 						@if (!isAddingLecture()) {
 							<button pButton type="button" [text]="true" class="self-start" (click)="toggleAddLecture()">
 								<i class="pi pi-plus"></i>
-								<span translate>Додати нову лекцію</span>
+								<span translate>Add new lecture</span>
 							</button>
 						} @else {
 							<div class="flex flex-col gap-2 sm:flex-row">
@@ -99,14 +99,14 @@
 									pInputText
 									class="w-full"
 									[(ngModel)]="newLectureTitle"
-									[placeholder]="translateService.translate('Назва лекції')()"
+									[placeholder]="translateService.translate('Lecture title')()"
 								/>
 								<div class="flex gap-2">
 									<button pButton type="button" (click)="createLecture()">
-										<span translate>Додати</span>
+										<span translate>Add</span>
 									</button>
 									<button pButton type="button" [text]="true" (click)="toggleAddLecture()">
-										<span translate>Скасувати</span>
+										<span translate>Cancel</span>
 									</button>
 								</div>
 							</div>
@@ -208,7 +208,7 @@
 
 				<button pButton type="button" class="w-full" (click)="startSession()">
 					<i class="pi pi-check"></i>
-					<span translate>Готово</span>
+					<span translate>Done</span>
 				</button>
 			}
 		</div>

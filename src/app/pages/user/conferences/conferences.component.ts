@@ -44,7 +44,10 @@ export class ConferencesComponent {
 	}
 
 	deleteConference(id: string, title: string): void {
-		if (!confirm(`Видалити конференцію "${title || 'Без назви'}"?`)) {
+		const message = this.translateService.interpolate(this.translateService.translate('Delete conference "{{title}}"?')(), {
+			title: title || this.translateService.translate('Untitled')(),
+		});
+		if (!confirm(message)) {
 			return;
 		}
 		this._conferenceService.remove(id);
