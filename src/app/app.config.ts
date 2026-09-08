@@ -102,7 +102,7 @@ export const appConfig: ApplicationConfig = {
 		provideRouter(
 			routes,
 			withPreloading(PreloadAllModules),
-			withInMemoryScrolling({ scrollPositionRestoration: 'enabled' }),
+			withInMemoryScrolling({ scrollPositionRestoration: 'enabled', anchorScrolling: 'enabled' }),
 			withComponentInputBinding(),
 		),
 	],

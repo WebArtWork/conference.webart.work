@@ -21,10 +21,12 @@
 							}
 						</div>
 						<div class="mt-1 truncate font-semibold">{{ lecture.title }}</div>
-						@if (lecture.speaker || lecture.time) {
-							<small class="opacity-60">
-								{{ lecture.speaker }}@if (lecture.speaker && lecture.time) { · }{{ lecture.time }}
-							</small>
+						@if (scheduleInfo(lecture); as schedule) {
+							@if (schedule.speaker || schedule.time) {
+								<small class="opacity-60">
+									{{ schedule.speaker }}@if (schedule.speaker && schedule.time) { · }{{ schedule.time }}
+								</small>
+							}
 						}
 					</div>
 					<i

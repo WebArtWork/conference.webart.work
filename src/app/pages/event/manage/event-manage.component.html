@@ -1,9 +1,9 @@
 @if (event(); as eventDoc) {
 	@if (isOwner()) {
 		<div class="mx-auto flex w-full max-w-[960px] flex-col gap-4 p-4">
-			<button pButton type="button" [text]="true" class="self-start" routerLink="/events">
+			<button pButton type="button" [text]="true" class="self-start" routerLink="/lectures-manage">
 				<i class="pi pi-arrow-left"></i>
-				<span translate>Мої події</span>
+				<span translate>Керування лекціями</span>
 			</button>
 
 			<p-card>
@@ -114,7 +114,7 @@
 				</div>
 			</p-card>
 
-			<p-card>
+			<p-card id="questions">
 				<div class="text-sm font-semibold" translate>Audience questions</div>
 				<div class="mt-2 flex flex-col gap-2">
 					@for (question of questions(); track question._id) {

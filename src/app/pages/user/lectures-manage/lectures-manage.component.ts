@@ -1,8 +1,12 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
+import { UserService } from '@wawjs/ngx-bos';
 import { ButtonModule } from '@wawjs/ngx-prime/button';
 import { CardModule } from '@wawjs/ngx-prime/card';
 import { TranslateDirective } from '@wawjs/ngx-translate';
 import { ConferenceService } from '../../../conference/conference.service';
+import { NEW_EVENT, generateEventSlug } from '../../../conference/event/event.const';
+import { EventService } from '../../../conference/event/event.service';
 import { NEW_LECTURE } from '../../../conference/lecture/lecture.const';
 import { Lecture } from '../../../conference/lecture/lecture.interface';
 import { LectureService } from '../../../conference/lecture/lecture.service';
@@ -19,6 +23,9 @@ import { LectureEditCardComponent } from './lecture-edit-card.component';
 export class LecturesManageComponent {
 	private readonly _lectureService = inject(LectureService);
 	private readonly _conferenceService = inject(ConferenceService);
+	private readonly _eventService = inject(EventService);
+	private readonly _userService = inject(UserService);
+	private readonly _router = inject(Router);
 
 	readonly lectures = this._lectureService.items;
 	readonly expandedId = signal<string | null>(null);
@@ -54,5 +61,20 @@ export class LecturesManageComponent {
 		if (this.expandedId() === lecture._id) {
 			this.expandedId.set(null);
 		}
+	}
+
+	createEventForLecture(lecture: Lecture): void {
+		const owner = this._userService.user();
+		const eventDoc = this._eventService.create({
+			...NEW_EVENT,
+			slug: generateEventSlug(),
+			owner: owner?._id ?? '',
+			title: lecture.title,
+			speaker: owner?.name || lecture.speaker || '',
+			description: lecture.description ?? '',
+			lectureId: lecture._id,
+			createdAt: new Date().toISOString(),
+		});
+		this._router.navigate(['/event', eventDoc.slug, 'manage']);
 	}
 }

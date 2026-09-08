@@ -6,6 +6,8 @@ import { CardModule } from '@wawjs/ngx-prime/card';
 import { TagModule } from '@wawjs/ngx-prime/tag';
 import { TranslateDirective } from '@wawjs/ngx-translate';
 import { ConferenceService } from '../../../conference/conference.service';
+import { EventService } from '../../../conference/event/event.service';
+import { Lecture } from '../../../conference/lecture/lecture.interface';
 import { LectureService } from '../../../conference/lecture/lecture.service';
 
 /**
@@ -24,6 +26,7 @@ import { LectureService } from '../../../conference/lecture/lecture.service';
 export class ConferencePublicComponent {
 	private readonly _conferenceService = inject(ConferenceService);
 	private readonly _lectureService = inject(LectureService);
+	private readonly _eventService = inject(EventService);
 	private readonly _metaService = inject(MetaService);
 	private readonly _route = inject(ActivatedRoute);
 
@@ -49,5 +52,16 @@ export class ConferencePublicComponent {
 
 	toggleLecture(lectureId: string): void {
 		this.expandedLectureId.update((current) => (current === lectureId ? null : lectureId));
+	}
+
+	/** Speaker and schedule, preferring the linked event's data over the lecture's own fallback fields. */
+	scheduleInfo(lecture: Lecture): { speaker: string; time: string } {
+		const event = this._eventService.all().find((item) => item.lectureId === lecture._id);
+		const speaker = event?.speaker || lecture.speaker;
+		const time =
+			event && (event.date || event.startTime)
+				? `${event.date} ${event.startTime}${event.endTime ? ' – ' + event.endTime : ''}`.trim()
+				: lecture.time;
+		return { speaker, time };
 	}
 }

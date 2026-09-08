@@ -198,9 +198,9 @@ export class EventManageComponent implements OnInit {
 	}
 
 	/**
-	 * Saves the current draft info and returns to "My events". Only flips a
-	 * still-`draft` event to `live` — an already `live`/`ended` state was set
-	 * explicitly via the state switch above and must not be overridden.
+	 * Saves the current draft info and returns to lecture management. Only
+	 * flips a still-`draft` event to `live` — an already `live`/`ended` state
+	 * was set explicitly via the state switch above and must not be overridden.
 	 */
 	startSession(): void {
 		this.saveEventInfo();
@@ -208,7 +208,7 @@ export class EventManageComponent implements OnInit {
 			this.setEventState('live');
 		}
 		this._messageService.add({ severity: 'success', detail: 'Збережено' });
-		this._router.navigateByUrl('/events');
+		this._router.navigateByUrl('/lectures-manage');
 	}
 
 	deleteQuestion(question: Question): void {

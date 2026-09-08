@@ -105,15 +105,6 @@
 
 	<app-nav-icon
 		[class.sidebar--minimized-icon]="!showNames()"
-		[name]="showNames() ? translateService.translate('Мої події')() : ''"
-		[ariaLabel]="translateService.translate('Мої події')()"
-		(click)="closeIfOverlay()"
-		routerLink="/events"
-		icon="calendar"
-	/>
-
-	<app-nav-icon
-		[class.sidebar--minimized-icon]="!showNames()"
 		[name]="showNames() ? translateService.translate('Поділитися конференцією')() : ''"
 		[ariaLabel]="translateService.translate('Поділитися конференцією')()"
 		(click)="closeIfOverlay()"

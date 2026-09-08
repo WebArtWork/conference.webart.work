@@ -1,12 +1,14 @@
 import { NgClass } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { ButtonModule } from '@wawjs/ngx-prime/button';
 import { CardModule } from '@wawjs/ngx-prime/card';
 import { InputTextModule } from '@wawjs/ngx-prime/inputtext';
 import { SelectModule } from '@wawjs/ngx-prime/select';
 import { TranslateDirective } from '@wawjs/ngx-translate';
 import { ConferenceService } from '../../../conference/conference.service';
+import { EventService } from '../../../conference/event/event.service';
 import { Lecture } from '../../../conference/lecture/lecture.interface';
 import { LectureService } from '../../../conference/lecture/lecture.service';
 
@@ -19,13 +21,23 @@ import { LectureService } from '../../../conference/lecture/lecture.service';
 @Component({
 	selector: 'app-lecture-edit-card',
 	changeDetection: ChangeDetectionStrategy.OnPush,
-	imports: [ButtonModule, CardModule, InputTextModule, SelectModule, NgClass, FormsModule, TranslateDirective],
+	imports: [
+		ButtonModule,
+		CardModule,
+		InputTextModule,
+		SelectModule,
+		NgClass,
+		FormsModule,
+		RouterLink,
+		TranslateDirective,
+	],
 	templateUrl: './lecture-edit-card.component.html',
 	styleUrl: './lecture-edit-card.component.scss',
 })
 export class LectureEditCardComponent implements OnInit {
 	private readonly _lectureService = inject(LectureService);
 	private readonly _conferenceService = inject(ConferenceService);
+	private readonly _eventService = inject(EventService);
 
 	readonly conferences = this._conferenceService.items;
 
@@ -33,9 +45,27 @@ export class LectureEditCardComponent implements OnInit {
 	readonly expanded = input(false);
 	readonly isNew = input(false);
 
+	/** The event created for this lecture, if the organizer already set one up. */
+	readonly linkedEvent = computed(() =>
+		this._eventService.all().find((event) => event.lectureId === this.lecture()._id),
+	);
+
+	/** Speaker and schedule, preferring the linked event's data over the lecture's own fallback fields. */
+	readonly scheduleInfo = computed(() => {
+		const event = this.linkedEvent();
+		const lecture = this.lecture();
+		const speaker = event?.speaker || lecture.speaker;
+		const time =
+			event && (event.date || event.startTime)
+				? `${event.date} ${event.startTime}${event.endTime ? ' – ' + event.endTime : ''}`.trim()
+				: lecture.time;
+		return { speaker, time };
+	});
+
 	readonly toggle = output<void>();
 	readonly deleted = output<void>();
 	readonly created = output<Lecture>();
+	readonly createEvent = output<void>();
 
 	readonly title = signal('');
 	readonly link = signal('');

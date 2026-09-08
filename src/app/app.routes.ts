@@ -74,19 +74,6 @@ export const routes: Routes = [
 					),
 			},
 			{
-				path: 'events',
-				canActivate: [MetaGuard],
-				data: {
-					meta: {
-						title: 'Мої події',
-					},
-				},
-				loadChildren: () =>
-					import('./pages/user/events/events.routes').then(
-						(m) => m.routes,
-					),
-			},
-			{
 				path: 'feedback',
 				canActivate: [MetaGuard],
 				data: {
@@ -241,6 +228,19 @@ export const routes: Routes = [
 						(m) => m.ConferencePublicComponent,
 					),
 			},
+			{
+				path: 'event/:slug/manage',
+				canActivate: [MetaGuard],
+				data: {
+					meta: {
+						title: 'Керування подією',
+					},
+				},
+				loadComponent: () =>
+					import('./pages/event/manage/event-manage.component').then(
+						(m) => m.EventManageComponent,
+					),
+			},
 		],
 	},
 	{
@@ -267,19 +267,6 @@ export const routes: Routes = [
 		loadComponent: () =>
 			import('./pages/event/public/event-public.component').then(
 				(m) => m.EventPublicComponent,
-			),
-	},
-	{
-		path: 'event/:slug/manage',
-		canActivate: [authenticatedGuard, MetaGuard],
-		data: {
-			meta: {
-				title: 'Керування подією',
-			},
-		},
-		loadComponent: () =>
-			import('./pages/event/manage/event-manage.component').then(
-				(m) => m.EventManageComponent,
 			),
 	},
 	{

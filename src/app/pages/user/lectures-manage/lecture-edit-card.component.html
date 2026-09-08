@@ -14,9 +14,57 @@
 					<i class="pi pi-paperclip text-sm opacity-70"></i>
 				}
 			</div>
+			@if (scheduleInfo().speaker || scheduleInfo().time) {
+				<small class="truncate opacity-70">
+					{{ scheduleInfo().speaker }}@if (scheduleInfo().speaker && scheduleInfo().time) { · }{{ scheduleInfo().time }}
+				</small>
+			}
 		</button>
 		<div class="flex items-center gap-1">
 			@if (!isNew()) {
+				@if (linkedEvent(); as event) {
+					@if (event.date && event.startTime) {
+						<button
+							pButton
+							type="button"
+							[text]="true"
+							[attr.aria-label]="'Керувати подією'"
+							[routerLink]="['/event', event.slug, 'manage']"
+						>
+							<i class="pi pi-pencil"></i>
+						</button>
+						<button
+							pButton
+							type="button"
+							[text]="true"
+							[attr.aria-label]="'Питання від студентів'"
+							[routerLink]="['/event', event.slug, 'manage']"
+							fragment="questions"
+						>
+							<i class="pi pi-comments"></i>
+						</button>
+					} @else {
+						<button
+							pButton
+							type="button"
+							[text]="true"
+							[attr.aria-label]="'Завершити створення події'"
+							[routerLink]="['/event', event.slug, 'manage']"
+						>
+							<i class="pi pi-plus"></i>
+						</button>
+					}
+				} @else {
+					<button
+						pButton
+						type="button"
+						[text]="true"
+						[attr.aria-label]="'Створити подію'"
+						(click)="createEvent.emit()"
+					>
+						<i class="pi pi-plus"></i>
+					</button>
+				}
 				<button pButton type="button" [text]="true" (click)="toggle.emit()">
 					<i class="pi" [ngClass]="expanded() ? 'pi-chevron-up' : 'pi-chevron-down'"></i>
 				</button>
