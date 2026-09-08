@@ -61,20 +61,23 @@
 					<div class="mt-3 text-sm font-semibold" translate>Lecture date and time</div>
 					<div class="mt-2 grid grid-cols-1 gap-3 sm:grid-cols-3">
 						<div class="flex flex-1 flex-col gap-1">
-							<small class="opacity-70" translate>Date</small>
+							<small class="opacity-70"><span translate>Date</span> *</small>
 							<div class="flex flex-1">
 								<input pInputText type="date" lang="uk-UA" class="h-full w-full" [(ngModel)]="eventDateDraft" />
 							</div>
 						</div>
 						<div class="flex flex-col gap-1">
-							<small class="opacity-70" translate>Start</small>
+							<small class="opacity-70"><span translate>Start</span> *</small>
 							<app-time-scroll-input [(ngModel)]="eventStartTimeDraft" class="w-full" />
 						</div>
 						<div class="flex flex-col gap-1">
-							<small class="opacity-70" translate>End</small>
+							<small class="opacity-70"><span translate>End</span> *</small>
 							<app-time-scroll-input [(ngModel)]="eventEndTimeDraft" class="w-full" />
 						</div>
 					</div>
+					@if (!scheduleValid()) {
+						<small class="mt-1 text-[var(--c-danger,#e11d48)]" translate>Date and time are required.</small>
+					}
 
 					<div class="mt-3 text-sm font-semibold" translate>Lecture</div>
 					<div class="mt-2 flex flex-col gap-2">
@@ -122,7 +125,7 @@
 							[placeholder]="translateService.translate('Description')()"
 							rows="2"
 						></textarea>
-						<button pButton type="button" (click)="saveEventInfo()">
+						<button pButton type="button" [disabled]="!scheduleValid()" (click)="saveEventInfo()">
 							<span translate>Save</span>
 						</button>
 					</div>
@@ -206,7 +209,7 @@
 					</div>
 				</p-card>
 
-				<button pButton type="button" class="w-full" (click)="startSession()">
+				<button pButton type="button" class="w-full" [disabled]="!scheduleValid()" (click)="startSession()">
 					<i class="pi pi-check"></i>
 					<span translate>Done</span>
 				</button>

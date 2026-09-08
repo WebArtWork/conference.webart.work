@@ -132,6 +132,11 @@ export class EventManageComponent implements OnInit {
 	readonly isAddingLecture = signal(false);
 	readonly newLectureTitle = signal('');
 
+	/** Date, start, and end are all required before an event can be saved or go live. */
+	readonly scheduleValid = computed(
+		() => !!this.eventDateDraft() && !!this.eventStartTimeDraft() && !!this.eventEndTimeDraft(),
+	);
+
 	readonly newPollQuestion = signal('');
 	readonly newPollOptions = signal('');
 	readonly newQuizQuestion = signal('');
@@ -183,6 +188,14 @@ export class EventManageComponent implements OnInit {
 			return;
 		}
 
+		if (!this.scheduleValid()) {
+			this._messageService.add({
+				severity: 'error',
+				detail: this.translateService.translate('Date and time are required.')(),
+			});
+			return;
+		}
+
 		this._eventService.update(eventDoc._id, {
 			title: this.eventTitleDraft().trim(),
 			speaker: this.eventSpeakerDraft().trim(),
@@ -209,6 +222,14 @@ export class EventManageComponent implements OnInit {
 	 * was set explicitly via the state switch above and must not be overridden.
 	 */
 	startSession(): void {
+		if (!this.scheduleValid()) {
+			this._messageService.add({
+				severity: 'error',
+				detail: this.translateService.translate('Date and time are required.')(),
+			});
+			return;
+		}
+
 		this.saveEventInfo();
 		if (this.event()?.state === 'draft') {
 			this.setEventState('live');
