@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { ActivatedRoute } from '@angular/router';
 import { MetaService } from '@wawjs/ngx-core';
 import { CardModule } from '@wawjs/ngx-prime/card';
 import { TagModule } from '@wawjs/ngx-prime/tag';
@@ -7,8 +9,10 @@ import { ConferenceService } from '../../../conference/conference.service';
 import { LectureService } from '../../../conference/lecture/lecture.service';
 
 /**
- * Public conference page: `conf?id=:conferenceId`. Shared via QR code so
- * attendees can browse the lecture programme without an account.
+ * Public conference page: `conf#:conferenceId`. Shared via QR code so
+ * attendees can browse the lecture programme without an account. The id
+ * lives in the URL fragment (not a query param), so it's read from
+ * `ActivatedRoute.fragment` rather than an `input()`.
  */
 @Component({
 	selector: 'app-conference-public',
@@ -21,8 +25,9 @@ export class ConferencePublicComponent {
 	private readonly _conferenceService = inject(ConferenceService);
 	private readonly _lectureService = inject(LectureService);
 	private readonly _metaService = inject(MetaService);
+	private readonly _route = inject(ActivatedRoute);
 
-	readonly id = input<string>();
+	readonly id = toSignal(this._route.fragment, { initialValue: null });
 
 	readonly conference = computed(() => this._conferenceService.byId(this.id() ?? '') ?? null);
 	readonly lectures = computed(() =>

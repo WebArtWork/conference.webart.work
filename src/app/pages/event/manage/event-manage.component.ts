@@ -5,6 +5,7 @@ import { UserService } from '@wawjs/ngx-bos';
 import { ButtonModule } from '@wawjs/ngx-prime/button';
 import { CardModule } from '@wawjs/ngx-prime/card';
 import { InputTextModule } from '@wawjs/ngx-prime/inputtext';
+import { SelectModule } from '@wawjs/ngx-prime/select';
 import { SelectButtonModule } from '@wawjs/ngx-prime/selectbutton';
 import { TextareaModule } from '@wawjs/ngx-prime/textarea';
 import { TranslateDirective } from '@wawjs/ngx-translate';
@@ -12,6 +13,8 @@ import { environment } from '@env';
 import { MessageService } from '@wawjs/ngx-prime/api';
 import { EventState } from '../../../conference/event/event.interface';
 import { EventService } from '../../../conference/event/event.service';
+import { NEW_LECTURE } from '../../../conference/lecture/lecture.const';
+import { LectureService } from '../../../conference/lecture/lecture.service';
 import { Poll } from '../../../conference/poll/poll.interface';
 import { PollService, PollAnswerService } from '../../../conference/poll/poll.service';
 import { NEW_POLL } from '../../../conference/poll/poll.const';
@@ -20,6 +23,7 @@ import { QuestionService } from '../../../conference/question/question.service';
 import { Quiz } from '../../../conference/quiz/quiz.interface';
 import { QuizService, QuizAnswerService } from '../../../conference/quiz/quiz.service';
 import { NEW_QUIZ } from '../../../conference/quiz/quiz.const';
+import { TimeScrollInputComponent } from '../../../shared/time-scroll-input/time-scroll-input.component';
 
 /**
  * Owner dashboard: `event/:slug/manage`. Full control over the event plus
@@ -36,8 +40,10 @@ import { NEW_QUIZ } from '../../../conference/quiz/quiz.const';
 		CardModule,
 		InputTextModule,
 		RouterLink,
+		SelectModule,
 		SelectButtonModule,
 		TextareaModule,
+		TimeScrollInputComponent,
 		FormsModule,
 		TranslateDirective,
 	],
@@ -49,6 +55,7 @@ export class EventManageComponent implements OnInit {
 	private readonly _messageService = inject(MessageService);
 	private readonly _userService = inject(UserService);
 	private readonly _eventService = inject(EventService);
+	private readonly _lectureService = inject(LectureService);
 	private readonly _questionService = inject(QuestionService);
 	private readonly _pollService = inject(PollService);
 	private readonly _pollAnswerService = inject(PollAnswerService);
@@ -65,6 +72,8 @@ export class EventManageComponent implements OnInit {
 		const currentUserId = this._userService.user()?._id;
 		return !!eventDoc && !!currentUserId && eventDoc.owner === currentUserId;
 	});
+
+	readonly lectures = this._lectureService.items;
 
 	readonly joinUrl = computed(() => `${environment.url}/event/${this.slug()}`);
 
@@ -110,6 +119,12 @@ export class EventManageComponent implements OnInit {
 	readonly eventTitleDraft = signal('');
 	readonly eventSpeakerDraft = signal('');
 	readonly eventDescriptionDraft = signal('');
+	readonly eventDateDraft = signal('');
+	readonly eventStartTimeDraft = signal('');
+	readonly eventEndTimeDraft = signal('');
+	readonly eventLectureIdDraft = signal('');
+	readonly isAddingLecture = signal(false);
+	readonly newLectureTitle = signal('');
 
 	readonly newPollQuestion = signal('');
 	readonly newPollOptions = signal('');
@@ -122,6 +137,10 @@ export class EventManageComponent implements OnInit {
 		this.eventTitleDraft.set(eventDoc?.title ?? '');
 		this.eventSpeakerDraft.set(eventDoc?.speaker || this._userService.user()?.name || '');
 		this.eventDescriptionDraft.set(eventDoc?.description ?? '');
+		this.eventDateDraft.set(eventDoc?.date ?? '');
+		this.eventStartTimeDraft.set(eventDoc?.startTime ?? '');
+		this.eventEndTimeDraft.set(eventDoc?.endTime ?? '');
+		this.eventLectureIdDraft.set(eventDoc?.lectureId ?? '');
 
 		queueMicrotask(() => {
 			if (eventDoc && !this.isOwner()) {
@@ -136,6 +155,22 @@ export class EventManageComponent implements OnInit {
 		});
 	}
 
+	toggleAddLecture(): void {
+		this.isAddingLecture.update((value) => !value);
+	}
+
+	createLecture(): void {
+		const title = this.newLectureTitle().trim();
+		if (!title) {
+			return;
+		}
+
+		const lecture = this._lectureService.create({ ...NEW_LECTURE, title });
+		this.eventLectureIdDraft.set(lecture._id);
+		this.newLectureTitle.set('');
+		this.isAddingLecture.set(false);
+	}
+
 	saveEventInfo(): void {
 		const eventDoc = this.event();
 		if (!eventDoc) {
@@ -146,6 +181,10 @@ export class EventManageComponent implements OnInit {
 			title: this.eventTitleDraft().trim(),
 			speaker: this.eventSpeakerDraft().trim(),
 			description: this.eventDescriptionDraft().trim(),
+			date: this.eventDateDraft(),
+			startTime: this.eventStartTimeDraft(),
+			endTime: this.eventEndTimeDraft(),
+			lectureId: this.eventLectureIdDraft(),
 		});
 	}
 

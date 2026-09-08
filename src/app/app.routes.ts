@@ -173,7 +173,7 @@ export const routes: Routes = [
 				data: {
 					shareKind: 'app',
 					meta: {
-						title: 'Поділитися Conference',
+						title: 'Поділитися конференцією',
 						description: 'Відскануйте QR-код, щоб приєднатися до Conference за кілька секунд.',
 					},
 				},
@@ -228,6 +228,19 @@ export const routes: Routes = [
 						(m) => m.routes,
 					),
 			},
+			{
+				path: 'conf',
+				canActivate: [MetaGuard],
+				data: {
+					meta: {
+						title: 'Конференція',
+					},
+				},
+				loadComponent: () =>
+					import('./pages/conference/public/conference-public.component').then(
+						(m) => m.ConferencePublicComponent,
+					),
+			},
 		],
 	},
 	{
@@ -267,19 +280,6 @@ export const routes: Routes = [
 		loadComponent: () =>
 			import('./pages/event/manage/event-manage.component').then(
 				(m) => m.EventManageComponent,
-			),
-	},
-	{
-		path: 'event/:slug/mutate',
-		canActivate: [authenticatedGuard, MetaGuard],
-		data: {
-			meta: {
-				title: 'Подія',
-			},
-		},
-		loadComponent: () =>
-			import('./pages/event/mutate/event-mutate.component').then(
-				(m) => m.EventMutateComponent,
 			),
 	},
 	{

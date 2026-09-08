@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { ButtonModule } from '@wawjs/ngx-prime/button';
 import { CardModule } from '@wawjs/ngx-prime/card';
 import { TranslateDirective } from '@wawjs/ngx-translate';
+import { ConferenceService } from '../../../conference/conference.service';
 import { NEW_LECTURE } from '../../../conference/lecture/lecture.const';
 import { Lecture } from '../../../conference/lecture/lecture.interface';
 import { LectureService } from '../../../conference/lecture/lecture.service';
@@ -17,6 +18,7 @@ import { LectureEditCardComponent } from './lecture-edit-card.component';
 })
 export class LecturesManageComponent {
 	private readonly _lectureService = inject(LectureService);
+	private readonly _conferenceService = inject(ConferenceService);
 
 	readonly lectures = this._lectureService.items;
 	readonly expandedId = signal<string | null>(null);
@@ -33,7 +35,7 @@ export class LecturesManageComponent {
 	}
 
 	addLecture(): void {
-		this.draftLecture.set({ ...NEW_LECTURE });
+		this.draftLecture.set({ ...NEW_LECTURE, conferenceId: this._conferenceService.items()[0]?._id ?? '' });
 	}
 
 	cancelDraft(): void {

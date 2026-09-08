@@ -37,12 +37,6 @@
 	"references": [
 		{
 			"path": "./tsconfig.app.json"
-		},
-		{
-			"path": "./projects/showcase/tsconfig.app.json"
-		},
-		{
-			"path": "./projects/uikit/tsconfig.app.json"
 		}
 	]
 }

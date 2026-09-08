@@ -114,8 +114,8 @@
 
 	<app-nav-icon
 		[class.sidebar--minimized-icon]="!showNames()"
-		[name]="showNames() ? translateService.translate('Share Conference')() : ''"
-		[ariaLabel]="translateService.translate('Share Conference')()"
+		[name]="showNames() ? translateService.translate('Поділитися конференцією')() : ''"
+		[ariaLabel]="translateService.translate('Поділитися конференцією')()"
 		(click)="closeIfOverlay()"
 		routerLink="/share"
 		icon="qrcode"

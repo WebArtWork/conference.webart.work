@@ -40,7 +40,7 @@
 	}
 
 	@for (conference of conferences(); track conference._id) {
-		<p-card [routerLink]="[conference._id]" class="cursor-pointer">
+		<p-card [routerLink]="['/conf']" [fragment]="conference._id" class="cursor-pointer">
 			<div class="flex items-center justify-between gap-3 text-[var(--c-text-primary)]">
 				<span class="font-semibold">{{ conference.title || 'Без назви' }}</span>
 				<div class="flex items-center gap-1">

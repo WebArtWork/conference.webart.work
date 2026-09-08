@@ -5,7 +5,7 @@ import { ButtonModule } from '@wawjs/ngx-prime/button';
 import { CardModule } from '@wawjs/ngx-prime/card';
 import { TagModule } from '@wawjs/ngx-prime/tag';
 import { TranslateDirective } from '@wawjs/ngx-translate';
-import { generateEventSlug } from '../../../conference/event/event.const';
+import { NEW_EVENT, generateEventSlug } from '../../../conference/event/event.const';
 import { Event, EventState } from '../../../conference/event/event.interface';
 import { EventService } from '../../../conference/event/event.service';
 
@@ -31,16 +31,19 @@ export class EventsComponent {
 	readonly endedEvents = computed(() => this._byState('ended'));
 
 	createEvent(): void {
-		const slug = generateEventSlug();
-		this._router.navigate(['/event', slug, 'mutate']);
+		const owner = this._userService.user();
+		const eventDoc = this._eventService.create({
+			...NEW_EVENT,
+			slug: generateEventSlug(),
+			owner: owner?._id ?? '',
+			speaker: owner?.name ?? '',
+			createdAt: new Date().toISOString(),
+		});
+		this._router.navigate(['/event', eventDoc.slug, 'manage']);
 	}
 
 	openManage(slug: string): void {
 		this._router.navigate(['/event', slug, 'manage']);
-	}
-
-	editEvent(slug: string): void {
-		this._router.navigate(['/event', slug, 'mutate']);
 	}
 
 	deleteEvent(event: Event): void {

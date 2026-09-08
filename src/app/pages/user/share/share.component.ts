@@ -3,13 +3,11 @@ import { ChangeDetectionStrategy, Component, PLATFORM_ID, computed, inject } fro
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs';
-import { UserService } from '@wawjs/ngx-bos';
 import { ButtonModule } from '@wawjs/ngx-prime/button';
 import { MessageService } from '@wawjs/ngx-prime/api';
 import { TranslateService } from '@wawjs/ngx-translate';
 import { QrCodeComponent } from '../../../shared/qr-code/qr-code.component';
 import { companyProfile } from '../../../company/company.data';
-import { EventService } from '../../../conference/event/event.service';
 import { ConferenceService } from '../../../conference/conference.service';
 
 export type ShareKind = 'app' | 'profile' | 'conference';
@@ -24,8 +22,6 @@ export type ShareKind = 'app' | 'profile' | 'conference';
 export class SharePageComponent {
 	private readonly _messageService = inject(MessageService);
 	private readonly _activatedRoute = inject(ActivatedRoute);
-	private readonly _userService = inject(UserService);
-	private readonly _eventService = inject(EventService);
 	private readonly _conferenceService = inject(ConferenceService);
 	private readonly _isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
 	readonly translateService = inject(TranslateService);
@@ -54,32 +50,18 @@ export class SharePageComponent {
 		{ initialValue: null },
 	);
 
-	readonly conference = computed(() => this._conferenceService.byId(this.conferenceId() ?? ''));
+	/** Falls back to the first conference when this share page isn't scoped to one (e.g. the sidebar's generic entry). */
+	private readonly _defaultConferenceId = computed(() => this._conferenceService.items()[0]?._id ?? '');
+	private readonly _resolvedConferenceId = computed(() => this.conferenceId() ?? this._defaultConferenceId());
 
-	/** The organizer's own event that's currently running — the one a scanned QR should drop attendees into. */
-	readonly liveEvent = computed(() => {
-		const ownerId = this._userService.user()?._id;
-		if (!ownerId) {
-			return undefined;
-		}
-		return this._eventService.all().find((event) => event.owner === ownerId && event.state === 'live');
-	});
+	readonly conference = computed(() => this._conferenceService.byId(this._resolvedConferenceId()));
 
 	readonly shareUrl = computed(() => {
 		if (this.kind() === 'profile') {
 			return `${this._origin}/profile`;
 		}
 
-		if (this.kind() === 'conference') {
-			return `${this._origin}/conf?id=${this.conferenceId() ?? ''}`;
-		}
-
-		const liveEvent = this.liveEvent();
-		if (liveEvent) {
-			return `${this._origin}/event/${liveEvent.slug}`;
-		}
-
-		return `${this._origin}/sign`;
+		return `${this._origin}/conf#${this._resolvedConferenceId()}`;
 	});
 
 	readonly title = computed(() => {
@@ -87,11 +69,7 @@ export class SharePageComponent {
 			return this.translateService.translate('Поділитися профілем')();
 		}
 
-		if (this.kind() === 'conference') {
-			return this.translateService.translate('Поділитися конференцією')();
-		}
-
-		return this.translateService.translate('Поділитися Conference')();
+		return this.translateService.translate('Поділитися конференцією')();
 	});
 
 	readonly description = computed(() => {
@@ -101,19 +79,13 @@ export class SharePageComponent {
 			)();
 		}
 
-		if (this.kind() === 'conference') {
-			const title = this.conference()?.title;
-			return title
-				? this.translateService.interpolate(
-						this.translateService.translate('Відскануйте код, щоб переглянути програму конференції «{{title}}».')(),
-						{ title },
-					)
-				: this.translateService.translate('Відскануйте код, щоб переглянути програму конференції.')();
-		}
-
-		return this.liveEvent()
-			? this.translateService.translate('Відскануйте код, щоб приєднатися до лекції, яка триває зараз.')()
-			: this.translateService.translate('Відскануйте код, щоб приєднатися до Conference за кілька секунд.')();
+		const title = this.conference()?.title;
+		return title
+			? this.translateService.interpolate(
+					this.translateService.translate('Відскануйте код, щоб переглянути програму конференції «{{title}}».')(),
+					{ title },
+				)
+			: this.translateService.translate('Відскануйте код, щоб переглянути програму конференції.')();
 	});
 
 	copyLink(): void {
