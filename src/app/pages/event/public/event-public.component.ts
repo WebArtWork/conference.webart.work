@@ -7,7 +7,7 @@ import { DialogModule } from '@wawjs/ngx-prime/dialog';
 import { InputTextModule } from '@wawjs/ngx-prime/inputtext';
 import { RadioButtonModule } from '@wawjs/ngx-prime/radiobutton';
 import { TagModule } from '@wawjs/ngx-prime/tag';
-import { TranslateDirective } from '@wawjs/ngx-translate';
+import { TranslateDirective, TranslateService } from '@wawjs/ngx-translate';
 import { ChapterService, ChapterReactionService } from '../../../conference/chapter/chapter.service';
 import { DeviceIdService } from '../../../conference/device-id.service';
 import { EventService } from '../../../conference/event/event.service';
@@ -38,6 +38,7 @@ import { QuizService, QuizAnswerService } from '../../../conference/quiz/quiz.se
 	styleUrl: './event-public.component.scss',
 })
 export class EventPublicComponent {
+	readonly translateService = inject(TranslateService);
 	private readonly _eventService = inject(EventService);
 	private readonly _chapterService = inject(ChapterService);
 	private readonly _chapterReactionService = inject(ChapterReactionService);

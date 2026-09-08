@@ -3,7 +3,15 @@
 		<button type="button" class="time-scroll__btn" tabindex="-1" (click)="incrementHour()">
 			<i class="pi pi-chevron-up"></i>
 		</button>
-		<span class="time-scroll__value">{{ hours() !== null ? (hours() | number: '2.0-0') : '--' }}</span>
+		<input
+			type="text"
+			inputmode="numeric"
+			class="time-scroll__value time-scroll__input"
+			[value]="hours() !== null ? (hours() | number: '2.0-0') : ''"
+			placeholder="--"
+			maxlength="2"
+			(input)="onHourInput($event)"
+		/>
 		<button type="button" class="time-scroll__btn" tabindex="-1" (click)="decrementHour()">
 			<i class="pi pi-chevron-down"></i>
 		</button>
@@ -15,7 +23,15 @@
 		<button type="button" class="time-scroll__btn" tabindex="-1" (click)="incrementMinute()">
 			<i class="pi pi-chevron-up"></i>
 		</button>
-		<span class="time-scroll__value">{{ minutes() !== null ? (minutes() | number: '2.0-0') : '--' }}</span>
+		<input
+			type="text"
+			inputmode="numeric"
+			class="time-scroll__value time-scroll__input"
+			[value]="minutes() !== null ? (minutes() | number: '2.0-0') : ''"
+			placeholder="--"
+			maxlength="2"
+			(input)="onMinuteInput($event)"
+		/>
 		<button type="button" class="time-scroll__btn" tabindex="-1" (click)="decrementMinute()">
 			<i class="pi pi-chevron-down"></i>
 		</button>

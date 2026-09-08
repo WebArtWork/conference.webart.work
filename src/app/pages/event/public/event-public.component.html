@@ -24,7 +24,7 @@
 			<p-card>
 				<div class="flex items-center justify-between gap-3">
 					<div class="font-semibold">{{ chapter.title }}</div>
-					<p-tag severity="success" value="Now"></p-tag>
+					<p-tag severity="success" [value]="translateService.translate('Now')()"></p-tag>
 				</div>
 
 				@if (isLive()) {
@@ -59,7 +59,7 @@
 					>
 						<span>{{ chapter.title }}</span>
 						@if (chapter.isActive) {
-							<p-tag severity="success" value="Now"></p-tag>
+							<p-tag severity="success" [value]="translateService.translate('Now')()"></p-tag>
 						}
 					</div>
 				}
@@ -123,7 +123,7 @@
 						pInputText
 						class="w-full"
 						[(ngModel)]="newQuestionText"
-						[placeholder]="'Ask a question...'"
+						[placeholder]="translateService.translate('Ask a question...')()"
 					/>
 					<button pButton type="button" (click)="submitQuestion()">
 						<span translate>Send</span>
@@ -160,7 +160,7 @@
 		[visible]="showNamePrompt()"
 		[modal]="true"
 		[closable]="false"
-		[header]="'Welcome!'"
+		[header]="translateService.translate('Welcome!')()"
 	>
 		<p class="m-0 mb-3 text-sm" translate>
 			What's your name? Other attendees will see it next to your questions.
@@ -170,7 +170,7 @@
 				pInputText
 				class="w-full"
 				[(ngModel)]="nameDraft"
-				[placeholder]="'Your name...'"
+				[placeholder]="translateService.translate('Your name...')()"
 				(keyup.enter)="confirmName()"
 			/>
 			<button pButton type="button" (click)="confirmName()">

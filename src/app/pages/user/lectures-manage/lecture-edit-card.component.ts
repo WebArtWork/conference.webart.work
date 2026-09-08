@@ -6,7 +6,7 @@ import { ButtonModule } from '@wawjs/ngx-prime/button';
 import { CardModule } from '@wawjs/ngx-prime/card';
 import { InputTextModule } from '@wawjs/ngx-prime/inputtext';
 import { SelectModule } from '@wawjs/ngx-prime/select';
-import { TranslateDirective } from '@wawjs/ngx-translate';
+import { TranslateDirective, TranslateService } from '@wawjs/ngx-translate';
 import { ConferenceService } from '../../../conference/conference.service';
 import { EventService } from '../../../conference/event/event.service';
 import { Lecture } from '../../../conference/lecture/lecture.interface';
@@ -35,6 +35,7 @@ import { LectureService } from '../../../conference/lecture/lecture.service';
 	styleUrl: './lecture-edit-card.component.scss',
 })
 export class LectureEditCardComponent implements OnInit {
+	readonly translateService = inject(TranslateService);
 	private readonly _lectureService = inject(LectureService);
 	private readonly _conferenceService = inject(ConferenceService);
 	private readonly _eventService = inject(EventService);
@@ -50,16 +51,14 @@ export class LectureEditCardComponent implements OnInit {
 		this._eventService.all().find((event) => event.lectureId === this.lecture()._id),
 	);
 
-	/** Speaker and schedule, preferring the linked event's data over the lecture's own fallback fields. */
+	/** Speaker and schedule actually set on the linked event — not the lecture's own placeholder fields. */
 	readonly scheduleInfo = computed(() => {
 		const event = this.linkedEvent();
-		const lecture = this.lecture();
-		const speaker = event?.speaker || lecture.speaker;
-		const time =
-			event && (event.date || event.startTime)
-				? `${event.date} ${event.startTime}${event.endTime ? ' – ' + event.endTime : ''}`.trim()
-				: lecture.time;
-		return { speaker, time };
+		if (!event || (!event.date && !event.startTime)) {
+			return { speaker: '', time: '' };
+		}
+		const time = `${event.date} ${event.startTime}${event.endTime ? ' – ' + event.endTime : ''}`.trim();
+		return { speaker: event.speaker, time };
 	});
 
 	readonly toggle = output<void>();

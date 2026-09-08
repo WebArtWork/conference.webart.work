@@ -38,6 +38,19 @@
 	text-align: center;
 }
 
+.time-scroll__input {
+	border: none;
+	background: transparent;
+	padding: 0;
+	width: 2ch;
+	cursor: text;
+	font-family: inherit;
+}
+
+.time-scroll__input:focus {
+	outline: none;
+}
+
 .time-scroll__sep {
 	color: var(--c-text-primary);
 	font-size: 1.1rem;

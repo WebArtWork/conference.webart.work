@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ButtonModule } from '@wawjs/ngx-prime/button';
 import { CardModule } from '@wawjs/ngx-prime/card';
 import { InputTextModule } from '@wawjs/ngx-prime/inputtext';
-import { TranslateDirective } from '@wawjs/ngx-translate';
+import { TranslateDirective, TranslateService } from '@wawjs/ngx-translate';
 import { OrganizerService } from '../../../conference/organizer.service';
 import { NEW_CONFERENCE } from '../../../conference/conference.const';
 import { ConferenceService } from '../../../conference/conference.service';
@@ -18,6 +18,7 @@ import { ConferenceService } from '../../../conference/conference.service';
 	styleUrl: './conferences.component.scss',
 })
 export class ConferencesComponent {
+	readonly translateService = inject(TranslateService);
 	private readonly _conferenceService = inject(ConferenceService);
 	private readonly _organizerService = inject(OrganizerService);
 

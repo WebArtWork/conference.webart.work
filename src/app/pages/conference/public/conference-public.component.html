@@ -1,6 +1,6 @@
 @if (conference(); as conferenceDoc) {
 	<div class="conference-public-page mx-auto flex w-full max-w-[720px] flex-col gap-3 p-3 sm:gap-4 sm:p-4">
-		<h1 class="m-0 text-lg font-semibold sm:text-xl">{{ conferenceDoc.title || 'Без назви' }}</h1>
+		<h1 class="m-0 text-lg font-semibold sm:text-xl">{{ conferenceDoc.title || translateService.translate('Без назви')() }}</h1>
 
 		@if (!lectures().length) {
 			<p-card>
@@ -65,11 +65,68 @@
 								<span class="opacity-70">({{ lecture.fileName }})</span>
 							</a>
 						}
+
+						<div class="flex flex-col gap-2 border-t border-[var(--c-border)] pt-3">
+							<div class="text-xs font-semibold tracking-wide uppercase opacity-70" translate>Питання від аудиторії</div>
+
+							<div class="flex gap-2">
+								<input
+									pInputText
+									class="w-full"
+									[(ngModel)]="newQuestionText"
+									[placeholder]="translateService.translate('Задати питання...')()"
+								/>
+								<button pButton type="button" (click)="submitQuestion(lecture)">
+									<span translate>Надіслати</span>
+								</button>
+							</div>
+
+							<div class="flex flex-col gap-2">
+								@for (question of questions(lecture); track question._id) {
+									<div
+										class="flex items-center justify-between gap-3 rounded-card border border-[var(--c-border)] px-3 py-2 text-sm"
+									>
+										<div class="flex flex-col">
+											<span>{{ question.text }}</span>
+											<small class="opacity-60">{{ question.authorName }}</small>
+										</div>
+										<button
+											pButton
+											type="button"
+											[text]="true"
+											[disabled]="question.likedBy.includes(deviceIdService.deviceId)"
+											(click)="likeQuestion(question)"
+										>
+											<i class="pi pi-thumbs-up"></i>
+											{{ question.likes }}
+										</button>
+									</div>
+								}
+							</div>
+						</div>
 					</div>
 				}
 			</p-card>
 		}
 	</div>
+
+	<p-dialog [visible]="showNamePrompt()" [modal]="true" [closable]="false" [header]="translateService.translate('Вітаємо!')()">
+		<p class="m-0 mb-3 text-sm" translate>
+			Як вас звати? Інші учасники бачитимуть це ім'я біля ваших питань.
+		</p>
+		<div class="flex gap-2">
+			<input
+				pInputText
+				class="w-full"
+				[(ngModel)]="nameDraft"
+				[placeholder]="translateService.translate('Ваше ім\'я...')()"
+				(keyup.enter)="confirmName()"
+			/>
+			<button pButton type="button" (click)="confirmName()">
+				<span translate>Продовжити</span>
+			</button>
+		</div>
+	</p-dialog>
 } @else {
 	<div class="mx-auto flex w-full max-w-[720px] flex-col gap-3 p-3 sm:p-4">
 		<p-card>

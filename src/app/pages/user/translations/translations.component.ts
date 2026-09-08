@@ -8,7 +8,7 @@ import { ButtonModule } from '@wawjs/ngx-prime/button';
 import { CardModule } from '@wawjs/ngx-prime/card';
 import { InputTextModule } from '@wawjs/ngx-prime/inputtext';
 import { TagModule } from '@wawjs/ngx-prime/tag';
-import { TranslateDirective } from '@wawjs/ngx-translate';
+import { TranslateDirective, TranslateService } from '@wawjs/ngx-translate';
 
 interface TranslationRow {
 	index: number;
@@ -30,6 +30,7 @@ interface TranslationRow {
 	styleUrl: './translations.component.scss',
 })
 export class TranslationsComponent {
+	readonly translateService = inject(TranslateService);
 	private readonly _http = inject(HttpClient);
 
 	private readonly _files = toSignal(

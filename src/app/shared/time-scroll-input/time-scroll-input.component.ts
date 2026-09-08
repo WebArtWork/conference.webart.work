@@ -80,6 +80,24 @@ export class TimeScrollInputComponent implements ControlValueAccessor {
 		this._shiftMinute(-1);
 	}
 
+	onHourInput(event: Event): void {
+		this.hours.set(this._parseDigits(event, 23));
+		this._emit();
+	}
+
+	onMinuteInput(event: Event): void {
+		this.minutes.set(this._parseDigits(event, 59));
+		this._emit();
+	}
+
+	private _parseDigits(event: Event, max: number): number | null {
+		const input = event.target as HTMLInputElement;
+		const digits = input.value.replace(/\D/g, '').slice(0, 2);
+		const parsed = digits === '' ? null : Math.min(max, Number(digits));
+		input.value = parsed !== null ? String(parsed) : '';
+		return parsed;
+	}
+
 	private _shiftHour(delta: number): void {
 		if (this.disabled) {
 			return;

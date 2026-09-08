@@ -83,7 +83,7 @@
 							optionLabel="title"
 							optionValue="_id"
 							[(ngModel)]="eventLectureIdDraft"
-							[placeholder]="'Оберіть лекцію'"
+							[placeholder]="translateService.translate('Оберіть лекцію')()"
 							[showClear]="true"
 							class="w-full"
 						></p-select>
@@ -99,7 +99,7 @@
 									pInputText
 									class="w-full"
 									[(ngModel)]="newLectureTitle"
-									[placeholder]="'Назва лекції'"
+									[placeholder]="translateService.translate('Назва лекції')()"
 								/>
 								<div class="flex gap-2">
 									<button pButton type="button" (click)="createLecture()">
@@ -114,12 +114,12 @@
 					</div>
 
 					<div class="mt-3 flex flex-col gap-2">
-						<input pInputText [(ngModel)]="eventTitleDraft" [placeholder]="'Title'" />
-						<input pInputText [(ngModel)]="eventSpeakerDraft" [placeholder]="'Speaker'" />
+						<input pInputText [(ngModel)]="eventTitleDraft" [placeholder]="translateService.translate('Title')()" />
+						<input pInputText [(ngModel)]="eventSpeakerDraft" [placeholder]="translateService.translate('Speaker')()" />
 						<textarea
 							pTextarea
 							[(ngModel)]="eventDescriptionDraft"
-							[placeholder]="'Description'"
+							[placeholder]="translateService.translate('Description')()"
 							rows="2"
 						></textarea>
 						<button pButton type="button" (click)="saveEventInfo()">
@@ -139,8 +139,8 @@
 				<p-card>
 					<div class="text-sm font-semibold" translate>Polls</div>
 					<div class="mt-2 flex flex-col gap-2">
-						<input pInputText [(ngModel)]="newPollQuestion" [placeholder]="'Poll question'" />
-						<input pInputText [(ngModel)]="newPollOptions" [placeholder]="'Options, comma separated'" />
+						<input pInputText [(ngModel)]="newPollQuestion" [placeholder]="translateService.translate('Poll question')()" />
+						<input pInputText [(ngModel)]="newPollOptions" [placeholder]="translateService.translate('Options, comma separated')()" />
 						<button pButton type="button" (click)="createPoll()">
 							<span translate>Create poll</span>
 						</button>
@@ -152,7 +152,7 @@
 								<div class="flex items-center justify-between gap-3">
 									<span class="font-semibold">{{ poll.question }}</span>
 									<button pButton type="button" [text]="true" (click)="togglePoll(poll)">
-										<span>{{ poll.active ? 'Deactivate' : 'Activate' }}</span>
+										<span>{{ poll.active ? translateService.translate('Deactivate')() : translateService.translate('Activate')() }}</span>
 									</button>
 								</div>
 								<div class="mt-2 flex flex-col gap-1 text-sm">
@@ -171,13 +171,13 @@
 				<p-card>
 					<div class="text-sm font-semibold" translate>Quizzes</div>
 					<div class="mt-2 flex flex-col gap-2">
-						<input pInputText [(ngModel)]="newQuizQuestion" [placeholder]="'Quiz question'" />
-						<input pInputText [(ngModel)]="newQuizOptions" [placeholder]="'Options, comma separated'" />
+						<input pInputText [(ngModel)]="newQuizQuestion" [placeholder]="translateService.translate('Quiz question')()" />
+						<input pInputText [(ngModel)]="newQuizOptions" [placeholder]="translateService.translate('Options, comma separated')()" />
 						<input
 							pInputText
 							type="number"
 							[(ngModel)]="newQuizCorrectIndex"
-							[placeholder]="'Correct option index (0-based)'"
+							[placeholder]="translateService.translate('Correct option index (0-based)')()"
 						/>
 						<button pButton type="button" (click)="createQuiz()">
 							<span translate>Create quiz</span>
@@ -190,7 +190,7 @@
 								<div class="flex items-center justify-between gap-3">
 									<span class="font-semibold">{{ quiz.question }}</span>
 									<button pButton type="button" [text]="true" (click)="toggleQuiz(quiz)">
-										<span>{{ quiz.active ? 'Deactivate' : 'Activate' }}</span>
+										<span>{{ quiz.active ? translateService.translate('Deactivate')() : translateService.translate('Activate')() }}</span>
 									</button>
 								</div>
 								<div class="mt-2 flex flex-col gap-1 text-sm">

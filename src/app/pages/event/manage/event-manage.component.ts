@@ -9,7 +9,7 @@ import { InputTextModule } from '@wawjs/ngx-prime/inputtext';
 import { SelectModule } from '@wawjs/ngx-prime/select';
 import { SelectButtonModule } from '@wawjs/ngx-prime/selectbutton';
 import { TextareaModule } from '@wawjs/ngx-prime/textarea';
-import { TranslateDirective } from '@wawjs/ngx-translate';
+import { TranslateDirective, TranslateService } from '@wawjs/ngx-translate';
 import { environment } from '@env';
 import { MessageService } from '@wawjs/ngx-prime/api';
 import { EventState } from '../../../conference/event/event.interface';
@@ -52,6 +52,7 @@ import { TimeScrollInputComponent } from '../../../shared/time-scroll-input/time
 	styleUrl: './event-manage.component.scss',
 })
 export class EventManageComponent implements OnInit {
+	readonly translateService = inject(TranslateService);
 	private readonly _router = inject(Router);
 	private readonly _route = inject(ActivatedRoute);
 	private readonly _messageService = inject(MessageService);

@@ -6,7 +6,7 @@
 			(click)="toggle.emit()"
 		>
 			<div class="flex items-center gap-2">
-				<span class="truncate font-semibold">{{ lecture().title || 'Без назви' }}</span>
+				<span class="truncate font-semibold">{{ lecture().title || translateService.translate('Без назви')() }}</span>
 				@if (lecture().link) {
 					<i class="pi pi-link text-sm opacity-70"></i>
 				}
@@ -28,7 +28,7 @@
 							pButton
 							type="button"
 							[text]="true"
-							[attr.aria-label]="'Керувати подією'"
+							[attr.aria-label]="translateService.translate('Керувати подією')()"
 							[routerLink]="['/event', event.slug, 'manage']"
 						>
 							<i class="pi pi-pencil"></i>
@@ -37,7 +37,7 @@
 							pButton
 							type="button"
 							[text]="true"
-							[attr.aria-label]="'Питання від студентів'"
+							[attr.aria-label]="translateService.translate('Питання від студентів')()"
 							[routerLink]="['/event', event.slug, 'manage']"
 							fragment="questions"
 						>
@@ -48,7 +48,7 @@
 							pButton
 							type="button"
 							[text]="true"
-							[attr.aria-label]="'Завершити створення події'"
+							[attr.aria-label]="translateService.translate('Завершити створення події')()"
 							[routerLink]="['/event', event.slug, 'manage']"
 						>
 							<i class="pi pi-plus"></i>
@@ -59,7 +59,7 @@
 						pButton
 						type="button"
 						[text]="true"
-						[attr.aria-label]="'Створити подію'"
+						[attr.aria-label]="translateService.translate('Створити подію')()"
 						(click)="createEvent.emit()"
 					>
 						<i class="pi pi-plus"></i>
@@ -81,9 +81,9 @@
 
 	@if (expanded()) {
 		<div class="mt-3 flex flex-col gap-2">
-			<input pInputText [(ngModel)]="title" [placeholder]="'Назва лекції'" />
+			<input pInputText [(ngModel)]="title" [placeholder]="translateService.translate('Назва лекції')()" />
 
-			<input pInputText [(ngModel)]="link" type="url" [placeholder]="'Покликання на лекцію'" />
+			<input pInputText [(ngModel)]="link" type="url" [placeholder]="translateService.translate('Покликання на лекцію')()" />
 
 			<p-select
 				[(ngModel)]="conferenceId"
@@ -91,7 +91,7 @@
 				optionLabel="title"
 				optionValue="_id"
 				[showClear]="true"
-				[placeholder]="'Конференція'"
+				[placeholder]="translateService.translate('Конференція')()"
 				class="w-full"
 			/>
 

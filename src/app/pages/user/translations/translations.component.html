@@ -18,7 +18,7 @@
 					pInputText
 					class="min-w-[240px] flex-1"
 					[(ngModel)]="filter"
-					[placeholder]="'Пошук...'"
+					[placeholder]="translateService.translate('Пошук...')()"
 				/>
 				<label class="flex items-center gap-2 text-sm">
 					<input type="checkbox" [(ngModel)]="onlyMissing" />
