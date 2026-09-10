@@ -1,1 +1,15 @@
-<router-outlet />
+<div
+	class="guest fixed inset-0 overflow-hidden bg-[var(--c-bg-primary)] text-[var(--c-text-primary)]"
+	[class.guest--withSidebar]="sidebar.pinnedVisible()"
+	[style.--drawer-w.px]="sidebar.widthPx()"
+>
+	<layout-topbar class="guest__topbar" [sidebarToggler]="true" />
+
+	@if (sidebar.anySidebarVisible()) {
+		<layout-sidebar class="guest__sidebar" />
+	}
+
+	<div class="guest__main relative overflow-auto max-md:mb-14">
+		<router-outlet />
+	</div>
+</div>

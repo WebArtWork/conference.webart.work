@@ -215,32 +215,6 @@ export const routes: Routes = [
 					),
 			},
 			{
-				path: 'conf',
-				canActivate: [MetaGuard],
-				data: {
-					meta: {
-						title: 'Конференція',
-					},
-				},
-				loadComponent: () =>
-					import('./pages/conference/public/conference-public.component').then(
-						(m) => m.ConferencePublicComponent,
-					),
-			},
-			{
-				path: 'lect',
-				canActivate: [MetaGuard],
-				data: {
-					meta: {
-						title: 'Лекція',
-					},
-				},
-				loadComponent: () =>
-					import('./pages/lecture/public/lecture-public.component').then(
-						(m) => m.LecturePublicComponent,
-					),
-			},
-			{
 				path: 'event/:slug/manage',
 				canActivate: [MetaGuard],
 				data: {
