@@ -26,10 +26,6 @@ export abstract class LocalStoreService<T extends StoredEntity> {
 		this._items = signal(this._load());
 	}
 
-	private get seedSnapshotKey(): string {
-		return `${this.storageKey}:seed-snapshot`;
-	}
-
 	readonly items = () => this._items();
 
 	all(): T[] {
@@ -69,33 +65,17 @@ export abstract class LocalStoreService<T extends StoredEntity> {
 		this._save(this.items().filter((item) => item._id !== id));
 	}
 
-	/**
-	 * Re-seeds from `this.seed` whenever the fixture data itself has changed
-	 * since it was last stored, so editing `seed.ts` doesn't leave browsers
-	 * that already have a cached copy stuck on stale demo data.
-	 */
 	private _load(): T[] {
 		if (typeof localStorage === 'undefined') {
 			return [...this.seed];
 		}
 
-		const seedSnapshot = JSON.stringify(this.seed);
-
 		try {
 			const raw = localStorage.getItem(this.storageKey);
-			const storedSeedSnapshot = localStorage.getItem(this.seedSnapshotKey);
-
-			if (raw && storedSeedSnapshot === seedSnapshot) {
-				return JSON.parse(raw) as T[];
-			}
+			return raw ? (JSON.parse(raw) as T[]) : [...this.seed];
 		} catch {
-			// fall through to re-seed below
+			return [...this.seed];
 		}
-
-		const reseeded = [...this.seed];
-		localStorage.setItem(this.seedSnapshotKey, seedSnapshot);
-		localStorage.setItem(this.storageKey, JSON.stringify(reseeded));
-		return reseeded;
 	}
 
 	private _save(items: T[]): void {
