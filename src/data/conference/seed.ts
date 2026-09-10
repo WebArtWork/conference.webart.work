@@ -37,44 +37,68 @@ export const SEED_LECTURES: Lecture[] = [
 	{
 		_id: 'conf-kpnu-2026-2027-1',
 		conferenceId: 'conf-kpnu-2026-2027',
-		title: 'Штучний інтелект у продуктовій розробці',
-		speaker: 'Олена Коваль',
-		topic: 'Штучний інтелект',
-		time: '10:00 — 10:45',
-		description:
-			'Огляд практичних кейсів впровадження AI-інструментів у процес розробки продукту: від ідеї до релізу.',
-		content:
-			'На цій лекції ми розглянемо, як команди інтегрують AI-інструменти на кожному етапі розробки продукту — ' +
-			'від генерації ідей та досліджень до автоматизації тестування та підтримки. Розберемо реальні кейси, ' +
-			'типові помилки та метрики, за якими можна оцінити ефект від впровадження.',
+		title: 'Гібридні мобільні додатки:  Архітектура та екосистема',
+		speaker: '',
+		topic: '',
+		time: '',
+		description: '',
+		content: '',
+		link: 'https://hybrid-mobile-applications.webart.work/hybrid-mobile-apps',
 	},
 	{
 		_id: 'conf-kpnu-2026-2027-2',
 		conferenceId: 'conf-kpnu-2026-2027',
-		title: 'Масштабування Angular-застосунків',
-		speaker: 'Андрій Петренко',
-		topic: 'Фронтенд',
-		time: '11:00 — 11:45',
-		description:
-			'Архітектурні підходи та практики, які допомагають утримувати великі Angular-проєкти швидкими та підтримуваними.',
-		content:
-			'Поговоримо про архітектурні рішення для великих Angular-застосунків: lazy loading, standalone-компоненти, ' +
-			'signals, оптимізацію білдів та стратегії поділу коду на модулі. Покажемо, як утримувати продуктивність ' +
-			'команди на високому рівні при зростанні кодової бази.',
+		title: 'Архітектура frontend мобільного застосунку',
+		speaker: '',
+		topic: '',
+		time: '',
+		description: '',
+		content: '',
+		link: 'https://hybrid-mobile-applications.webart.work/frontend-architecture',
 	},
 	{
 		_id: 'conf-kpnu-2026-2027-3',
 		conferenceId: 'conf-kpnu-2026-2027',
-		title: 'Побудова відмовостійких мікросервісів',
-		speaker: 'Марія Іванова',
-		topic: 'Бекенд',
-		time: '12:00 — 12:45',
-		description:
-			'Патерни надійності: circuit breaker, retry, ідемпотентність — і як обрати правильний підхід для вашої системи.',
-		content:
-			'Розглянемо ключові патерни відмовостійкості розподілених систем: circuit breaker, retry з backoff, ' +
-			'ідемпотентність операцій та graceful degradation. Обговоримо, як обрати правильну комбінацію підходів ' +
-			'залежно від навантаження та вимог до системи.',
+		title: 'Дані, API, авторизація та Offline',
+		speaker: '',
+		topic: '',
+		time: '',
+		description: '',
+		content: '',
+		link: 'https://hybrid-mobile-applications.webart.work/data-api-offline',
+	},
+	{
+		_id: 'conf-kpnu-2026-2027-4',
+		conferenceId: 'conf-kpnu-2026-2027',
+		title: 'Мобільна платформа, Capacitor та Native API',
+		speaker: '',
+		topic: '',
+		time: '',
+		description: '',
+		content: '',
+		link: 'https://hybrid-mobile-applications.webart.work/native-api',
+	},
+	{
+		_id: 'conf-kpnu-2026-2027-5',
+		conferenceId: 'conf-kpnu-2026-2027',
+		title: 'Створення та налаштування Hybrid-проєкту на Angular',
+		speaker: '',
+		topic: '',
+		time: '',
+		description: '',
+		content: '',
+		link: 'https://hybrid-mobile-applications.webart.work/hybrid-project-setup',
+	},
+	{
+		_id: 'conf-kpnu-2026-2027-6',
+		conferenceId: 'conf-kpnu-2026-2027',
+		title: 'Build, Deployment та публікація застосунку',
+		speaker: '',
+		topic: '',
+		time: '',
+		description: '',
+		content: '',
+		link: 'https://hybrid-mobile-applications.webart.work/build-deployment',
 	},
 ];
 
