@@ -6,5 +6,6 @@ export const NEW_QUIZ: Quiz = {
 	question: '',
 	options: ['', ''],
 	correctOptionIndex: 0,
+	revealAnswer: false,
 	active: false,
 };

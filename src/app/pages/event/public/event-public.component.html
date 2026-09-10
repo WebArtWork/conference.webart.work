@@ -109,7 +109,17 @@
 					}
 				</div>
 				@if (hasAnsweredQuiz(quiz._id)) {
-					<small translate>Thanks for answering!</small>
+					@if (quiz.revealAnswer) {
+						@if (myQuizAnswerOption(quiz._id) === quiz.correctOptionIndex) {
+							<small class="text-[var(--c-success,#16a34a)]" translate>Correct!</small>
+						} @else {
+							<small class="text-[var(--c-danger,#e11d48)]">
+								<span translate>Incorrect. Correct answer:</span> {{ quiz.options[quiz.correctOptionIndex] }}
+							</small>
+						}
+					} @else {
+						<small translate>Thanks for answering!</small>
+					}
 				}
 			</p-card>
 		}

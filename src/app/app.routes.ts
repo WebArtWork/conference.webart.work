@@ -87,6 +87,32 @@ export const routes: Routes = [
 						(m) => m.LecturePublicComponent,
 					),
 			},
+			{
+				path: 'poll/:pollId',
+				canActivate: [MetaGuard],
+				data: {
+					meta: {
+						title: 'Опитування',
+					},
+				},
+				loadComponent: () =>
+					import('./pages/poll/public/poll-public.component').then(
+						(m) => m.PollPublicComponent,
+					),
+			},
+			{
+				path: 'quiz/:quizId',
+				canActivate: [MetaGuard],
+				data: {
+					meta: {
+						title: 'Вікторина',
+					},
+				},
+				loadComponent: () =>
+					import('./pages/quiz/public/quiz-public.component').then(
+						(m) => m.QuizPublicComponent,
+					),
+			},
 		],
 	},
 	{

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MetaService } from '@wawjs/ngx-core';
 import { ButtonModule } from '@wawjs/ngx-prime/button';
 import { CardModule } from '@wawjs/ngx-prime/card';
@@ -13,8 +13,10 @@ import { ConferenceService } from '../../../conference/conference.service';
 import { DeviceIdService } from '../../../conference/device-id.service';
 import { EventService } from '../../../conference/event/event.service';
 import { LectureService } from '../../../conference/lecture/lecture.service';
+import { PollAnswerService, PollService } from '../../../conference/poll/poll.service';
 import { Question } from '../../../conference/question/question.interface';
 import { QuestionService } from '../../../conference/question/question.service';
+import { QuizAnswerService, QuizService } from '../../../conference/quiz/quiz.service';
 
 /**
  * Public lecture page: `lect#:lectureId`. Mirrors the conference programme's
@@ -45,8 +47,13 @@ export class LecturePublicComponent {
 	private readonly _lectureService = inject(LectureService);
 	private readonly _eventService = inject(EventService);
 	private readonly _questionService = inject(QuestionService);
+	private readonly _pollService = inject(PollService);
+	readonly pollAnswerService = inject(PollAnswerService);
+	private readonly _quizService = inject(QuizService);
+	readonly quizAnswerService = inject(QuizAnswerService);
 	private readonly _metaService = inject(MetaService);
 	private readonly _route = inject(ActivatedRoute);
+	private readonly _router = inject(Router);
 	readonly deviceIdService = inject(DeviceIdService);
 
 	readonly lectureId = toSignal(this._route.fragment, { initialValue: null });
@@ -76,6 +83,22 @@ export class LecturePublicComponent {
 		const lecture = this.lecture();
 		return lecture ? this._questionService.byEvent(lecture._id) : [];
 	});
+
+	/** The event this lecture is scheduled as, if any — polls are keyed by event id, not lecture id. */
+	readonly event = computed(() => {
+		const lecture = this.lecture();
+		return lecture ? (this._eventService.all().find((item) => item.lectureId === lecture._id) ?? null) : null;
+	});
+	readonly activePolls = computed(() => {
+		const eventDoc = this.event();
+		return eventDoc ? this._pollService.byEvent(eventDoc._id).filter((poll) => poll.active) : [];
+	});
+	readonly allPollsAnswered = computed(() => this.activePolls().every((poll) => this.pollAnswerService.hasAnswered(poll)));
+	readonly activeQuizzes = computed(() => {
+		const eventDoc = this.event();
+		return eventDoc ? this._quizService.byEvent(eventDoc._id).filter((quiz) => quiz.active) : [];
+	});
+	readonly allQuizzesAnswered = computed(() => this.activeQuizzes().every((quiz) => this.quizAnswerService.hasAnswered(quiz)));
 
 	readonly newQuestionText = signal('');
 	readonly showNamePrompt = signal(false);
@@ -112,6 +135,28 @@ export class LecturePublicComponent {
 
 	likeQuestion(question: Question): void {
 		this._withVisitorName(() => this._questionService.like(question));
+	}
+
+	goToPolls(): void {
+		const ids = this.activePolls()
+			.filter((poll) => !this.pollAnswerService.hasAnswered(poll))
+			.map((poll) => poll._id);
+		if (!ids.length) {
+			return;
+		}
+
+		this._router.navigate(['/poll', ids[0]], { queryParams: { lecture: this.lectureId(), ids: ids.join(',') } });
+	}
+
+	goToQuizzes(): void {
+		const ids = this.activeQuizzes()
+			.filter((quiz) => !this.quizAnswerService.hasAnswered(quiz))
+			.map((quiz) => quiz._id);
+		if (!ids.length) {
+			return;
+		}
+
+		this._router.navigate(['/quiz', ids[0]], { queryParams: { lecture: this.lectureId(), ids: ids.join(',') } });
 	}
 
 	confirmName(): void {

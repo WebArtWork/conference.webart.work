@@ -1,0 +1,78 @@
+<div class="mx-auto flex w-full max-w-[560px] flex-col gap-3 p-3 sm:gap-4 sm:p-4">
+	@if (lectureId) {
+		<a
+			[routerLink]="['/lect']"
+			[fragment]="lectureId"
+			class="inline-flex w-fit items-center gap-2 text-sm opacity-70 hover:opacity-100"
+		>
+			<i class="pi pi-arrow-left"></i>
+			<span translate>Back to lecture</span>
+		</a>
+	}
+
+	@if (quiz(); as quizDoc) {
+		<p-card>
+			@if (total > 1) {
+				<div class="text-xs font-semibold tracking-wide uppercase opacity-70">
+					{{ position() }} / {{ total }}
+				</div>
+			}
+			<div class="mt-1 text-lg font-semibold">{{ quizDoc.question }}</div>
+
+			@if (revealed()) {
+				@if (selectedOption() === quizDoc.correctOptionIndex) {
+					<p class="mt-3 text-sm font-semibold text-[var(--c-success,#16a34a)]" translate>Correct!</p>
+				} @else {
+					<p class="mt-3 text-sm font-semibold text-[var(--c-danger,#e11d48)]">
+						<span translate>Incorrect. Correct answer:</span> {{ quizDoc.options[quizDoc.correctOptionIndex] }}
+					</p>
+				}
+
+				<button pButton type="button" class="mt-3 w-full" (click)="next()">
+					<span translate>Next</span>
+				</button>
+			} @else {
+				<div class="mt-3 flex flex-col gap-2">
+					@for (option of quizDoc.options; track $index) {
+						<label class="flex items-center gap-2 rounded-card border border-[var(--c-border)] p-2 text-sm">
+							<input type="radio" pRadioButton [name]="'quiz-' + quizDoc._id" [value]="$index" [(ngModel)]="selectedOption" />
+							{{ option }}
+						</label>
+					}
+				</div>
+
+				<button pButton type="button" class="mt-3 w-full" [disabled]="selectedOption() === null" (click)="submitAnswer()">
+					<span translate>Submit answer</span>
+				</button>
+			}
+		</p-card>
+	} @else if (finished()) {
+		<div class="mx-auto flex w-full flex-col items-center gap-3 p-8 text-center">
+			<i class="pi pi-check-circle text-3xl opacity-60"></i>
+			<h1 class="m-0 text-xl font-semibold" translate>Thanks for answering!</h1>
+		</div>
+	} @else {
+		<div class="mx-auto flex w-full flex-col items-center gap-3 p-8 text-center">
+			<i class="pi pi-search text-3xl opacity-60"></i>
+			<h1 class="m-0 text-xl font-semibold" translate>Quiz not found</h1>
+		</div>
+	}
+</div>
+
+<p-dialog [visible]="showNamePrompt()" [modal]="true" [closable]="false" [header]="translateService.translate('Welcome!')()">
+	<p class="m-0 mb-3 text-sm" translate>
+		What's your name? Other attendees will see it next to your questions.
+	</p>
+	<div class="flex gap-2">
+		<input
+			pInputText
+			class="w-full"
+			[(ngModel)]="nameDraft"
+			[placeholder]="translateService.translate('Your name...')()"
+			(keyup.enter)="confirmName()"
+		/>
+		<button pButton type="button" (click)="confirmName()">
+			<span translate>Continue</span>
+		</button>
+	</div>
+</p-dialog>

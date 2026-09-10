@@ -2,7 +2,13 @@
 	@if (isOwner()) {
 		<div class="mx-auto flex w-full max-w-[960px] flex-col gap-4 p-4">
 			@if (fragment() === 'questions') {
-				<h1 class="m-0 text-xl font-semibold" translate>Audience Q&A</h1>
+				<div class="flex items-center justify-between gap-3">
+					<h1 class="m-0 text-xl font-semibold" translate>Audience Q&A</h1>
+					<a [routerLink]="['.']" class="flex items-center gap-2 text-sm opacity-70 hover:opacity-100">
+						<i class="pi pi-arrow-left"></i>
+						<span translate>Back to event</span>
+					</a>
+				</div>
 
 				<p-card>
 					<div class="text-sm font-semibold" translate>Live audience stats</div>
@@ -21,6 +27,48 @@
 						</div>
 					</div>
 				</p-card>
+
+				@if (polls().length) {
+					<p-card>
+						<div class="text-sm font-semibold" translate>Poll statistics</div>
+						<div class="mt-2 flex flex-col gap-3">
+							@for (poll of polls(); track poll._id) {
+								<div class="rounded-card border border-[var(--c-border)] p-3">
+									<span class="font-semibold">{{ poll.question }}</span>
+									<div class="mt-2 flex flex-col gap-1 text-sm">
+										@for (result of pollResults(poll); track result.optionIndex) {
+											<div class="flex justify-between">
+												<span>{{ poll.options[result.optionIndex] }}</span>
+												<span>{{ result.votes }}</span>
+											</div>
+										}
+									</div>
+								</div>
+							}
+						</div>
+					</p-card>
+				}
+
+				@if (quizzes().length) {
+					<p-card>
+						<div class="text-sm font-semibold" translate>Quiz statistics</div>
+						<div class="mt-2 flex flex-col gap-3">
+							@for (quiz of quizzes(); track quiz._id) {
+								<div class="rounded-card border border-[var(--c-border)] p-3">
+									<span class="font-semibold">{{ quiz.question }}</span>
+									<div class="mt-2 flex flex-col gap-1 text-sm">
+										@for (result of quizResults(quiz); track result.optionIndex) {
+											<div class="flex justify-between" [class.font-semibold]="result.isCorrect">
+												<span>{{ quiz.options[result.optionIndex] }}</span>
+												<span>{{ result.votes }}</span>
+											</div>
+										}
+									</div>
+								</div>
+							}
+						</div>
+					</p-card>
+				}
 
 				<p-card>
 					<div class="text-sm font-semibold" translate>Audience questions</div>
@@ -41,9 +89,16 @@
 					</div>
 				</p-card>
 			} @else {
+				<div class="flex items-center justify-between gap-3">
+					<h1 class="m-0 text-xl font-semibold" translate>Manage event</h1>
+					<a [routerLink]="['.']" fragment="questions" class="flex items-center gap-2 text-sm opacity-70 hover:opacity-100">
+						<i class="pi pi-chart-bar"></i>
+						<span translate>View statistics</span>
+					</a>
+				</div>
+
 				<p-card>
 					<div class="flex items-center justify-between gap-3">
-						<h1 class="m-0 text-xl font-semibold" translate>Manage event</h1>
 						<p-selectButton
 							[options]="stateOptions"
 							[ngModel]="eventDoc.state"
@@ -124,84 +179,222 @@
 							<span translate>Save</span>
 						</button>
 					</div>
-
-					<div class="mt-3 flex items-center gap-2 rounded-card border border-[var(--c-border)] p-2 text-sm">
-						<span class="truncate opacity-70">{{ joinUrl() }}</span>
-						<button pButton type="button" [text]="true" (click)="copyJoinLink()">
-							<i class="pi pi-copy"></i>
-							<span translate>Copy link</span>
-						</button>
-					</div>
 				</p-card>
 
 				<p-card>
 					<div class="text-sm font-semibold" translate>Polls</div>
 					<div class="mt-2 flex flex-col gap-2">
 						<input pInputText [(ngModel)]="newPollQuestion" [placeholder]="translateService.translate('Poll question')()" />
-						<input pInputText [(ngModel)]="newPollOptions" [placeholder]="translateService.translate('Options, comma separated')()" />
+						@for (option of newPollOptions(); track $index) {
+							<div class="flex items-center gap-2">
+								<input
+									pInputText
+									class="w-full"
+									[ngModel]="option"
+									(ngModelChange)="updateNewPollOption($index, $event)"
+									[placeholder]="translateService.translate('Option')() + ' ' + ($index + 1)"
+								/>
+								@if (newPollOptions().length > 2) {
+									<button pButton type="button" [text]="true" (click)="removeNewPollOption($index)">
+										<i class="pi pi-times"></i>
+									</button>
+								}
+							</div>
+						}
+						<button pButton type="button" [text]="true" class="self-start" (click)="addNewPollOption()">
+							<i class="pi pi-plus"></i>
+							<span translate>Add option</span>
+						</button>
 						<button pButton type="button" (click)="createPoll()">
-							<span translate>Create poll</span>
+							<span translate>Add question</span>
 						</button>
 					</div>
 
-					<div class="mt-3 flex flex-col gap-3">
+					<div class="mt-3 flex flex-col gap-2">
 						@for (poll of polls(); track poll._id) {
-							<div class="rounded-card border border-[var(--c-border)] p-3">
-								<div class="flex items-center justify-between gap-3">
-									<span class="font-semibold">{{ poll.question }}</span>
-									<button pButton type="button" [text]="true" (click)="togglePoll(poll)">
-										<span>{{ poll.active ? translateService.translate('Deactivate')() : translateService.translate('Activate')() }}</span>
-									</button>
-								</div>
-								<div class="mt-2 flex flex-col gap-1 text-sm">
-									@for (result of pollResults(poll); track result.optionIndex) {
-										<div class="flex justify-between">
-											<span>{{ poll.options[result.optionIndex] }}</span>
-											<span>{{ result.votes }}</span>
+							<div class="rounded-card border border-[var(--c-border)] px-3 py-2 text-sm">
+								@if (editingPollId() === poll._id) {
+									<div class="flex flex-col gap-2">
+										<input pInputText [(ngModel)]="editPollQuestion" [placeholder]="translateService.translate('Poll question')()" />
+										@for (option of editPollOptions(); track $index) {
+											<div class="flex items-center gap-2">
+												<input
+													pInputText
+													class="w-full"
+													[ngModel]="option"
+													(ngModelChange)="updateEditPollOption($index, $event)"
+													[placeholder]="translateService.translate('Option')() + ' ' + ($index + 1)"
+												/>
+												@if (editPollOptions().length > 2) {
+													<button pButton type="button" [text]="true" (click)="removeEditPollOption($index)">
+														<i class="pi pi-times"></i>
+													</button>
+												}
+											</div>
+										}
+										<button pButton type="button" [text]="true" class="self-start" (click)="addEditPollOption()">
+											<i class="pi pi-plus"></i>
+											<span translate>Add option</span>
+										</button>
+										<div class="flex gap-2">
+											<button pButton type="button" (click)="saveEditPoll()">
+												<span translate>Save</span>
+											</button>
+											<button pButton type="button" [text]="true" (click)="cancelEditPoll()">
+												<span translate>Cancel</span>
+											</button>
 										</div>
-									}
-								</div>
+									</div>
+								} @else {
+									<div class="flex items-start justify-between gap-3">
+										<div>
+											<div class="font-semibold">{{ poll.question }}</div>
+											<ul class="m-0 mt-1 list-disc pl-4 opacity-80">
+												@for (option of poll.options; track $index) {
+													<li>{{ option }}</li>
+												}
+											</ul>
+										</div>
+										<div class="flex shrink-0 gap-1">
+											<button pButton type="button" [text]="true" (click)="startEditPoll(poll)">
+												<i class="pi pi-pencil"></i>
+											</button>
+											<button pButton type="button" severity="danger" [text]="true" (click)="deletePoll(poll)">
+												<i class="pi pi-trash"></i>
+											</button>
+										</div>
+									</div>
+								}
 							</div>
 						}
 					</div>
+
+					@if (polls().length) {
+						<button pButton type="button" class="mt-3 w-full" (click)="togglePollGroup()">
+							<span>{{ allPollsActive() ? translateService.translate('Deactivate poll')() : translateService.translate('Activate poll')() }}</span>
+						</button>
+					}
 				</p-card>
 
 				<p-card>
 					<div class="text-sm font-semibold" translate>Quizzes</div>
 					<div class="mt-2 flex flex-col gap-2">
 						<input pInputText [(ngModel)]="newQuizQuestion" [placeholder]="translateService.translate('Quiz question')()" />
-						<input pInputText [(ngModel)]="newQuizOptions" [placeholder]="translateService.translate('Options, comma separated')()" />
-						<input
-							pInputText
-							type="number"
-							[(ngModel)]="newQuizCorrectIndex"
-							[placeholder]="translateService.translate('Correct option index (0-based)')()"
-						/>
+						@for (option of newQuizOptions(); track $index) {
+							<div class="flex items-center gap-2">
+								<input
+									type="radio"
+									pRadioButton
+									name="new-quiz-correct"
+									[value]="$index"
+									[(ngModel)]="newQuizCorrectIndex"
+									[title]="translateService.translate('Correct answer')()"
+								/>
+								<input
+									pInputText
+									class="w-full"
+									[ngModel]="option"
+									(ngModelChange)="updateNewQuizOption($index, $event)"
+									[placeholder]="translateService.translate('Option')() + ' ' + ($index + 1)"
+								/>
+								@if (newQuizOptions().length > 2) {
+									<button pButton type="button" [text]="true" (click)="removeNewQuizOption($index)">
+										<i class="pi pi-times"></i>
+									</button>
+								}
+							</div>
+						}
+						<button pButton type="button" [text]="true" class="self-start" (click)="addNewQuizOption()">
+							<i class="pi pi-plus"></i>
+							<span translate>Add option</span>
+						</button>
+						<label class="flex items-center gap-2 text-sm">
+							<p-checkbox [binary]="true" [(ngModel)]="newQuizRevealAnswer"></p-checkbox>
+							<span translate>Show correct answer to participants</span>
+						</label>
 						<button pButton type="button" (click)="createQuiz()">
 							<span translate>Create quiz</span>
 						</button>
 					</div>
 
-					<div class="mt-3 flex flex-col gap-3">
+					<div class="mt-3 flex flex-col gap-2">
 						@for (quiz of quizzes(); track quiz._id) {
-							<div class="rounded-card border border-[var(--c-border)] p-3">
-								<div class="flex items-center justify-between gap-3">
-									<span class="font-semibold">{{ quiz.question }}</span>
-									<button pButton type="button" [text]="true" (click)="toggleQuiz(quiz)">
-										<span>{{ quiz.active ? translateService.translate('Deactivate')() : translateService.translate('Activate')() }}</span>
-									</button>
-								</div>
-								<div class="mt-2 flex flex-col gap-1 text-sm">
-									@for (result of quizResults(quiz); track result.optionIndex) {
-										<div class="flex justify-between" [class.font-semibold]="result.isCorrect">
-											<span>{{ quiz.options[result.optionIndex] }}</span>
-											<span>{{ result.votes }}</span>
+							<div class="rounded-card border border-[var(--c-border)] px-3 py-2 text-sm">
+								@if (editingQuizId() === quiz._id) {
+									<div class="flex flex-col gap-2">
+										<input pInputText [(ngModel)]="editQuizQuestion" [placeholder]="translateService.translate('Quiz question')()" />
+										@for (option of editQuizOptions(); track $index) {
+											<div class="flex items-center gap-2">
+												<input
+													type="radio"
+													pRadioButton
+													name="edit-quiz-correct"
+													[value]="$index"
+													[(ngModel)]="editQuizCorrectIndex"
+													[title]="translateService.translate('Correct answer')()"
+												/>
+												<input
+													pInputText
+													class="w-full"
+													[ngModel]="option"
+													(ngModelChange)="updateEditQuizOption($index, $event)"
+													[placeholder]="translateService.translate('Option')() + ' ' + ($index + 1)"
+												/>
+												@if (editQuizOptions().length > 2) {
+													<button pButton type="button" [text]="true" (click)="removeEditQuizOption($index)">
+														<i class="pi pi-times"></i>
+													</button>
+												}
+											</div>
+										}
+										<button pButton type="button" [text]="true" class="self-start" (click)="addEditQuizOption()">
+											<i class="pi pi-plus"></i>
+											<span translate>Add option</span>
+										</button>
+										<label class="flex items-center gap-2 text-sm">
+											<p-checkbox [binary]="true" [(ngModel)]="editQuizRevealAnswer"></p-checkbox>
+											<span translate>Show correct answer to participants</span>
+										</label>
+										<div class="flex gap-2">
+											<button pButton type="button" (click)="saveEditQuiz()">
+												<span translate>Save</span>
+											</button>
+											<button pButton type="button" [text]="true" (click)="cancelEditQuiz()">
+												<span translate>Cancel</span>
+											</button>
 										</div>
-									}
-								</div>
+									</div>
+								} @else {
+									<div class="flex items-start justify-between gap-3">
+										<div>
+											<span class="font-semibold">{{ quiz.question }}</span>
+											<ul class="m-0 mt-1 list-disc pl-4 opacity-80">
+												@for (option of quiz.options; track $index) {
+													<li [class.font-semibold]="$index === quiz.correctOptionIndex">
+														{{ option }}@if ($index === quiz.correctOptionIndex) { <i class="pi pi-check text-xs"></i> }
+													</li>
+												}
+											</ul>
+										</div>
+										<div class="flex shrink-0 gap-1">
+											<button pButton type="button" [text]="true" (click)="startEditQuiz(quiz)">
+												<i class="pi pi-pencil"></i>
+											</button>
+											<button pButton type="button" severity="danger" [text]="true" (click)="deleteQuiz(quiz)">
+												<i class="pi pi-trash"></i>
+											</button>
+										</div>
+									</div>
+								}
 							</div>
 						}
 					</div>
+
+					@if (quizzes().length) {
+						<button pButton type="button" class="mt-3 w-full" (click)="toggleQuizGroup()">
+							<span>{{ allQuizzesActive() ? translateService.translate('Deactivate quiz')() : translateService.translate('Activate quiz')() }}</span>
+						</button>
+					}
 				</p-card>
 
 				<button pButton type="button" class="w-full" [disabled]="!scheduleValid()" (click)="startSession()">

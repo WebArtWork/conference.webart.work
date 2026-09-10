@@ -1,11 +1,13 @@
 import { StoredEntity } from '../local-store';
 
-/** Owner-created quiz: like a poll, but with a correct answer. */
+/** Owner-created quiz: question + options with a marked correct answer. */
 export interface Quiz extends StoredEntity {
 	eventId: string;
 	question: string;
 	options: string[];
 	correctOptionIndex: number;
+	/** Whether visitors see if their pick was correct right after answering. */
+	revealAnswer: boolean;
 	active: boolean;
 }
 

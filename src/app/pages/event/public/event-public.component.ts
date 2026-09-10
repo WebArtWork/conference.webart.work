@@ -161,6 +161,14 @@ export class EventPublicComponent {
 			.some((entry) => entry.quizId === quizId && entry.deviceId === this.deviceIdService.deviceId);
 	}
 
+	/** The visitor's own pick for a quiz, once answered — used to reveal correctness when the owner enabled it. */
+	myQuizAnswerOption(quizId: string): number | null {
+		const entry = this._quizAnswerService
+			.all()
+			.find((item) => item.quizId === quizId && item.deviceId === this.deviceIdService.deviceId);
+		return entry ? entry.optionIndex : null;
+	}
+
 	confirmName(): void {
 		this.deviceIdService.setVisitorName(this.nameDraft().trim());
 		this.showNamePrompt.set(false);

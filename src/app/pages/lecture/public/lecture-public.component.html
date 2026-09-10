@@ -52,6 +52,36 @@
 			</a>
 		}
 
+		@if (activePolls().length) {
+			@if (allPollsAnswered()) {
+				<p-card>
+					<div class="flex items-center justify-between gap-3">
+						<div class="font-semibold" translate>Poll</div>
+						<p-tag severity="success" [value]="translateService.translate('Answered')()"></p-tag>
+					</div>
+				</p-card>
+			} @else {
+				<button pButton type="button" class="w-full" (click)="goToPolls()">
+					<span translate>Take poll</span>
+				</button>
+			}
+		}
+
+		@if (activeQuizzes().length) {
+			@if (allQuizzesAnswered()) {
+				<p-card>
+					<div class="flex items-center justify-between gap-3">
+						<div class="font-semibold" translate>Quiz</div>
+						<p-tag severity="success" [value]="translateService.translate('Answered')()"></p-tag>
+					</div>
+				</p-card>
+			} @else {
+				<button pButton type="button" class="w-full" (click)="goToQuizzes()">
+					<span translate>Take quiz</span>
+				</button>
+			}
+		}
+
 		<p-card>
 			<div class="text-xs font-semibold tracking-wide uppercase opacity-70" translate>Audience questions</div>
 

@@ -152,6 +152,7 @@ export const SEED_QUIZZES: Quiz[] = [
 		question: 'Which function creates a writable signal?',
 		options: ['computed()', 'signal()', 'effect()'],
 		correctOptionIndex: 1,
+		revealAnswer: false,
 		active: true,
 	},
 ];
