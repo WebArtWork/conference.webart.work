@@ -91,7 +91,6 @@ export const routes: Routes = [
 	},
 	{
 		path: '',
-		canActivate: [authenticatedGuard],
 		loadComponent: () =>
 			import('./layouts/user/user.component').then(
 				(m) => m.UserComponent,
@@ -137,32 +136,6 @@ export const routes: Routes = [
 					),
 			},
 			{
-				path: 'conferences',
-				canActivate: [MetaGuard],
-				data: {
-					meta: {
-						title: 'Конференції',
-					},
-				},
-				loadChildren: () =>
-					import('./pages/user/conferences/conferences.routes').then(
-						(m) => m.routes,
-					),
-			},
-			{
-				path: 'lectures-manage',
-				canActivate: [MetaGuard],
-				data: {
-					meta: {
-						title: 'Керування лекціями',
-					},
-				},
-				loadChildren: () =>
-					import('./pages/user/lectures-manage/lectures-manage.routes').then(
-						(m) => m.routes,
-					),
-			},
-			{
 				path: 'for-attendees',
 				canActivate: [MetaGuard],
 				data: {
@@ -201,6 +174,42 @@ export const routes: Routes = [
 				},
 				loadChildren: () =>
 					import('./pages/user/share/share.routes').then(
+						(m) => m.routes,
+					),
+			},
+		],
+	},
+	{
+		path: '',
+		canActivate: [authenticatedGuard],
+		loadComponent: () =>
+			import('./layouts/user/user.component').then(
+				(m) => m.UserComponent,
+			),
+		children: [
+			{
+				path: 'conferences',
+				canActivate: [MetaGuard],
+				data: {
+					meta: {
+						title: 'Конференції',
+					},
+				},
+				loadChildren: () =>
+					import('./pages/user/conferences/conferences.routes').then(
+						(m) => m.routes,
+					),
+			},
+			{
+				path: 'lectures-manage',
+				canActivate: [MetaGuard],
+				data: {
+					meta: {
+						title: 'Керування лекціями',
+					},
+				},
+				loadChildren: () =>
+					import('./pages/user/lectures-manage/lectures-manage.routes').then(
 						(m) => m.routes,
 					),
 			},
