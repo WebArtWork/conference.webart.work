@@ -37,9 +37,14 @@ export abstract class LocalStoreService<T extends StoredEntity> {
 	}
 
 	create(entity: Omit<T, '_id'> & Partial<Pick<T, '_id'>>): T {
-		const created = { ...entity, _id: entity._id || this._createId() } as T;
+		const created = { ...entity, _id: entity._id || this.generateId(entity) } as T;
 		this._save([...this.items(), created]);
 		return created;
+	}
+
+	/** Hook for subclasses that want friendlier ids than a random UUID. */
+	protected generateId(_entity: Omit<T, '_id'> & Partial<Pick<T, '_id'>>): string {
+		return this._createId();
 	}
 
 	update(id: string, patch: Partial<T>): T | undefined {
