@@ -89,6 +89,9 @@ importers:
       '@wawjs/ngx-translate':
         specifier: 22.0.5
         version: 22.0.5(58c20ddbf60d7bbb73f8591cb3fd446d)
+      '@wawjs/ngx-ui':
+        specifier: 22.0.5
+        version: 22.0.5(e0c2dbf79039a55461402a5c7d0473dc)
       ace-builds:
         specifier: ^1.43.5
         version: 1.44.0
