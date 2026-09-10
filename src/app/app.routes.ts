@@ -177,16 +177,6 @@ export const routes: Routes = [
 						(m) => m.routes,
 					),
 			},
-		],
-	},
-	{
-		path: '',
-		canActivate: [authenticatedGuard],
-		loadComponent: () =>
-			import('./layouts/user/user.component').then(
-				(m) => m.UserComponent,
-			),
-		children: [
 			{
 				path: 'conferences',
 				canActivate: [MetaGuard],
@@ -200,6 +190,16 @@ export const routes: Routes = [
 						(m) => m.routes,
 					),
 			},
+		],
+	},
+	{
+		path: '',
+		canActivate: [authenticatedGuard],
+		loadComponent: () =>
+			import('./layouts/user/user.component').then(
+				(m) => m.UserComponent,
+			),
+		children: [
 			{
 				path: 'lectures-manage',
 				canActivate: [MetaGuard],
