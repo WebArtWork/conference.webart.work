@@ -59,7 +59,7 @@
 									<div class="mt-2 flex flex-col gap-1 text-sm">
 										@for (result of quizResults(quiz); track result.optionIndex) {
 											<div class="flex justify-between" [class.font-semibold]="result.isCorrect">
-												<span>{{ quiz.options[result.optionIndex] }}</span>
+												<span>{{ quiz.options[result.optionIndex] }}@if (result.isCorrect) { <i class="pi pi-check text-xs"></i> }</span>
 												<span>{{ result.votes }}</span>
 											</div>
 										}
