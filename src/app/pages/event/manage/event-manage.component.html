@@ -1,11 +1,6 @@
 @if (event(); as eventDoc) {
 	@if (isOwner()) {
 		<div class="mx-auto flex w-full max-w-[960px] flex-col gap-4 p-4">
-			<button pButton type="button" [text]="true" class="self-start" routerLink="/lectures-manage">
-				<i class="pi pi-arrow-left"></i>
-				<span translate>Manage lectures</span>
-			</button>
-
 			@if (fragment() === 'questions') {
 				<h1 class="m-0 text-xl font-semibold" translate>Audience Q&A</h1>
 
