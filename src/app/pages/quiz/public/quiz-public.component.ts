@@ -8,6 +8,7 @@ import { DialogModule } from '@wawjs/ngx-prime/dialog';
 import { InputTextModule } from '@wawjs/ngx-prime/inputtext';
 import { RadioButtonModule } from '@wawjs/ngx-prime/radiobutton';
 import { TranslateDirective, TranslateService } from '@wawjs/ngx-translate';
+import { withDomain } from '../../../conference/conference-domain';
 import { DeviceIdService } from '../../../conference/device-id.service';
 import { QuizAnswerService, QuizService } from '../../../conference/quiz/quiz.service';
 
@@ -65,7 +66,7 @@ export class QuizPublicComponent {
 	constructor() {
 		// Fallback load: the lecture page already preloads active quizzes before
 		// linking here, but a visitor can also land on this URL directly.
-		this._quizService.get({}).subscribe();
+		this._quizService.get({ query: withDomain() }).subscribe();
 
 		effect(() => {
 			const quizDoc = this.quiz();

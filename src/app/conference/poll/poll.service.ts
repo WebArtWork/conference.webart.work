@@ -1,5 +1,6 @@
 import { Injectable, inject } from '@angular/core';
-import { CrudService } from '@wawjs/ngx-crud';
+import { CrudService, CrudOptions } from '@wawjs/ngx-crud';
+import { CONFERENCE_DOMAIN, withDomain } from '../conference-domain';
 import { DeviceIdService } from '../device-id.service';
 import { Poll, PollAnswer, PollResult } from './poll.interface';
 
@@ -10,9 +11,13 @@ export class PollService extends CrudService<Poll> {
 		super({ name: 'companyconferencepoll' });
 	}
 
+	protected override beforeCreate(doc: Poll, options: CrudOptions<Poll>) {
+		return super.beforeCreate({ ...doc, domain: CONFERENCE_DOMAIN } as Poll, options);
+	}
+
 	/** Loads (or reloads) every poll for one event — owner sees all, visitors only the active ones. */
 	loadEvent(eventId: string): void {
-		this.get({ query: `eventId=${encodeURIComponent(eventId)}` }).subscribe();
+		this.get({ query: withDomain(`eventId=${encodeURIComponent(eventId)}`) }).subscribe();
 	}
 
 	byEvent(eventId: string): Poll[] {
@@ -39,9 +44,13 @@ export class PollAnswerService extends CrudService<PollAnswer> {
 		super({ name: 'companyconferenceanswer' });
 	}
 
+	protected override beforeCreate(doc: PollAnswer, options: CrudOptions<PollAnswer>) {
+		return super.beforeCreate({ ...doc, domain: CONFERENCE_DOMAIN } as PollAnswer, options);
+	}
+
 	/** Owner-only: loads every answer for this company, to tally results. */
 	loadAll(): void {
-		this.get({}).subscribe();
+		this.get({ query: withDomain() }).subscribe();
 	}
 
 	all(): PollAnswer[] {

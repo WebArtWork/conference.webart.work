@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
-import { CrudService } from '@wawjs/ngx-crud';
+import { CrudOptions, CrudService } from '@wawjs/ngx-crud';
 import { HttpService } from '@wawjs/ngx-http';
+import { CONFERENCE_DOMAIN, withDomain } from '../conference-domain';
 import { DeviceIdService } from '../device-id.service';
 import { Question } from './question.interface';
 
@@ -19,9 +20,13 @@ export class QuestionService extends CrudService<Question> {
 		super({ name: 'companyconferencequestion' });
 	}
 
+	protected override beforeCreate(doc: Question, options: CrudOptions<Question>) {
+		return super.beforeCreate({ ...doc, domain: CONFERENCE_DOMAIN } as Question, options);
+	}
+
 	/** Loads (or reloads) the public question wall for one event/lecture. */
 	loadEvent(eventId: string): void {
-		this.get({ query: `eventId=${encodeURIComponent(eventId)}` }).subscribe();
+		this.get({ query: withDomain(`eventId=${encodeURIComponent(eventId)}`) }).subscribe();
 	}
 
 	/** Public questions for an event, ordered by like count descending. */
@@ -51,7 +56,9 @@ export class QuestionService extends CrudService<Question> {
 		}
 
 		this.addDoc({ ...question, likes: question.likes + 1, likedBy: [...question.likedBy, deviceId] });
-		this._http.post('/api/companyconferencequestion/like', { _id: question._id, deviceId }).subscribe();
+		this._http
+			.post('/api/companyconferencequestion/like', { _id: question._id, deviceId, domain: CONFERENCE_DOMAIN })
+			.subscribe();
 	}
 
 	/** Owner-only moderation: removes a question from the public page. */

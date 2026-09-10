@@ -1,5 +1,6 @@
 import { Injectable, inject } from '@angular/core';
-import { CrudService } from '@wawjs/ngx-crud';
+import { CrudOptions, CrudService } from '@wawjs/ngx-crud';
+import { CONFERENCE_DOMAIN, withDomain } from './conference-domain';
 import { Conference } from './conference.interface';
 import { generateLocalId } from './local-store';
 
@@ -7,6 +8,10 @@ import { generateLocalId } from './local-store';
 class ConferenceCrud extends CrudService<Conference> {
 	constructor() {
 		super({ name: 'companyconference' });
+	}
+
+	protected override beforeCreate(doc: Conference, options: CrudOptions<Conference>) {
+		return super.beforeCreate({ ...doc, domain: CONFERENCE_DOMAIN } as Conference, options);
 	}
 }
 
@@ -23,7 +28,7 @@ export class ConferenceService {
 	readonly items = this._crud.documents;
 
 	constructor() {
-		this._crud.get({}).subscribe();
+		this._crud.get({ query: withDomain() }).subscribe();
 	}
 
 	all(): Conference[] {

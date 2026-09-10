@@ -1,5 +1,6 @@
 import { Injectable, inject } from '@angular/core';
-import { CrudService } from '@wawjs/ngx-crud';
+import { CrudOptions, CrudService } from '@wawjs/ngx-crud';
+import { CONFERENCE_DOMAIN, withDomain } from '../conference-domain';
 import { generateLocalId } from '../local-store';
 import { Event } from './event.interface';
 
@@ -7,6 +8,10 @@ import { Event } from './event.interface';
 class EventCrud extends CrudService<Event> {
 	constructor() {
 		super({ name: 'companyconferenceevent' });
+	}
+
+	protected override beforeCreate(doc: Event, options: CrudOptions<Event>) {
+		return super.beforeCreate({ ...doc, domain: CONFERENCE_DOMAIN } as Event, options);
 	}
 }
 
@@ -23,7 +28,7 @@ export class EventService {
 	readonly items = this._crud.documents;
 
 	constructor() {
-		this._crud.get({}).subscribe();
+		this._crud.get({ query: withDomain() }).subscribe();
 	}
 
 	all(): Event[] {

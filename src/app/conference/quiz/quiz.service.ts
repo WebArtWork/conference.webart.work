@@ -1,5 +1,6 @@
 import { Injectable, inject } from '@angular/core';
-import { CrudService } from '@wawjs/ngx-crud';
+import { CrudService, CrudOptions } from '@wawjs/ngx-crud';
+import { CONFERENCE_DOMAIN, withDomain } from '../conference-domain';
 import { DeviceIdService } from '../device-id.service';
 import { PollAnswerService } from '../poll/poll.service';
 import { Quiz, QuizAnswer, QuizResult } from './quiz.interface';
@@ -11,9 +12,13 @@ export class QuizService extends CrudService<Quiz> {
 		super({ name: 'companyconferencequiz' });
 	}
 
+	protected override beforeCreate(doc: Quiz, options: CrudOptions<Quiz>) {
+		return super.beforeCreate({ ...doc, domain: CONFERENCE_DOMAIN } as Quiz, options);
+	}
+
 	/** Loads (or reloads) every quiz for one event — owner sees all, visitors only the active ones. */
 	loadEvent(eventId: string): void {
-		this.get({ query: `eventId=${encodeURIComponent(eventId)}` }).subscribe();
+		this.get({ query: withDomain(`eventId=${encodeURIComponent(eventId)}`) }).subscribe();
 	}
 
 	byEvent(eventId: string): Quiz[] {

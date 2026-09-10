@@ -8,6 +8,7 @@ import { DialogModule } from '@wawjs/ngx-prime/dialog';
 import { InputTextModule } from '@wawjs/ngx-prime/inputtext';
 import { RadioButtonModule } from '@wawjs/ngx-prime/radiobutton';
 import { TranslateDirective, TranslateService } from '@wawjs/ngx-translate';
+import { withDomain } from '../../../conference/conference-domain';
 import { DeviceIdService } from '../../../conference/device-id.service';
 import { PollAnswerService, PollService } from '../../../conference/poll/poll.service';
 
@@ -64,7 +65,7 @@ export class PollPublicComponent {
 	constructor() {
 		// Fallback load: the lecture page already preloads active polls before
 		// linking here, but a visitor can also land on this URL directly.
-		this._pollService.get({}).subscribe();
+		this._pollService.get({ query: withDomain() }).subscribe();
 
 		effect(() => {
 			const pollDoc = this.poll();
