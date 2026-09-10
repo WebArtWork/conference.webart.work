@@ -56,6 +56,11 @@ export class SettingsComponent {
 
 	readonly isLanguageListOpen = signal(false);
 
+	/** Password change only makes sense for a signed-in account, not a guest browsing without registration. */
+	readonly isAuthenticated = signal(
+		typeof localStorage !== 'undefined' && !!localStorage.getItem('waw_user'),
+	);
+
 	readonly securityModel = signal<SecurityModel>({
 		currentPassword: '',
 		newPassword: '',
