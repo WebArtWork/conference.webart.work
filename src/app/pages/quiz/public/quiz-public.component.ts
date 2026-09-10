@@ -46,7 +46,7 @@ export class QuizPublicComponent {
 	readonly lectureId = this._route.snapshot.queryParamMap.get('lecture');
 
 	private readonly _quizIds = this._resolveQuizIds();
-	readonly currentIndex = signal(this._firstUnansweredIndex(this._quizIds, 0));
+	readonly currentIndex = signal(0);
 	readonly total = this._quizIds.length;
 
 	readonly quiz = computed(() => {
@@ -63,9 +63,23 @@ export class QuizPublicComponent {
 	private _pendingInteraction: (() => void) | null = null;
 
 	constructor() {
+		// Fallback load: the lecture page already preloads active quizzes before
+		// linking here, but a visitor can also land on this URL directly.
+		this._quizService.get({}).subscribe();
+
 		effect(() => {
 			const quizDoc = this.quiz();
 			this._metaService.applyMeta({ title: quizDoc ? quizDoc.question : this.translateService.translate('Quiz')() });
+		});
+
+		// Skips quizzes already answered from an earlier visit as soon as the
+		// data is known. Guarded by `revealed` so it never skips past the quiz
+		// this visitor *just* answered while its correct/incorrect screen is showing.
+		effect(() => {
+			const quizDoc = this.quiz();
+			if (quizDoc && this.quizAnswerService.hasAnswered(quizDoc) && !this.revealed()) {
+				this.currentIndex.update((index) => index + 1);
+			}
 		});
 
 		effect(() => {
@@ -106,7 +120,7 @@ export class QuizPublicComponent {
 
 	private _advance(): void {
 		this.selectedOption.set(null);
-		this.currentIndex.set(this._firstUnansweredIndex(this._quizIds, this.currentIndex() + 1));
+		this.currentIndex.update((index) => index + 1);
 	}
 
 	private _withVisitorName(action: () => void): void {
@@ -130,16 +144,5 @@ export class QuizPublicComponent {
 
 		const pathId = this._route.snapshot.paramMap.get('quizId');
 		return pathId ? [pathId] : [];
-	}
-
-	/** Skips over quizzes the visitor already answered, e.g. from an earlier visit. */
-	private _firstUnansweredIndex(ids: string[], from: number): number {
-		for (let index = from; index < ids.length; index++) {
-			const quizDoc = this._quizService.byId(ids[index]);
-			if (quizDoc && !this.quizAnswerService?.hasAnswered(quizDoc)) {
-				return index;
-			}
-		}
-		return ids.length;
 	}
 }

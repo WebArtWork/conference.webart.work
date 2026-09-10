@@ -8,9 +8,15 @@ export interface Poll extends StoredEntity {
 	active: boolean;
 }
 
-/** A single visitor answer. Owner-only, never exposed to visitors. */
+/**
+ * A single visitor answer. Owner-only, never exposed to visitors.
+ * Backed by the shared `companyconferenceanswer` resource, also used by
+ * quizzes — `kind` tells them apart and only the matching id field is set.
+ */
 export interface PollAnswer extends StoredEntity {
-	pollId: string;
+	kind: 'poll' | 'quiz';
+	pollId?: string;
+	quizId?: string;
 	optionIndex: number;
 	deviceId: string;
 }

@@ -1,36 +1,63 @@
 import { Injectable, inject } from '@angular/core';
-import { SEED_QUIZ_ANSWERS, SEED_QUIZZES } from '../../../data/conference/seed';
-import { LocalStoreService } from '../local-store';
+import { CrudService } from '@wawjs/ngx-crud';
 import { DeviceIdService } from '../device-id.service';
+import { PollAnswerService } from '../poll/poll.service';
 import { Quiz, QuizAnswer, QuizResult } from './quiz.interface';
 
+/** Owner-managed quizzes, backed by the real backend so they sync across devices. */
 @Injectable({ providedIn: 'root' })
-export class QuizService extends LocalStoreService<Quiz> {
+export class QuizService extends CrudService<Quiz> {
 	constructor() {
-		super('conference:quizzes', SEED_QUIZZES);
+		super({ name: 'companyconferencequiz' });
+	}
+
+	/** Loads (or reloads) every quiz for one event — owner sees all, visitors only the active ones. */
+	loadEvent(eventId: string): void {
+		this.get({ query: `eventId=${encodeURIComponent(eventId)}` }).subscribe();
 	}
 
 	byEvent(eventId: string): Quiz[] {
-		return this.all().filter((quiz) => quiz.eventId === eventId);
+		return this.documents().filter((quiz) => quiz.eventId === eventId);
+	}
+
+	byId(id: string): Quiz | undefined {
+		return this.documents().find((quiz) => quiz._id === id);
 	}
 }
 
+/**
+ * Quiz answers share the exact same backend resource (and the same
+ * `PollAnswerService` CrudService instance) as poll answers — only `kind`
+ * differs. This wraps that shared instance with the quiz-flavored API the
+ * rest of the app expects.
+ */
 @Injectable({ providedIn: 'root' })
-export class QuizAnswerService extends LocalStoreService<QuizAnswer> {
+export class QuizAnswerService {
+	private readonly _answers = inject(PollAnswerService);
 	private readonly _deviceIdService = inject(DeviceIdService);
 
-	constructor() {
-		super('conference:quiz-answers', SEED_QUIZ_ANSWERS);
+	all(): QuizAnswer[] {
+		return this._answers.documents().filter((entry) => entry.kind === 'quiz');
+	}
+
+	/** Owner-only: loads every answer for this company, to tally results. */
+	loadAll(): void {
+		this._answers.loadAll();
 	}
 
 	/** Visitor write-only action. Correctness is never returned from this call. */
 	answer(quiz: Quiz, optionIndex: number): void {
-		const deviceId = this._deviceIdService.deviceId;
-		if (this.all().some((entry) => entry.quizId === quiz._id && entry.deviceId === deviceId)) {
+		if (this.hasAnswered(quiz)) {
 			return;
 		}
 
-		this.create({ quizId: quiz._id, optionIndex, deviceId });
+		this._answers.create({
+			_id: '',
+			kind: 'quiz',
+			quizId: quiz._id,
+			optionIndex,
+			deviceId: this._deviceIdService.deviceId,
+		});
 	}
 
 	hasAnswered(quiz: Quiz): boolean {
@@ -42,9 +69,7 @@ export class QuizAnswerService extends LocalStoreService<QuizAnswer> {
 	results(quiz: Quiz): QuizResult[] {
 		return quiz.options.map((_option, optionIndex) => ({
 			optionIndex,
-			votes: this.all().filter(
-				(entry) => entry.quizId === quiz._id && entry.optionIndex === optionIndex,
-			).length,
+			votes: this.all().filter((entry) => entry.quizId === quiz._id && entry.optionIndex === optionIndex).length,
 			isCorrect: optionIndex === quiz.correctOptionIndex,
 		}));
 	}

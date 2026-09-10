@@ -107,6 +107,17 @@ export class EventPublicComponent {
 				description: eventDoc.description || undefined,
 			});
 		});
+
+		effect(() => {
+			const eventDoc = this.event();
+			if (!eventDoc) {
+				return;
+			}
+
+			this._questionService.loadEvent(eventDoc._id);
+			this._pollService.loadEvent(eventDoc._id);
+			this._quizService.loadEvent(eventDoc._id);
+		});
 	}
 
 	submitQuestion(): void {

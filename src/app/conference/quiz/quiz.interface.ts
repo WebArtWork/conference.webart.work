@@ -1,4 +1,5 @@
 import { StoredEntity } from '../local-store';
+import { PollAnswer } from '../poll/poll.interface';
 
 /** Owner-created quiz: question + options with a marked correct answer. */
 export interface Quiz extends StoredEntity {
@@ -11,12 +12,8 @@ export interface Quiz extends StoredEntity {
 	active: boolean;
 }
 
-/** A single visitor answer. Owner-only, never exposed to visitors. */
-export interface QuizAnswer extends StoredEntity {
-	quizId: string;
-	optionIndex: number;
-	deviceId: string;
-}
+/** A single visitor answer. Same shared shape as `PollAnswer` (`kind: 'quiz'`). */
+export type QuizAnswer = PollAnswer;
 
 /** Owner-only aggregate result for one quiz option. */
 export interface QuizResult {

@@ -87,8 +87,13 @@ export abstract class LocalStoreService<T extends StoredEntity> {
 	}
 
 	private _createId(): string {
-		return typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
-			? crypto.randomUUID()
-			: `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+		return generateLocalId();
 	}
+}
+
+/** Shared id generator for backend-backed facades that create entities optimistically. */
+export function generateLocalId(): string {
+	return typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+		? crypto.randomUUID()
+		: `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }

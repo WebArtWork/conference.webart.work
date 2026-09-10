@@ -1,26 +1,39 @@
 import { Injectable, inject } from '@angular/core';
-import { SEED_QUESTIONS } from '../../../data/conference/seed';
-import { LocalStoreService } from '../local-store';
+import { CrudService } from '@wawjs/ngx-crud';
+import { HttpService } from '@wawjs/ngx-http';
 import { DeviceIdService } from '../device-id.service';
 import { Question } from './question.interface';
 
+/**
+ * Audience questions, backed by the real backend so the Q&A wall is shared
+ * across every visitor and syncs across the owner's devices. Anyone (owner
+ * or anonymous visitor) may post or like a question; only the owner may
+ * delete one.
+ */
 @Injectable({ providedIn: 'root' })
-export class QuestionService extends LocalStoreService<Question> {
+export class QuestionService extends CrudService<Question> {
 	private readonly _deviceIdService = inject(DeviceIdService);
+	private readonly _http = inject(HttpService);
 
 	constructor() {
-		super('conference:questions', SEED_QUESTIONS);
+		super({ name: 'companyconferencequestion' });
+	}
+
+	/** Loads (or reloads) the public question wall for one event/lecture. */
+	loadEvent(eventId: string): void {
+		this.get({ query: `eventId=${encodeURIComponent(eventId)}` }).subscribe();
 	}
 
 	/** Public questions for an event, ordered by like count descending. */
 	byEvent(eventId: string): Question[] {
-		return this.all()
+		return this.documents()
 			.filter((question) => question.eventId === eventId)
 			.sort((a, b) => b.likes - a.likes);
 	}
 
-	ask(eventId: string, text: string, authorName: string): Question {
-		return this.create({
+	ask(eventId: string, text: string, authorName: string): void {
+		this.create({
+			_id: '',
 			eventId,
 			text,
 			authorName,
@@ -30,21 +43,19 @@ export class QuestionService extends LocalStoreService<Question> {
 		});
 	}
 
-	/** Upvotes a question. Only one like per device id is allowed. */
+	/** Upvotes a question. The server enforces one like per device and does the increment atomically. */
 	like(question: Question): void {
 		const deviceId = this._deviceIdService.deviceId;
 		if (question.likedBy.includes(deviceId)) {
 			return;
 		}
 
-		this.update(question._id, {
-			likes: question.likes + 1,
-			likedBy: [...question.likedBy, deviceId],
-		});
+		this.addDoc({ ...question, likes: question.likes + 1, likedBy: [...question.likedBy, deviceId] });
+		this._http.post('/api/companyconferencequestion/like', { _id: question._id, deviceId }).subscribe();
 	}
 
 	/** Owner-only moderation: removes a question from the public page. */
 	removeQuestion(question: Question): void {
-		this.remove(question._id);
+		this.delete(question).subscribe();
 	}
 }

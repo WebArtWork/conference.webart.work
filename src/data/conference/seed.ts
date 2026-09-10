@@ -2,14 +2,14 @@ import { Chapter, ChapterReaction } from '../../app/conference/chapter/chapter.i
 import { Conference } from '../../app/conference/conference.interface';
 import { Event } from '../../app/conference/event/event.interface';
 import { Lecture } from '../../app/conference/lecture/lecture.interface';
-import { Poll, PollAnswer } from '../../app/conference/poll/poll.interface';
-import { Question } from '../../app/conference/question/question.interface';
-import { Quiz, QuizAnswer } from '../../app/conference/quiz/quiz.interface';
 
 /**
- * Static demo fixtures for the Conference domain. There is no backend for
- * this domain: each entity service seeds its `localStorage`-backed store
- * from the matching array below the first time it runs in a browser.
+ * Static demo fixtures for the parts of the Conference domain that still
+ * have no backend (conferences, events, lectures, chapters): each entity
+ * service seeds its `localStorage`-backed store from the matching array
+ * below the first time it runs in a browser. Questions, polls, quizzes, and
+ * their answers are backend-backed now (see `conference/question`,
+ * `conference/poll`, `conference/quiz`) and carry no local seed data.
  */
 
 export const SEED_CONFERENCES: Conference[] = [
@@ -111,50 +111,3 @@ export const SEED_CHAPTERS: Chapter[] = [
 ];
 
 export const SEED_CHAPTER_REACTIONS: ChapterReaction[] = [];
-
-export const SEED_QUESTIONS: Question[] = [
-	{
-		_id: 'que-demo-1',
-		eventId: 'evt-demo-1',
-		text: 'How does this compare to RxJS-based state management?',
-		authorName: 'Max',
-		likes: 4,
-		likedBy: [],
-		createdAt: new Date().toISOString(),
-	},
-	{
-		_id: 'que-demo-2',
-		eventId: 'evt-demo-1',
-		text: 'Any plans to support signal-based forms in production soon?',
-		authorName: 'Ira',
-		likes: 1,
-		likedBy: [],
-		createdAt: new Date().toISOString(),
-	},
-];
-
-export const SEED_POLLS: Poll[] = [
-	{
-		_id: 'pol-demo-1',
-		eventId: 'evt-demo-1',
-		question: 'What should we cover next?',
-		options: ['More signals internals', 'Testing strategies', 'Migration stories'],
-		active: true,
-	},
-];
-
-export const SEED_POLL_ANSWERS: PollAnswer[] = [];
-
-export const SEED_QUIZZES: Quiz[] = [
-	{
-		_id: 'qui-demo-1',
-		eventId: 'evt-demo-1',
-		question: 'Which function creates a writable signal?',
-		options: ['computed()', 'signal()', 'effect()'],
-		correctOptionIndex: 1,
-		revealAnswer: false,
-		active: true,
-	},
-];
-
-export const SEED_QUIZ_ANSWERS: QuizAnswer[] = [];

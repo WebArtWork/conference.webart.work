@@ -46,7 +46,7 @@ export class PollPublicComponent {
 	readonly lectureId = this._route.snapshot.queryParamMap.get('lecture');
 
 	private readonly _pollIds = this._resolvePollIds();
-	readonly currentIndex = signal(this._firstUnansweredIndex(this._pollIds, 0));
+	readonly currentIndex = signal(0);
 	readonly total = this._pollIds.length;
 
 	readonly poll = computed(() => {
@@ -62,9 +62,23 @@ export class PollPublicComponent {
 	private _pendingInteraction: (() => void) | null = null;
 
 	constructor() {
+		// Fallback load: the lecture page already preloads active polls before
+		// linking here, but a visitor can also land on this URL directly.
+		this._pollService.get({}).subscribe();
+
 		effect(() => {
 			const pollDoc = this.poll();
 			this._metaService.applyMeta({ title: pollDoc ? pollDoc.question : this.translateService.translate('Poll')() });
+		});
+
+		// Skips polls already answered (from an earlier visit or a prior step
+		// in this sequence) as soon as the data is known — handles both the
+		// initial async load and each subsequent submit.
+		effect(() => {
+			const pollDoc = this.poll();
+			if (pollDoc && this.pollAnswerService.hasAnswered(pollDoc)) {
+				this.currentIndex.update((index) => index + 1);
+			}
 		});
 
 		effect(() => {
@@ -82,7 +96,7 @@ export class PollPublicComponent {
 
 			this.pollAnswerService.answer(pollDoc, optionIndex);
 			this.selectedOption.set(null);
-			this.currentIndex.set(this._firstUnansweredIndex(this._pollIds, this.currentIndex() + 1));
+			this.currentIndex.update((index) => index + 1);
 		});
 	}
 
@@ -116,16 +130,5 @@ export class PollPublicComponent {
 
 		const pathId = this._route.snapshot.paramMap.get('pollId');
 		return pathId ? [pathId] : [];
-	}
-
-	/** Skips over polls the visitor already answered, e.g. from an earlier visit. */
-	private _firstUnansweredIndex(ids: string[], from: number): number {
-		for (let index = from; index < ids.length; index++) {
-			const pollDoc = this._pollService.byId(ids[index]);
-			if (pollDoc && !this.pollAnswerService?.hasAnswered(pollDoc)) {
-				return index;
-			}
-		}
-		return ids.length;
 	}
 }

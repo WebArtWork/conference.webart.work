@@ -167,6 +167,13 @@ export class EventManageComponent implements OnInit {
 		this.eventEndTimeDraft.set(eventDoc?.endTime ?? '');
 		this.eventLectureIdDraft.set(eventDoc?.lectureId ?? '');
 
+		if (eventDoc) {
+			this._questionService.loadEvent(eventDoc.lectureId || eventDoc._id);
+			this._pollService.loadEvent(eventDoc._id);
+			this._quizService.loadEvent(eventDoc._id);
+			this._pollAnswerService.loadAll();
+		}
+
 		queueMicrotask(() => {
 			if (eventDoc && !this.isOwner()) {
 				this._router.navigateByUrl('/profile');
@@ -270,7 +277,7 @@ export class EventManageComponent implements OnInit {
 			return;
 		}
 
-		this._pollService.create({ ...NEW_POLL, eventId: eventDoc._id, question, options });
+		this._pollService.create({ ...NEW_POLL, eventId: eventDoc._id, question, options }).subscribe();
 		this.newPollQuestion.set('');
 		this.newPollOptions.set(['', '']);
 	}
@@ -283,7 +290,7 @@ export class EventManageComponent implements OnInit {
 	togglePollGroup(): void {
 		const nextActive = !this.allPollsActive();
 		for (const poll of this.polls()) {
-			this._pollService.update(poll._id, { active: nextActive });
+			this._pollService.update({ ...poll, active: nextActive }).subscribe();
 		}
 		this._changeDetectorRef.markForCheck();
 	}
@@ -312,13 +319,14 @@ export class EventManageComponent implements OnInit {
 
 	saveEditPoll(): void {
 		const pollId = this.editingPollId();
+		const poll = pollId ? this._pollService.byId(pollId) : undefined;
 		const question = this.editPollQuestion().trim();
 		const options = this._trimOptions(this.editPollOptions());
-		if (!pollId || !question || options.length < 2) {
+		if (!poll || !question || options.length < 2) {
 			return;
 		}
 
-		this._pollService.update(pollId, { question, options });
+		this._pollService.update({ ...poll, question, options }).subscribe();
 		this.cancelEditPoll();
 	}
 
@@ -329,7 +337,7 @@ export class EventManageComponent implements OnInit {
 	}
 
 	deletePoll(poll: Poll): void {
-		this._pollService.remove(poll._id);
+		this._pollService.delete(poll).subscribe();
 		if (this.editingPollId() === poll._id) {
 			this.cancelEditPoll();
 		}
@@ -355,14 +363,16 @@ export class EventManageComponent implements OnInit {
 			return;
 		}
 
-		this._quizService.create({
-			...NEW_QUIZ,
-			eventId: eventDoc._id,
-			question,
-			options,
-			correctOptionIndex: Math.min(this.newQuizCorrectIndex(), options.length - 1),
-			revealAnswer: this.newQuizRevealAnswer(),
-		});
+		this._quizService
+			.create({
+				...NEW_QUIZ,
+				eventId: eventDoc._id,
+				question,
+				options,
+				correctOptionIndex: Math.min(this.newQuizCorrectIndex(), options.length - 1),
+				revealAnswer: this.newQuizRevealAnswer(),
+			})
+			.subscribe();
 		this.newQuizQuestion.set('');
 		this.newQuizOptions.set(['', '']);
 		this.newQuizCorrectIndex.set(0);
@@ -377,7 +387,7 @@ export class EventManageComponent implements OnInit {
 	toggleQuizGroup(): void {
 		const nextActive = !this.allQuizzesActive();
 		for (const quiz of this.quizzes()) {
-			this._quizService.update(quiz._id, { active: nextActive });
+			this._quizService.update({ ...quiz, active: nextActive }).subscribe();
 		}
 		this._changeDetectorRef.markForCheck();
 	}
@@ -408,18 +418,22 @@ export class EventManageComponent implements OnInit {
 
 	saveEditQuiz(): void {
 		const quizId = this.editingQuizId();
+		const quiz = quizId ? this._quizService.byId(quizId) : undefined;
 		const question = this.editQuizQuestion().trim();
 		const options = this._trimOptions(this.editQuizOptions());
-		if (!quizId || !question || options.length < 2) {
+		if (!quiz || !question || options.length < 2) {
 			return;
 		}
 
-		this._quizService.update(quizId, {
-			question,
-			options,
-			correctOptionIndex: Math.min(this.editQuizCorrectIndex(), options.length - 1),
-			revealAnswer: this.editQuizRevealAnswer(),
-		});
+		this._quizService
+			.update({
+				...quiz,
+				question,
+				options,
+				correctOptionIndex: Math.min(this.editQuizCorrectIndex(), options.length - 1),
+				revealAnswer: this.editQuizRevealAnswer(),
+			})
+			.subscribe();
 		this.cancelEditQuiz();
 	}
 
@@ -432,7 +446,7 @@ export class EventManageComponent implements OnInit {
 	}
 
 	deleteQuiz(quiz: Quiz): void {
-		this._quizService.remove(quiz._id);
+		this._quizService.delete(quiz).subscribe();
 		if (this.editingQuizId() === quiz._id) {
 			this.cancelEditQuiz();
 		}

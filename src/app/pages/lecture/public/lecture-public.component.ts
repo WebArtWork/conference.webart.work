@@ -113,6 +113,17 @@ export class LecturePublicComponent {
 			}
 
 			this._metaService.applyMeta({ title: lecture.title, description: lecture.description || undefined });
+			this._questionService.loadEvent(lecture._id);
+		});
+
+		effect(() => {
+			const eventDoc = this.event();
+			if (!eventDoc) {
+				return;
+			}
+
+			this._pollService.loadEvent(eventDoc._id);
+			this._quizService.loadEvent(eventDoc._id);
 		});
 
 		effect(() => {
