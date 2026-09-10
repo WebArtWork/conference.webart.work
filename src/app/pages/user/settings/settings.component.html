@@ -102,7 +102,7 @@
 				></i>
 			</button>
 			@if (isLanguageListOpen()) {
-				<ul class="settings__languages">
+				<ul class="settings__languages" [class.settings__languages--down]="!isAuthenticated()">
 					@for (language of languageService.languages(); track language.code) {
 						<li>
 							<button
