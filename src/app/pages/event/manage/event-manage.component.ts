@@ -1,4 +1,4 @@
-import { Component, OnInit, WritableSignal, computed, inject, input, signal } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, WritableSignal, computed, inject, input, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -67,6 +67,7 @@ export class EventManageComponent implements OnInit {
 	private readonly _pollAnswerService = inject(PollAnswerService);
 	private readonly _quizService = inject(QuizService);
 	private readonly _quizAnswerService = inject(QuizAnswerService);
+	private readonly _changeDetectorRef = inject(ChangeDetectorRef);
 
 	readonly slug = input.required<string>();
 
@@ -284,6 +285,7 @@ export class EventManageComponent implements OnInit {
 		for (const poll of this.polls()) {
 			this._pollService.update(poll._id, { active: nextActive });
 		}
+		this._changeDetectorRef.markForCheck();
 	}
 
 	pollResults(poll: Poll) {
@@ -377,6 +379,7 @@ export class EventManageComponent implements OnInit {
 		for (const quiz of this.quizzes()) {
 			this._quizService.update(quiz._id, { active: nextActive });
 		}
+		this._changeDetectorRef.markForCheck();
 	}
 
 	quizResults(quiz: Quiz) {
