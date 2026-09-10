@@ -1,6 +1,5 @@
 <div class="settings">
-	@if (isAuthenticated()) {
-	<section class="settings__section">
+	<section class="settings__section" [hidden]="!isAuthenticated()">
 		<h2 class="settings__label" translate>Change password</h2>
 		<form (submit)="wSecuritySubmit(); $event.preventDefault()" class="settings__content">
 			<div>
@@ -18,7 +17,6 @@
 			<button pButton type="submit" [disabled]="isSecurityDisabled()"><span translate>Update password</span></button>
 		</form>
 	</section>
-	}
 
 	<section class="settings__section">
 		<h2 class="settings__label" translate>Theme</h2>
