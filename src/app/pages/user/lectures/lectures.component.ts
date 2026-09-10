@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { map } from 'rxjs';
+import { UserService } from '@wawjs/ngx-bos';
 import { ButtonModule } from '@wawjs/ngx-prime/button';
 import { CardModule } from '@wawjs/ngx-prime/card';
 import { TranslateDirective } from '@wawjs/ngx-translate';
@@ -18,6 +19,7 @@ import { LectureService } from '../../../conference/lecture/lecture.service';
 export class LecturesComponent {
 	private readonly _lectureService = inject(LectureService);
 	private readonly _route = inject(ActivatedRoute);
+	private readonly _userService = inject(UserService);
 
 	/** `:conferenceId` is declared on the parent route (`/conferences/:conferenceId`), not this one. */
 	private readonly _conferenceId = toSignal(
@@ -28,4 +30,7 @@ export class LecturesComponent {
 	readonly lectures = computed(() =>
 		this._lectureService.all().filter((lecture) => lecture.conferenceId === this._conferenceId()),
 	);
+
+	/** Signed-in organizers land back on the manageable list; public visitors land on the homepage instead. */
+	readonly backLink = computed(() => (this._userService.user()._id ? '/conferences' : '/'));
 }

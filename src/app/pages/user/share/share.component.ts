@@ -61,7 +61,7 @@ export class SharePageComponent {
 			return `${this._origin}/profile`;
 		}
 
-		return `${this._origin}/conf#${this._resolvedConferenceId()}`;
+		return `${this._origin}/conferences/${this._resolvedConferenceId()}`;
 	});
 
 	readonly title = computed(() => {

@@ -36,6 +36,31 @@ export const routes: Routes = [
 						(m) => m.routes,
 					),
 			},
+			{
+				path: 'conferences/:conferenceId',
+				canActivate: [MetaGuard],
+				data: {
+					meta: {
+						title: 'Конференція',
+					},
+				},
+				children: [
+					{
+						path: '',
+						loadComponent: () =>
+							import('./pages/user/lectures/lectures.component').then(
+								(m) => m.LecturesComponent,
+							),
+					},
+					{
+						path: ':id',
+						loadComponent: () =>
+							import('./pages/user/lectures/lecture-detail.component').then(
+								(m) => m.LectureDetailComponent,
+							),
+					},
+				],
+			},
 		],
 	},
 	{
