@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } 
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { UserService } from '@wawjs/ngx-bos';
 import { MetaService } from '@wawjs/ngx-core';
 import { ButtonModule } from '@wawjs/ngx-prime/button';
 import { CardModule } from '@wawjs/ngx-prime/card';
@@ -57,6 +58,7 @@ export class LecturePublicComponent {
 	private readonly _route = inject(ActivatedRoute);
 	private readonly _router = inject(Router);
 	private readonly _location = inject(Location);
+	private readonly _userService = inject(UserService);
 	readonly deviceIdService = inject(DeviceIdService);
 
 	readonly lectureId = toSignal(this._route.fragment, { initialValue: null });
@@ -163,7 +165,7 @@ export class LecturePublicComponent {
 				return;
 			}
 
-			this._questionService.ask(lecture._id, text, this.deviceIdService.visitorName() || 'Anonymous');
+			this._questionService.ask(lecture._id, text, this._effectiveVisitorName() || 'Anonymous');
 			this.newQuestionText.set('');
 		});
 	}
@@ -203,9 +205,14 @@ export class LecturePublicComponent {
 		pending?.();
 	}
 
+	/** Logged-in visitors already have a display name on their profile — no need to ask again. */
+	private _effectiveVisitorName(): string {
+		return this.deviceIdService.visitorName() || this._userService.user()?.name || '';
+	}
+
 	/** Prompts for a visitor display name once, on first interaction, then runs the action. */
 	private _withVisitorName(action: () => void): void {
-		if (this.deviceIdService.visitorName()) {
+		if (this._effectiveVisitorName()) {
 			action();
 			return;
 		}
