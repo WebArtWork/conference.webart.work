@@ -160,7 +160,7 @@ export class EventManageComponent implements OnInit {
 	ngOnInit(): void {
 		const eventDoc = this.event();
 		this.eventTitleDraft.set(eventDoc?.title ?? '');
-		this.eventSpeakerDraft.set(eventDoc?.speaker || this._userService.user()?.name || '');
+		this.eventSpeakerDraft.set(this._userService.user()?.name || eventDoc?.speaker || '');
 		this.eventDescriptionDraft.set(eventDoc?.description ?? '');
 		this.eventDateDraft.set(eventDoc?.date ?? '');
 		this.eventStartTimeDraft.set(eventDoc?.startTime ?? '');
