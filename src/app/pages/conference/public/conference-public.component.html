@@ -9,7 +9,7 @@
 		}
 
 		@for (lecture of lectures(); track lecture._id; let i = $index) {
-			<p-card class="cursor-pointer" [routerLink]="['/lect']" [fragment]="lecture._id">
+			<p-card class="cursor-pointer" [routerLink]="['/lect']" [fragment]="lectureFragment(i)">
 				<div class="flex items-center justify-between gap-3 text-[var(--c-text-primary)]">
 					<div class="min-w-0 flex-1">
 						<div class="flex flex-wrap items-center gap-2">

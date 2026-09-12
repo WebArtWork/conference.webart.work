@@ -139,6 +139,9 @@ export class EventManageComponent implements OnInit {
 		() => !!this.eventDateDraft() && !!this.eventStartTimeDraft() && !!this.eventEndTimeDraft(),
 	);
 
+	/** Computed once and reused for every option row so the translation resolves consistently regardless of when the row was added. */
+	readonly optionLabel = computed(() => this.translateService.translate('Option')());
+
 	readonly newPollQuestion = signal('');
 	readonly newPollOptions = signal<string[]>(['', '']);
 

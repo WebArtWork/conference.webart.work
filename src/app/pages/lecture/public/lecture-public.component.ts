@@ -58,7 +58,7 @@ export class LecturePublicComponent {
 
 	readonly lectureId = toSignal(this._route.fragment, { initialValue: null });
 
-	readonly lecture = computed(() => this._lectureService.byId(this.lectureId() ?? '') ?? null);
+	readonly lecture = computed(() => this._lectureService.byPublicId(this.lectureId() ?? '') ?? null);
 	readonly conference = computed(() => {
 		const conferenceId = this.lecture()?.conferenceId;
 		return conferenceId ? (this._conferenceService.byId(conferenceId) ?? null) : null;

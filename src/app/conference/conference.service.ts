@@ -1,5 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { CrudOptions, CrudService } from '@wawjs/ngx-crud';
+import { slugify } from '../shared/slugify';
 import { CONFERENCE_DOMAIN, withDomain } from './conference-domain';
 import { Conference } from './conference.interface';
 import { generateLocalId } from './local-store';
@@ -39,10 +40,51 @@ export class ConferenceService {
 		return this.all().find((conference) => conference._id === id);
 	}
 
+	/** Readable id for public links, e.g. `conf-kpnu-2026-2027` -> `kpnu-2026-2027`; falls back to the title for older/legacy ids. */
+	slugFor(conference: Conference): string {
+		const { _id } = conference;
+		return _id.startsWith('conf-') ? _id.slice('conf-'.length) : slugify(conference.title);
+	}
+
+	/**
+	 * Resolves a `/conf#<fragment>` link back to a conference: tries the raw
+	 * `_id` first (old links keep working), then the `conf-<slug>` form, then
+	 * falls back to matching the title slug directly — so pre-existing
+	 * conferences whose `_id` isn't slug-shaped still resolve a pretty link.
+	 */
+	byPublicId(fragment: string): Conference | undefined {
+		if (!fragment) {
+			return undefined;
+		}
+
+		return (
+			this.byId(fragment) ??
+			this.byId(`conf-${fragment}`) ??
+			this.all().find((conference) => slugify(conference.title) === fragment)
+		);
+	}
+
 	create(entity: Omit<Conference, '_id'> & Partial<Pick<Conference, '_id'>>): Conference {
-		const created: Conference = { ...entity, _id: entity._id || generateLocalId() } as Conference;
+		const created: Conference = { ...entity, _id: entity._id || this._generateId(entity.title) } as Conference;
 		this._crud.create(created).subscribe();
 		return created;
+	}
+
+	private _generateId(title: string): string {
+		const slug = slugify(title);
+		if (!slug) {
+			return generateLocalId();
+		}
+
+		const existingIds = new Set(this.all().map((conference) => conference._id));
+		const base = `conf-${slug}`;
+		let candidate = base;
+		let suffix = 2;
+		while (existingIds.has(candidate)) {
+			candidate = `${base}-${suffix++}`;
+		}
+
+		return candidate;
 	}
 
 	update(id: string, patch: Partial<Conference>): Conference | undefined {
