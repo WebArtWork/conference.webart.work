@@ -2,13 +2,14 @@ import { Location } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { UserService } from '@wawjs/ngx-bos';
 import { MetaService } from '@wawjs/ngx-core';
 import { ButtonModule } from '@wawjs/ngx-prime/button';
 import { CardModule } from '@wawjs/ngx-prime/card';
 import { DialogModule } from '@wawjs/ngx-prime/dialog';
 import { InputTextModule } from '@wawjs/ngx-prime/inputtext';
+import { RadioButtonModule } from '@wawjs/ngx-prime/radiobutton';
 import { TagModule } from '@wawjs/ngx-prime/tag';
 import { TranslateDirective, TranslateService } from '@wawjs/ngx-translate';
 import { ConferenceService } from '../../../conference/conference.service';
@@ -35,6 +36,7 @@ import { slugify } from '../../../shared/slugify';
 		CardModule,
 		DialogModule,
 		InputTextModule,
+		RadioButtonModule,
 		TagModule,
 		FormsModule,
 		RouterLink,
@@ -56,7 +58,6 @@ export class LecturePublicComponent {
 	readonly quizAnswerService = inject(QuizAnswerService);
 	private readonly _metaService = inject(MetaService);
 	private readonly _route = inject(ActivatedRoute);
-	private readonly _router = inject(Router);
 	private readonly _location = inject(Location);
 	private readonly _userService = inject(UserService);
 	readonly deviceIdService = inject(DeviceIdService);
@@ -110,6 +111,39 @@ export class LecturePublicComponent {
 	readonly nameDraft = signal('');
 	private _pendingInteraction: (() => void) | null = null;
 
+	/** `null` when not taking the poll; otherwise the snapshot of poll ids still to answer, walked one at a time inline. */
+	readonly pollFlowIds = signal<string[] | null>(null);
+	readonly pollFlowIndex = signal(0);
+	readonly selectedPollOption = signal<number | null>(null);
+	readonly currentPoll = computed(() => {
+		const ids = this.pollFlowIds();
+		const id = ids ? ids[this.pollFlowIndex()] : undefined;
+		return id ? (this._pollService.byId(id) ?? null) : null;
+	});
+	readonly pollFlowPosition = computed(() => this.pollFlowIndex() + 1);
+	readonly pollFlowTotal = computed(() => this.pollFlowIds()?.length ?? 0);
+	readonly pollFlowFinished = computed(() => {
+		const ids = this.pollFlowIds();
+		return ids !== null && this.pollFlowIndex() >= ids.length;
+	});
+
+	/** Same idea as the poll flow above, for quizzes (plus the reveal-answer pause). */
+	readonly quizFlowIds = signal<string[] | null>(null);
+	readonly quizFlowIndex = signal(0);
+	readonly selectedQuizOption = signal<number | null>(null);
+	readonly quizRevealed = signal(false);
+	readonly currentQuiz = computed(() => {
+		const ids = this.quizFlowIds();
+		const id = ids ? ids[this.quizFlowIndex()] : undefined;
+		return id ? (this._quizService.byId(id) ?? null) : null;
+	});
+	readonly quizFlowPosition = computed(() => this.quizFlowIndex() + 1);
+	readonly quizFlowTotal = computed(() => this.quizFlowIds()?.length ?? 0);
+	readonly quizFlowFinished = computed(() => {
+		const ids = this.quizFlowIds();
+		return ids !== null && this.quizFlowIndex() >= ids.length;
+	});
+
 	constructor() {
 		effect(() => {
 			const lecture = this.lecture();
@@ -155,6 +189,22 @@ export class LecturePublicComponent {
 		effect(() => {
 			this.nameDraft.set(this.deviceIdService.visitorName());
 		});
+
+		// Once every poll/quiz in the flow is answered, fold back to the plain
+		// "Answered" tag instead of leaving an empty flow card on screen.
+		effect(() => {
+			if (this.pollFlowFinished()) {
+				this.pollFlowIds.set(null);
+				this.pollFlowIndex.set(0);
+			}
+		});
+
+		effect(() => {
+			if (this.quizFlowFinished()) {
+				this.quizFlowIds.set(null);
+				this.quizFlowIndex.set(0);
+			}
+		});
 	}
 
 	submitQuestion(): void {
@@ -182,7 +232,28 @@ export class LecturePublicComponent {
 			return;
 		}
 
-		this._router.navigate(['/poll', ids[0]], { queryParams: { lecture: this.lectureId(), ids: ids.join(',') } });
+		this.pollFlowIds.set(ids);
+		this.pollFlowIndex.set(0);
+		this.selectedPollOption.set(null);
+	}
+
+	submitPollAnswer(): void {
+		this._withVisitorName(() => {
+			const pollDoc = this.currentPoll();
+			const optionIndex = this.selectedPollOption();
+			if (!pollDoc || optionIndex === null) {
+				return;
+			}
+
+			this.pollAnswerService.answer(pollDoc, optionIndex);
+			this.selectedPollOption.set(null);
+			this.pollFlowIndex.update((index) => index + 1);
+		});
+	}
+
+	closePollFlow(): void {
+		this.pollFlowIds.set(null);
+		this.pollFlowIndex.set(0);
 	}
 
 	goToQuizzes(): void {
@@ -193,7 +264,43 @@ export class LecturePublicComponent {
 			return;
 		}
 
-		this._router.navigate(['/quiz', ids[0]], { queryParams: { lecture: this.lectureId(), ids: ids.join(',') } });
+		this.quizFlowIds.set(ids);
+		this.quizFlowIndex.set(0);
+		this.selectedQuizOption.set(null);
+		this.quizRevealed.set(false);
+	}
+
+	submitQuizAnswer(): void {
+		this._withVisitorName(() => {
+			const quizDoc = this.currentQuiz();
+			const optionIndex = this.selectedQuizOption();
+			if (!quizDoc || optionIndex === null) {
+				return;
+			}
+
+			this.quizAnswerService.answer(quizDoc, optionIndex);
+			if (quizDoc.revealAnswer) {
+				this.quizRevealed.set(true);
+			} else {
+				this._advanceQuiz();
+			}
+		});
+	}
+
+	nextQuiz(): void {
+		this.quizRevealed.set(false);
+		this._advanceQuiz();
+	}
+
+	closeQuizFlow(): void {
+		this.quizFlowIds.set(null);
+		this.quizFlowIndex.set(0);
+		this.quizRevealed.set(false);
+	}
+
+	private _advanceQuiz(): void {
+		this.selectedQuizOption.set(null);
+		this.quizFlowIndex.update((index) => index + 1);
 	}
 
 	confirmName(): void {

@@ -53,7 +53,34 @@
 		}
 
 		@if (activePolls().length) {
-			@if (allPollsAnswered()) {
+			@if (currentPoll(); as pollDoc) {
+				<p-card>
+					<div class="flex items-center justify-between gap-3">
+						@if (pollFlowTotal() > 1) {
+							<div class="text-xs font-semibold tracking-wide uppercase opacity-70">
+								{{ pollFlowPosition() }} / {{ pollFlowTotal() }}
+							</div>
+						}
+						<button pButton type="button" [text]="true" class="ml-auto" (click)="closePollFlow()">
+							<i class="pi pi-times"></i>
+						</button>
+					</div>
+					<div class="mt-1 text-lg font-semibold">{{ pollDoc.question }}</div>
+
+					<div class="mt-3 flex flex-col gap-2">
+						@for (option of pollDoc.options; track $index) {
+							<label class="flex items-center gap-2 rounded-card border border-[var(--c-border)] p-2 text-sm">
+								<input type="radio" pRadioButton [name]="'poll-' + pollDoc._id" [value]="$index" [(ngModel)]="selectedPollOption" />
+								{{ option }}
+							</label>
+						}
+					</div>
+
+					<button pButton type="button" class="mt-3 w-full" [disabled]="selectedPollOption() === null" (click)="submitPollAnswer()">
+						<span translate>Submit answer</span>
+					</button>
+				</p-card>
+			} @else if (allPollsAnswered()) {
 				<p-card>
 					<div class="flex items-center justify-between gap-3">
 						<div class="font-semibold" translate>Poll</div>
@@ -68,7 +95,48 @@
 		}
 
 		@if (activeQuizzes().length) {
-			@if (allQuizzesAnswered()) {
+			@if (currentQuiz(); as quizDoc) {
+				<p-card>
+					<div class="flex items-center justify-between gap-3">
+						@if (quizFlowTotal() > 1) {
+							<div class="text-xs font-semibold tracking-wide uppercase opacity-70">
+								{{ quizFlowPosition() }} / {{ quizFlowTotal() }}
+							</div>
+						}
+						<button pButton type="button" [text]="true" class="ml-auto" (click)="closeQuizFlow()">
+							<i class="pi pi-times"></i>
+						</button>
+					</div>
+					<div class="mt-1 text-lg font-semibold">{{ quizDoc.question }}</div>
+
+					@if (quizRevealed()) {
+						@if (selectedQuizOption() === quizDoc.correctOptionIndex) {
+							<p class="mt-3 text-sm font-semibold text-[var(--c-success,#16a34a)]" translate>Correct!</p>
+						} @else {
+							<p class="mt-3 text-sm font-semibold text-[var(--c-danger,#e11d48)]">
+								<span translate>Incorrect. Correct answer:</span> {{ quizDoc.options[quizDoc.correctOptionIndex] }}
+							</p>
+						}
+
+						<button pButton type="button" class="mt-3 w-full" (click)="nextQuiz()">
+							<span translate>Next</span>
+						</button>
+					} @else {
+						<div class="mt-3 flex flex-col gap-2">
+							@for (option of quizDoc.options; track $index) {
+								<label class="flex items-center gap-2 rounded-card border border-[var(--c-border)] p-2 text-sm">
+									<input type="radio" pRadioButton [name]="'quiz-' + quizDoc._id" [value]="$index" [(ngModel)]="selectedQuizOption" />
+									{{ option }}
+								</label>
+							}
+						</div>
+
+						<button pButton type="button" class="mt-3 w-full" [disabled]="selectedQuizOption() === null" (click)="submitQuizAnswer()">
+							<span translate>Submit answer</span>
+						</button>
+					}
+				</p-card>
+			} @else if (allQuizzesAnswered()) {
 				<p-card>
 					<div class="flex items-center justify-between gap-3">
 						<div class="font-semibold" translate>Quiz</div>
