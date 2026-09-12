@@ -1,5 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { CrudOptions, CrudService } from '@wawjs/ngx-crud';
+import { firstValueFrom } from 'rxjs';
 import { CONFERENCE_DOMAIN, withDomain } from '../conference-domain';
 import { generateLocalId } from '../local-store';
 import { Event } from './event.interface';
@@ -52,6 +53,18 @@ export class EventService {
 		const created: Event = { ...entity, _id: entity._id || generateLocalId() } as Event;
 		this._crud.create(created).subscribe();
 		return created;
+	}
+
+	/**
+	 * Confirms an event actually made it to the backend. `create()` echoes the
+	 * local doc straight back (and the CRUD layer treats a rejected write the
+	 * same as a successful one), so a caller that navigates away right after
+	 * `create()` can't tell a real save from one the server silently refused
+	 * (e.g. an expired session) — this re-reads the record to be sure.
+	 */
+	async confirmPersisted(id: string): Promise<boolean> {
+		const doc = await firstValueFrom(this._crud.fetch({ _id: id }));
+		return !!doc;
 	}
 
 	update(id: string, patch: Partial<Event>): Event | undefined {
