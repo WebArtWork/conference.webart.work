@@ -87,8 +87,13 @@ export const appConfig: ApplicationConfig = {
 			useWorker: false,
 		}),
 		provideTranslate({
+			// `defaultLanguage` is also the source-of-truth language every
+			// `translate()`/`[translate]` call is keyed in throughout the app —
+			// keep it English. `detectLanguage` only decides what a brand new
+			// visitor (no stored preference yet) sees on first load.
 			defaultLanguage: environment.defaultLanguageCode,
 			languages: environment.languages,
+			detectLanguage: [() => 'ua'],
 			folder: '/i18n/',
 			persistLanguage: true,
 		}),
