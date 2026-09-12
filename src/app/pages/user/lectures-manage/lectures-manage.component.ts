@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserService } from '@wawjs/ngx-bos';
+import { MessageService } from '@wawjs/ngx-prime/api';
 import { ButtonModule } from '@wawjs/ngx-prime/button';
 import { CardModule } from '@wawjs/ngx-prime/card';
 import { TranslateDirective, TranslateService } from '@wawjs/ngx-translate';
@@ -26,6 +27,7 @@ export class LecturesManageComponent {
 	private readonly _conferenceService = inject(ConferenceService);
 	private readonly _eventService = inject(EventService);
 	private readonly _userService = inject(UserService);
+	private readonly _messageService = inject(MessageService);
 	private readonly _router = inject(Router);
 
 	readonly lectures = this._lectureService.items;
@@ -67,7 +69,7 @@ export class LecturesManageComponent {
 		}
 	}
 
-	createEventForLecture(lecture: Lecture): void {
+	async createEventForLecture(lecture: Lecture): Promise<void> {
 		const owner = this._userService.user();
 		const eventDoc = this._eventService.create({
 			...NEW_EVENT,
@@ -79,6 +81,21 @@ export class LecturesManageComponent {
 			lectureId: lecture._id,
 			createdAt: new Date().toISOString(),
 		});
+
+		// The backend can silently refuse the write (e.g. an expired session)
+		// without ever surfacing an error, so confirm it actually landed before
+		// sending the organizer to a "manage" page for an event that doesn't
+		// really exist — otherwise it just vanishes again on the next refresh.
+		const persisted = await this._eventService.confirmPersisted(eventDoc._id);
+		if (!persisted) {
+			this._eventService.remove(eventDoc._id);
+			this._messageService.add({
+				severity: 'error',
+				detail: this.translateService.translate('Something went wrong')(),
+			});
+			return;
+		}
+
 		this._router.navigate(['/event', eventDoc.slug, 'manage']);
 	}
 }
