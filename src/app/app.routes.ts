@@ -124,7 +124,7 @@ export const routes: Routes = [
 		children: [
 			{
 				path: 'profile',
-				canActivate: [MetaGuard],
+				canActivate: [authenticatedGuard, MetaGuard],
 				data: {
 					meta: {
 						title: 'Мій профіль',
