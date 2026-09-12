@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
@@ -31,6 +32,7 @@ export class ConferencePublicComponent {
 	private readonly _eventService = inject(EventService);
 	private readonly _metaService = inject(MetaService);
 	private readonly _route = inject(ActivatedRoute);
+	private readonly _location = inject(Location);
 
 	readonly id = toSignal(this._route.fragment, { initialValue: null });
 
@@ -48,6 +50,13 @@ export class ConferencePublicComponent {
 			}
 
 			this._metaService.applyMeta({ title: conference.title });
+
+			// Old links (raw backend id) still resolve, but the address bar is
+			// normalized to the readable slug once the conference is found.
+			const canonical = this._conferenceService.slugFor(conference);
+			if (canonical && this.id() !== canonical) {
+				this._location.replaceState(`/conf#${canonical}`);
+			}
 		});
 	}
 
