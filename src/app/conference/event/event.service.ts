@@ -60,11 +60,14 @@ export class EventService {
 	 * local doc straight back (and the CRUD layer treats a rejected write the
 	 * same as a successful one), so a caller that navigates away right after
 	 * `create()` can't tell a real save from one the server silently refused
-	 * (e.g. an expired session) — this re-reads the record to be sure.
+	 * (e.g. an expired session). This re-runs the exact same domain-scoped
+	 * list request a page refresh does (see the constructor above) and checks
+	 * whether the new id is actually in it — the most faithful possible
+	 * "would this survive a refresh?" check.
 	 */
 	async confirmPersisted(id: string): Promise<boolean> {
-		const doc = await firstValueFrom(this._crud.fetch({ _id: id }));
-		return !!doc;
+		const docs = await firstValueFrom(this._crud.get({ query: withDomain() }));
+		return docs.some((doc) => doc._id === id);
 	}
 
 	update(id: string, patch: Partial<Event>): Event | undefined {
