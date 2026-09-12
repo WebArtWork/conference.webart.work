@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
@@ -17,6 +18,7 @@ import { PollAnswerService, PollService } from '../../../conference/poll/poll.se
 import { Question } from '../../../conference/question/question.interface';
 import { QuestionService } from '../../../conference/question/question.service';
 import { QuizAnswerService, QuizService } from '../../../conference/quiz/quiz.service';
+import { slugify } from '../../../shared/slugify';
 
 /**
  * Public lecture page: `lect#:lectureId`. Mirrors the conference programme's
@@ -54,6 +56,7 @@ export class LecturePublicComponent {
 	private readonly _metaService = inject(MetaService);
 	private readonly _route = inject(ActivatedRoute);
 	private readonly _router = inject(Router);
+	private readonly _location = inject(Location);
 	readonly deviceIdService = inject(DeviceIdService);
 
 	readonly lectureId = toSignal(this._route.fragment, { initialValue: null });
@@ -114,6 +117,27 @@ export class LecturePublicComponent {
 
 			this._metaService.applyMeta({ title: lecture.title, description: lecture.description || undefined });
 			this._questionService.loadEvent(lecture._id);
+		});
+
+		effect(() => {
+			const lecture = this.lecture();
+			const conference = this.conference();
+			if (!lecture || !conference) {
+				return;
+			}
+
+			// Old links (raw lecture id) still resolve, but the address bar is
+			// normalized to the readable conf-<slug>-<n> form once it's found.
+			const siblings = this._lectureService.all().filter((item) => item.conferenceId === conference._id);
+			const position = siblings.indexOf(lecture) + 1;
+			if (position < 1) {
+				return;
+			}
+
+			const canonical = `conf-${slugify(conference.title)}-${position}`;
+			if (this.lectureId() !== canonical) {
+				this._location.replaceState(`/lect#${canonical}`);
+			}
 		});
 
 		effect(() => {
