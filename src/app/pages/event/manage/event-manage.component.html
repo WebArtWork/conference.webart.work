@@ -192,7 +192,7 @@
 									class="w-full"
 									[ngModel]="option"
 									(ngModelChange)="updateNewPollOption($index, $event)"
-									[placeholder]="translateService.translate('Option')() + ' ' + ($index + 1)"
+									[placeholder]="optionLabel() + ' ' + ($index + 1)"
 								/>
 								@if (newPollOptions().length > 2) {
 									<button pButton type="button" [text]="true" (click)="removeNewPollOption($index)">
@@ -223,7 +223,7 @@
 													class="w-full"
 													[ngModel]="option"
 													(ngModelChange)="updateEditPollOption($index, $event)"
-													[placeholder]="translateService.translate('Option')() + ' ' + ($index + 1)"
+													[placeholder]="optionLabel() + ' ' + ($index + 1)"
 												/>
 												@if (editPollOptions().length > 2) {
 													<button pButton type="button" [text]="true" (click)="removeEditPollOption($index)">
@@ -295,7 +295,7 @@
 									class="w-full"
 									[ngModel]="option"
 									(ngModelChange)="updateNewQuizOption($index, $event)"
-									[placeholder]="translateService.translate('Option')() + ' ' + ($index + 1)"
+									[placeholder]="optionLabel() + ' ' + ($index + 1)"
 								/>
 								@if (newQuizOptions().length > 2) {
 									<button pButton type="button" [text]="true" (click)="removeNewQuizOption($index)">
@@ -338,7 +338,7 @@
 													class="w-full"
 													[ngModel]="option"
 													(ngModelChange)="updateEditQuizOption($index, $event)"
-													[placeholder]="translateService.translate('Option')() + ' ' + ($index + 1)"
+													[placeholder]="optionLabel() + ' ' + ($index + 1)"
 												/>
 												@if (editQuizOptions().length > 2) {
 													<button pButton type="button" [text]="true" (click)="removeEditQuizOption($index)">

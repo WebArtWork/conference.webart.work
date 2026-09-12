@@ -9,6 +9,7 @@ import { ConferenceService } from '../../../conference/conference.service';
 import { EventService } from '../../../conference/event/event.service';
 import { Lecture } from '../../../conference/lecture/lecture.interface';
 import { LectureService } from '../../../conference/lecture/lecture.service';
+import { slugify } from '../../../shared/slugify';
 
 /**
  * Public conference page: `conf#:conferenceId`. Shared via QR code so
@@ -33,10 +34,11 @@ export class ConferencePublicComponent {
 
 	readonly id = toSignal(this._route.fragment, { initialValue: null });
 
-	readonly conference = computed(() => this._conferenceService.byId(this.id() ?? '') ?? null);
-	readonly lectures = computed(() =>
-		this._lectureService.all().filter((lecture) => lecture.conferenceId === this.id()),
-	);
+	readonly conference = computed(() => this._conferenceService.byPublicId(this.id() ?? '') ?? null);
+	readonly lectures = computed(() => {
+		const conference = this.conference();
+		return conference ? this._lectureService.all().filter((lecture) => lecture.conferenceId === conference._id) : [];
+	});
 
 	constructor() {
 		effect(() => {
@@ -47,6 +49,12 @@ export class ConferencePublicComponent {
 
 			this._metaService.applyMeta({ title: conference.title });
 		});
+	}
+
+	/** `conf-<conference-slug>-<n>`, matching `LectureService.byPublicId`, so links stay readable even for lectures whose stored `_id` isn't slug-shaped. */
+	lectureFragment(index: number): string {
+		const conference = this.conference();
+		return conference ? `conf-${slugify(conference.title)}-${index + 1}` : '';
 	}
 
 	/** Speaker and schedule actually set on the linked event — not the lecture's own placeholder fields. */

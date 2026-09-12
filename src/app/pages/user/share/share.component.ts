@@ -61,7 +61,9 @@ export class SharePageComponent {
 			return `${this._origin}/profile`;
 		}
 
-		return `${this._origin}/conf#${this._resolvedConferenceId()}`;
+		const conference = this.conference();
+		const slug = conference ? this._conferenceService.slugFor(conference) : '';
+		return `${this._origin}/conf#${slug || this._resolvedConferenceId()}`;
 	});
 
 	readonly title = computed(() => {
