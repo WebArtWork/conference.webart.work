@@ -1,0 +1,1 @@
+import{D as e}from"./main-23UBBIFN.js";var m=e.contact.slug;function i(n=``){let o=`domain=${encodeURIComponent(m)}`;return n?`${n}&${o}`:o}export{m as n,i as t};
