@@ -57,7 +57,7 @@ export class TopbarComponent {
 	readonly conferencesLabel = computed(() => {
 		const id = this._selectedConferenceId();
 		const conference = id ? this._conferenceService.byId(id) : undefined;
-		return conference?.title || this.translateService.translate('Конференції')();
+		return conference?.title || this.translateService.translate('Conferences')();
 	});
 
 	readonly burgerState = computed<BurgerState>(() => {

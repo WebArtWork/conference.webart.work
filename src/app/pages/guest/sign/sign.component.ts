@@ -137,7 +137,7 @@ export class SignComponent {
 
 			this._messageService.add({
 				severity: 'info',
-				detail: this.translateService.translate('Лист буде надіслано на ваш email')(),
+				detail: this.translateService.translate('Mail will be sent to your email')(),
 			});
 		}, this._handleRequestError.bind(this));
 	}
@@ -147,12 +147,12 @@ export class SignComponent {
 			if (resp) {
 				this._messageService.add({
 					severity: 'info',
-					detail: this.translateService.translate('Пароль успішно змінено')(),
+					detail: this.translateService.translate('Password successfully changed')(),
 				});
 			} else {
 				this._messageService.add({
 					severity: 'error',
-					detail: this.translateService.translate('Неправильний код')(),
+					detail: this.translateService.translate('Wrong code')(),
 				});
 			}
 
@@ -165,7 +165,7 @@ export class SignComponent {
 			this.isSubmitting.set(false);
 			this._messageService.add({
 				severity: 'error',
-				detail: this.translateService.translate('Щось пішло не так')(),
+				detail: this.translateService.translate('Something went wrong')(),
 			});
 			return;
 		}

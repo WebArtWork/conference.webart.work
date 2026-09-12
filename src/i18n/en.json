@@ -286,5 +286,11 @@
 	"Poll statistics",
 	"Quiz statistics",
 	"View statistics",
-	"Back to event"
+	"Back to event",
+	"Back to lecture",
+	"Date and time are required.",
+	"Poll not found",
+	"Submit answer",
+	"Take poll",
+	"Answered"
 ]
