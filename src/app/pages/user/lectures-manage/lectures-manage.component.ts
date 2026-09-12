@@ -71,7 +71,12 @@ export class LecturesManageComponent {
 
 	async createEventForLecture(lecture: Lecture): Promise<void> {
 		const owner = this._userService.user();
-		const eventDoc = this._eventService.create({
+
+		// The backend can reject the write (e.g. an expired session) without
+		// the CRUD layer noticing, so confirm it actually landed before sending
+		// the organizer to a "manage" page for an event that doesn't really
+		// exist — otherwise it just vanishes again on the next refresh.
+		const { event: eventDoc, persisted, error } = await this._eventService.createAndVerify({
 			...NEW_EVENT,
 			slug: generateEventSlug(),
 			owner: owner?._id ?? '',
@@ -82,16 +87,12 @@ export class LecturesManageComponent {
 			createdAt: new Date().toISOString(),
 		});
 
-		// The backend can silently refuse the write (e.g. an expired session)
-		// without ever surfacing an error, so confirm it actually landed before
-		// sending the organizer to a "manage" page for an event that doesn't
-		// really exist — otherwise it just vanishes again on the next refresh.
-		const persisted = await this._eventService.confirmPersisted(eventDoc._id);
 		if (!persisted) {
 			this._eventService.remove(eventDoc._id);
+			console.error('[createEventForLecture] event was not saved', { eventDoc, error });
 			this._messageService.add({
 				severity: 'error',
-				detail: this.translateService.translate('Something went wrong')(),
+				detail: `${this.translateService.translate('Something went wrong')()}${error ? ` (${error})` : ''}`,
 			});
 			return;
 		}

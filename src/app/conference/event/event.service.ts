@@ -70,6 +70,38 @@ export class EventService {
 		return docs.some((doc) => doc._id === id);
 	}
 
+	/**
+	 * Like `create()`, but waits for the write and reports whether it actually
+	 * landed — plus, if the backend rejected it, what it said (HTTP status and
+	 * body), so a failure shows more than a generic "something went wrong".
+	 */
+	async createAndVerify(
+		entity: Omit<Event, '_id'> & Partial<Pick<Event, '_id'>>,
+	): Promise<{ event: Event; persisted: boolean; error: string | null }> {
+		const created: Event = { ...entity, _id: entity._id || generateLocalId() } as Event;
+		let error: string | null = null;
+
+		try {
+			await firstValueFrom(this._crud.create(created));
+		} catch (err) {
+			error = this._describeError(err);
+		}
+
+		const persisted = await this.confirmPersisted(created._id);
+		return { event: created, persisted, error };
+	}
+
+	private _describeError(err: unknown): string {
+		if (err && typeof err === 'object') {
+			const httpErr = err as { status?: number; error?: unknown; message?: string };
+			const detail = typeof httpErr.error === 'string' ? httpErr.error : httpErr.message;
+			if (httpErr.status !== undefined) {
+				return `HTTP ${httpErr.status}${detail ? `: ${detail}` : ''}`;
+			}
+		}
+		return String(err);
+	}
+
 	update(id: string, patch: Partial<Event>): Event | undefined {
 		const current = this.byId(id);
 		if (!current) {
