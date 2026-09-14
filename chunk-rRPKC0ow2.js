@@ -1,0 +1,1 @@
+var o=[{path:``,loadComponent:()=>import(`./chunk-DzujtIqB.js`).then(t=>t.LecturesComponent)},{path:`:id`,loadComponent:()=>import(`./chunk-zWw4Aprw2.js`).then(t=>t.LectureDetailComponent)}];export{o as routes};

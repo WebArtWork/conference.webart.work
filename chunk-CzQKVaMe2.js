@@ -1,0 +1,1 @@
+var t=[{path:``,loadComponent:()=>import(`./chunk-zUqte42I2.js`).then(o=>o.ForHostsPageComponent)}];export{t as routes};
