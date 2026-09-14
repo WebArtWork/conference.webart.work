@@ -22,7 +22,7 @@ export const SEED_CONFERENCES: Conference[] = [
 export const SEED_EVENTS: Event[] = [
 	{
 		_id: 'evt-demo-1',
-		slug: '1042-8837',
+		slug: 'test-1',
 		owner: '',
 		title: 'Building With Angular Signals',
 		speaker: 'Olena Petrenko',

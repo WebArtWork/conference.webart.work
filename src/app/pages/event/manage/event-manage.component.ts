@@ -26,6 +26,15 @@ import { Quiz } from '../../../conference/quiz/quiz.interface';
 import { QuizService, QuizAnswerService } from '../../../conference/quiz/quiz.service';
 import { NEW_QUIZ } from '../../../conference/quiz/quiz.const';
 import { TimeScrollInputComponent } from '../../../shared/time-scroll-input/time-scroll-input.component';
+import {
+	DEMO_EVENT,
+	DEMO_EVENT_SLUG,
+	DEMO_POLLS,
+	DEMO_POLL_RESULTS,
+	DEMO_QUESTIONS,
+	DEMO_QUIZZES,
+	DEMO_QUIZ_RESULTS,
+} from '../event-demo.data';
 
 /**
  * Owner dashboard: `event/:slug/manage`. Full control over the event plus
@@ -74,16 +83,35 @@ export class EventManageComponent implements OnInit {
 	/** `#questions` shows the audience Q&A dashboard instead of the event setup form. */
 	readonly fragment = toSignal(this._route.fragment, { initialValue: this._route.snapshot.fragment });
 
-	readonly event = computed(() => this._eventService.bySlug(this.slug()) ?? null);
+	/**
+	 * Falls back to the public showcase event when the slug is `test-1` and no
+	 * real backend event exists there yet — this is the landing page's "Try
+	 * yourself as an organizer" link, reachable by anonymous visitors with no
+	 * event of their own to view.
+	 */
+	readonly event = computed(
+		() => this._eventService.bySlug(this.slug()) ?? (this.slug() === DEMO_EVENT_SLUG ? DEMO_EVENT : null),
+	);
 
-	/** Restricts this page to the event's actual owner, not just any logged-in user. */
+	/** Restricts this page to the event's actual owner, not just any logged-in user — except the anonymous showcase event, open to everyone. */
 	readonly isOwner = computed(() => {
 		const eventDoc = this.event();
+		if (eventDoc?.slug === DEMO_EVENT_SLUG) {
+			return true;
+		}
 		const currentUserId = this._userService.user()?._id;
 		return !!eventDoc && !!currentUserId && eventDoc.owner === currentUserId;
 	});
 
 	readonly lectures = this._lectureService.items;
+
+	/**
+	 * An event published at the `test-1` slug has no real backend Q&A/poll/quiz
+	 * data of its own — falls back to static showcase fixtures so its
+	 * dashboard isn't empty. Any other event always shows its real (possibly
+	 * empty) data.
+	 */
+	readonly isDemoEvent = computed(() => this.event()?.slug === DEMO_EVENT_SLUG);
 
 	/** Questions live on the scheduled lecture's chat, not the event itself. */
 	readonly questions = computed(() => {
@@ -91,30 +119,51 @@ export class EventManageComponent implements OnInit {
 		if (!eventDoc) {
 			return [];
 		}
-		return this._questionService.byEvent(eventDoc.lectureId || eventDoc._id);
+		const real = this._questionService.byEvent(eventDoc.lectureId || eventDoc._id);
+		if (real.length || !this.isDemoEvent()) {
+			return real;
+		}
+		return DEMO_QUESTIONS.filter((question) => !this._removedDemoQuestionIds().has(question._id));
 	});
 	readonly polls = computed(() => {
 		const eventDoc = this.event();
-		return eventDoc ? this._pollService.byEvent(eventDoc._id) : [];
+		if (!eventDoc) {
+			return [];
+		}
+		const real = this._pollService.byEvent(eventDoc._id);
+		return real.length || !this.isDemoEvent() ? real : DEMO_POLLS;
 	});
 	readonly quizzes = computed(() => {
 		const eventDoc = this.event();
-		return eventDoc ? this._quizService.byEvent(eventDoc._id) : [];
+		if (!eventDoc) {
+			return [];
+		}
+		const real = this._quizService.byEvent(eventDoc._id);
+		return real.length || !this.isDemoEvent() ? real : DEMO_QUIZZES;
 	});
+
+	private readonly _removedDemoQuestionIds = signal<Set<string>>(new Set());
 
 	/** Live audience-participation counters for the dashboard summary. */
 	readonly stats = computed(() => {
+		const showingDemoPolls = this.isDemoEvent() && this.polls() === DEMO_POLLS;
+		const showingDemoQuizzes = this.isDemoEvent() && this.quizzes() === DEMO_QUIZZES;
+
 		return {
 			questionCount: this.questions().length,
 			totalLikes: this.questions().reduce((sum, question) => sum + question.likes, 0),
-			pollAnswerCount: this.polls().reduce(
-				(sum, poll) => sum + this._pollAnswerService.all().filter((a) => a.pollId === poll._id).length,
-				0,
-			),
-			quizAnswerCount: this.quizzes().reduce(
-				(sum, quiz) => sum + this._quizAnswerService.all().filter((a) => a.quizId === quiz._id).length,
-				0,
-			),
+			pollAnswerCount: showingDemoPolls
+				? this.polls().reduce((sum, poll) => sum + this.pollResults(poll).reduce((s, r) => s + r.votes, 0), 0)
+				: this.polls().reduce(
+						(sum, poll) => sum + this._pollAnswerService.all().filter((a) => a.pollId === poll._id).length,
+						0,
+					),
+			quizAnswerCount: showingDemoQuizzes
+				? this.quizzes().reduce((sum, quiz) => sum + this.quizResults(quiz).reduce((s, r) => s + r.votes, 0), 0)
+				: this.quizzes().reduce(
+						(sum, quiz) => sum + this._quizAnswerService.all().filter((a) => a.quizId === quiz._id).length,
+						0,
+					),
 		};
 	});
 
@@ -125,6 +174,7 @@ export class EventManageComponent implements OnInit {
 	];
 
 	readonly eventTitleDraft = signal('');
+	readonly eventSlugDraft = signal('');
 	readonly eventSpeakerDraft = signal('');
 	readonly eventDescriptionDraft = signal('');
 	readonly eventDateDraft = signal('');
@@ -163,6 +213,7 @@ export class EventManageComponent implements OnInit {
 	ngOnInit(): void {
 		const eventDoc = this.event();
 		this.eventTitleDraft.set(eventDoc?.title ?? '');
+		this.eventSlugDraft.set(eventDoc?.slug ?? '');
 		this.eventSpeakerDraft.set(this._userService.user()?.name || eventDoc?.speaker || '');
 		this.eventDescriptionDraft.set(eventDoc?.description ?? '');
 		this.eventDateDraft.set(eventDoc?.date ?? '');
@@ -214,7 +265,10 @@ export class EventManageComponent implements OnInit {
 			return;
 		}
 
+		const nextSlug = this.eventSlugDraft().trim() || eventDoc.slug;
+
 		this._eventService.update(eventDoc._id, {
+			slug: nextSlug,
 			title: this.eventTitleDraft().trim(),
 			speaker: this.eventSpeakerDraft().trim(),
 			description: this.eventDescriptionDraft().trim(),
@@ -223,6 +277,11 @@ export class EventManageComponent implements OnInit {
 			endTime: this.eventEndTimeDraft(),
 			lectureId: this.eventLectureIdDraft(),
 		});
+
+		if (nextSlug !== eventDoc.slug) {
+			this.eventSlugDraft.set(nextSlug);
+			this._router.navigate(['/event', nextSlug, 'manage'], { fragment: this.fragment() ?? undefined });
+		}
 	}
 
 	setEventState(state: EventState): void {
@@ -257,6 +316,10 @@ export class EventManageComponent implements OnInit {
 	}
 
 	deleteQuestion(question: Question): void {
+		if (question._id.startsWith('demo-')) {
+			this._removedDemoQuestionIds.update((ids) => new Set(ids).add(question._id));
+			return;
+		}
 		this._questionService.removeQuestion(question);
 	}
 
@@ -299,7 +362,7 @@ export class EventManageComponent implements OnInit {
 	}
 
 	pollResults(poll: Poll) {
-		return this._pollAnswerService.results(poll);
+		return DEMO_POLL_RESULTS[poll._id] ?? this._pollAnswerService.results(poll);
 	}
 
 	addEditPollOption(): void {
@@ -396,7 +459,7 @@ export class EventManageComponent implements OnInit {
 	}
 
 	quizResults(quiz: Quiz) {
-		return this._quizAnswerService.results(quiz);
+		return DEMO_QUIZ_RESULTS[quiz._id] ?? this._quizAnswerService.results(quiz);
 	}
 
 	addEditQuizOption(): void {

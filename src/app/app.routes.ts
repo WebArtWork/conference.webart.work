@@ -92,6 +92,28 @@ export const routes: Routes = [
 	{
 		path: '',
 		loadComponent: () =>
+			import('./layouts/guest/guest.component').then(
+				(m) => m.GuestComponent,
+			),
+		children: [
+			{
+				path: 'event/:slug',
+				canActivate: [MetaGuard],
+				data: {
+					meta: {
+						title: 'Подія',
+					},
+				},
+				loadComponent: () =>
+					import('./pages/event/public/event-public.component').then(
+						(m) => m.EventPublicComponent,
+					),
+			},
+		],
+	},
+	{
+		path: '',
+		loadComponent: () =>
 			import('./layouts/user/user.component').then(
 				(m) => m.UserComponent,
 			),
@@ -288,19 +310,6 @@ export const routes: Routes = [
 					),
 			},
 		],
-	},
-	{
-		path: 'event/:slug',
-		canActivate: [MetaGuard],
-		data: {
-			meta: {
-				title: 'Подія',
-			},
-		},
-		loadComponent: () =>
-			import('./pages/event/public/event-public.component').then(
-				(m) => m.EventPublicComponent,
-			),
 	},
 	{
 		path: '**',

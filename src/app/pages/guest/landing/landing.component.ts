@@ -59,7 +59,7 @@ export class LandingComponent implements OnDestroy {
 	}
 
 	openDemoEvent(): void {
-		this._router.navigate(['/event', '1042-8837']);
+		this._router.navigate(['/event', 'test-1']);
 	}
 
 	private _updateHeroOffset(): void {

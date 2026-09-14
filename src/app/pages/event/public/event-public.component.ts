@@ -14,6 +14,7 @@ import { EventService } from '../../../conference/event/event.service';
 import { PollService, PollAnswerService } from '../../../conference/poll/poll.service';
 import { QuestionService } from '../../../conference/question/question.service';
 import { QuizService, QuizAnswerService } from '../../../conference/quiz/quiz.service';
+import { DEMO_EVENT, DEMO_EVENT_SLUG, DEMO_POLLS, DEMO_QUESTIONS, DEMO_QUIZZES } from '../event-demo.data';
 
 /**
  * Public event page: `event/:slug`. One link, one page — visitors read
@@ -52,8 +53,17 @@ export class EventPublicComponent {
 
 	readonly slug = input.required<string>();
 
-	readonly event = computed(() => this._eventService.bySlug(this.slug()) ?? null);
+	/**
+	 * Falls back to the public showcase event when the slug is `test-1` and no
+	 * real backend event exists there yet — this is the landing page's "Try
+	 * yourself as an organizer" link, reachable by anonymous visitors with no
+	 * event of their own to view.
+	 */
+	readonly event = computed(
+		() => this._eventService.bySlug(this.slug()) ?? (this.slug() === DEMO_EVENT_SLUG ? DEMO_EVENT : null),
+	);
 	readonly isLive = computed(() => this.event()?.state === 'live');
+	readonly isDemoEvent = computed(() => this.event()?.slug === DEMO_EVENT_SLUG);
 
 	readonly chapters = computed(() => {
 		const eventDoc = this.event();
@@ -68,15 +78,27 @@ export class EventPublicComponent {
 
 	readonly questions = computed(() => {
 		const eventDoc = this.event();
-		return eventDoc ? this._questionService.byEvent(eventDoc._id) : [];
+		if (!eventDoc) {
+			return [];
+		}
+		const real = this._questionService.byEvent(eventDoc._id);
+		return real.length || !this.isDemoEvent() ? real : DEMO_QUESTIONS;
 	});
 	readonly polls = computed(() => {
 		const eventDoc = this.event();
-		return eventDoc ? this._pollService.byEvent(eventDoc._id) : [];
+		if (!eventDoc) {
+			return [];
+		}
+		const real = this._pollService.byEvent(eventDoc._id);
+		return real.length || !this.isDemoEvent() ? real : DEMO_POLLS;
 	});
 	readonly quizzes = computed(() => {
 		const eventDoc = this.event();
-		return eventDoc ? this._quizService.byEvent(eventDoc._id) : [];
+		if (!eventDoc) {
+			return [];
+		}
+		const real = this._quizService.byEvent(eventDoc._id);
+		return real.length || !this.isDemoEvent() ? real : DEMO_QUIZZES;
 	});
 	readonly activePolls = computed(() => this.polls().filter((poll) => poll.active));
 	readonly activeQuizzes = computed(() => this.quizzes().filter((quiz) => quiz.active));
