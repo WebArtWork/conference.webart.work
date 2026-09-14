@@ -1,62 +1,352 @@
 <div class="min-h-dvh bg-[var(--c-bg-primary)]">
-	<div class="mx-auto flex w-full max-w-[880px] flex-col gap-10 px-6 py-16">
-		<section class="flex flex-col gap-4 text-center">
-			<h1 class="m-0 text-3xl font-bold text-[var(--c-text-secondary)] sm:text-4xl">
-				<span translate>The live companion for your talk</span>
-			</h1>
-			<p class="m-0 text-base opacity-80 sm:text-lg">{{ company.description }}</p>
+	<section
+		class="relative h-dvh w-full overflow-hidden bg-cover bg-center bg-no-repeat"
+		style="background-image: url('/images/hero.png')"
+	>
+		<div class="absolute inset-0 bg-black/30"></div>
+		<div class="absolute inset-0 bg-gradient-to-r from-black/10 via-transparent to-black/40"></div>
 
-			<div class="mt-2 flex flex-wrap justify-center gap-3">
-				<button pButton type="button" (click)="openDemoEvent()">
+		<div
+			class="absolute inset-y-0 right-0 flex w-full flex-col items-center justify-center gap-4 px-6 text-center transition-[opacity,transform] duration-[1500ms] ease-out sm:w-[38%]"
+			[style.opacity]="heroTitleOpacity()"
+			[style.transform]="'translateY(' + heroTitleOffset() + 'px)'"
+		>
+			<p class="m-0 text-5xl font-bold text-white drop-shadow-lg sm:text-7xl">{{ company.name }}</p>
+			<p class="m-0 max-w-[420px] text-sm text-white/85 drop-shadow-md sm:text-lg">
+				{{ company.description }}
+			</p>
+			<button pButton type="button" (click)="openDemoEvent()">
+				<i class="pi pi-play"></i>
+				<span translate>Try a live demo</span>
+			</button>
+		</div>
+
+		<div
+			class="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/80 transition-opacity duration-150"
+			[style.opacity]="heroTitleOpacity()"
+		>
+			<i class="pi pi-chevron-down animate-bounce text-xl"></i>
+		</div>
+	</section>
+
+	<div class="mx-auto flex w-full max-w-[960px] flex-col gap-16 px-6 py-16">
+		<section class="reveal flex flex-wrap items-center justify-center gap-3">
+			<button pButton type="button" (click)="openDemoEvent()">
+				<i class="pi pi-play"></i>
+				<span translate>Try a live demo</span>
+			</button>
+			<a pButton [outlined]="true" routerLink="/sign">
+				<span translate>Create your event</span>
+			</a>
+			<a pButton [text]="true" size="small" routerLink="/for-attendees">
+				<span translate>For attendees</span>
+			</a>
+			<a pButton [text]="true" size="small" routerLink="/for-hosts">
+				<span translate>For hosts</span>
+			</a>
+		</section>
+
+		<section class="flex flex-col gap-5">
+			<h2 class="reveal m-0 text-center text-xl font-bold text-[var(--c-text-secondary)] sm:text-2xl" translate>
+				Features
+			</h2>
+			<div class="reveal-stagger grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+				<p-card
+					class="block transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-lg"
+				>
+					<div
+						class="flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--c-primary)]/10 text-[var(--c-primary)]"
+					>
+						<svg viewBox="0 0 48 48" fill="none" class="h-8 w-8">
+							<path
+								d="M8 12a4 4 0 0 1 4-4h20a4 4 0 0 1 4 4v14a4 4 0 0 1-4 4H20l-8 6v-6h-0a4 4 0 0 1-4-4z"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linejoin="round"
+							/>
+							<path
+								d="M20 16.5c0-1.4 1.3-2.5 3-2.5s3 1.1 3 2.5c0 1-.6 1.6-1.6 2.2-.9.6-1.4 1.1-1.4 2.1"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+							/>
+							<circle cx="23.5" cy="24.5" r="1.2" fill="currentColor" />
+						</svg>
+					</div>
+					<div class="mt-2 font-semibold" translate>Audience Q&A</div>
+					<p class="mt-1 text-sm opacity-80" translate>
+						Visitors ask and upvote questions in real time — no account needed.
+					</p>
+				</p-card>
+				<p-card
+					class="block transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-lg"
+				>
+					<div
+						class="flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--c-primary)]/10 text-[var(--c-primary)]"
+					>
+						<svg viewBox="0 0 48 48" fill="none" class="h-8 w-8">
+							<path d="M10 38V26" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+							<path d="M20 38V18" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+							<path d="M30 38V22" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+							<circle cx="34" cy="12" r="6" stroke="currentColor" stroke-width="2" />
+							<path
+								d="M31.3 12.2 33 14l3.2-3.6"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+							/>
+						</svg>
+					</div>
+					<div class="mt-2 font-semibold" translate>Polls & quizzes</div>
+					<p class="mt-1 text-sm opacity-80" translate>
+						Gauge opinions and knowledge on the spot. Results stay private to you.
+					</p>
+				</p-card>
+				<p-card
+					class="block transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-lg"
+				>
+					<div
+						class="flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--c-primary)]/10 text-[var(--c-primary)]"
+					>
+						<svg viewBox="0 0 48 48" fill="none" class="h-8 w-8">
+							<path
+								d="M24 15c-2.5-2-6.5-3-11-3v20c4.5 0 8.5 1 11 3 2.5-2 6.5-3 11-3V12c-4.5 0-8.5 1-11 3Z"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linejoin="round"
+							/>
+							<path d="M24 15v20" stroke="currentColor" stroke-width="2" />
+							<path
+								d="M31 21.3c-.9-.7-2-.3-2.6.4-.6-.7-1.7-1.1-2.6-.4-1 .8-1 2.2.2 3.3l2.4 2.1 2.4-2.1c1.2-1.1 1.2-2.5.2-3.3Z"
+								fill="currentColor"
+							/>
+						</svg>
+					</div>
+					<span
+						class="mt-2 inline-flex w-fit items-center rounded-full bg-[var(--c-primary)] px-2 py-0.5 text-sm text-white"
+						translate
+						>For hosts</span
+					>
+					<div class="mt-2 font-semibold" translate>Chapter feedback</div>
+					<p class="mt-1 text-sm opacity-80" translate>
+						Get honest per-chapter reactions the audience never sees aggregated.
+					</p>
+				</p-card>
+				<p-card
+					class="block transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-lg"
+				>
+					<div
+						class="flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--c-primary)]/10 text-[var(--c-primary)]"
+					>
+						<svg viewBox="0 0 48 48" fill="none" class="h-8 w-8">
+							<rect
+								x="8"
+								y="10"
+								width="32"
+								height="28"
+								rx="3"
+								stroke="currentColor"
+								stroke-width="2"
+							/>
+							<path d="M8 18h32" stroke="currentColor" stroke-width="2" />
+							<path d="M15 6v8M33 6v8" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+							<rect x="14" y="24" width="8" height="6" rx="1.5" fill="currentColor" />
+							<path d="M28 27h6M28 31h9" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+						</svg>
+					</div>
+					<div class="mt-2 font-semibold" translate>Live schedule & chapters</div>
+					<p class="mt-1 text-sm opacity-80" translate>
+						Attendees follow the event structure and jump straight to the current chapter.
+					</p>
+				</p-card>
+				<p-card
+					class="block transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-lg"
+				>
+					<div
+						class="flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--c-primary)]/10 text-[var(--c-primary)]"
+					>
+						<svg viewBox="0 0 48 48" fill="none" class="h-8 w-8">
+							<rect
+								x="12"
+								y="6"
+								width="24"
+								height="36"
+								rx="4"
+								stroke="currentColor"
+								stroke-width="2"
+							/>
+							<path d="M21 12h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+							<path
+								d="M25 19 19 27h5l-1 6 7-9h-5l1-5Z"
+								fill="currentColor"
+							/>
+						</svg>
+					</div>
+					<div class="mt-2 font-semibold" translate>Instant join, no signup</div>
+					<p class="mt-1 text-sm opacity-80" translate>
+						One link opens the event page — visitors join in seconds, no account required.
+					</p>
+				</p-card>
+				<p-card
+					class="block transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-lg"
+				>
+					<div
+						class="flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--c-primary)]/10 text-[var(--c-primary)]"
+					>
+						<svg viewBox="0 0 48 48" fill="none" class="h-8 w-8">
+							<path
+								d="M24 6 10 11v10c0 10 6 16.5 14 21 8-4.5 14-11 14-21V11Z"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linejoin="round"
+							/>
+							<path
+								d="M18 23.5 22 27.5 30 19"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+							/>
+						</svg>
+					</div>
+					<span
+						class="mt-2 inline-flex w-fit items-center rounded-full bg-[var(--c-primary)] px-2 py-0.5 text-sm text-white"
+						translate
+						>For hosts</span
+					>
+					<div class="mt-2 font-semibold" translate>Question moderation</div>
+					<p class="mt-1 text-sm opacity-80" translate>
+						Hosts review and approve questions before they reach the audience.
+					</p>
+				</p-card>
+			</div>
+		</section>
+
+		<section class="flex flex-col gap-5">
+			<h2 class="reveal m-0 text-center text-xl font-bold text-[var(--c-text-secondary)] sm:text-2xl" translate>
+				How it works
+			</h2>
+			<div class="reveal-stagger grid gap-6 sm:grid-cols-3">
+				<div class="flex flex-col items-center gap-2 text-center">
+					<div
+						class="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-[var(--c-primary)] text-base font-bold text-white shadow-[0_0_0_6px_var(--c-primary)]/10"
+					>
+						1
+					</div>
+					<p class="m-0 text-sm opacity-80" translate>
+						Create your event and add chapters, polls, and quizzes.
+					</p>
+				</div>
+				<div class="flex flex-col items-center gap-2 text-center">
+					<div
+						class="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-[var(--c-primary)] text-base font-bold text-white shadow-[0_0_0_6px_var(--c-primary)]/10"
+					>
+						2
+					</div>
+					<p class="m-0 text-sm opacity-80" translate>
+						Share one link — attendees join instantly from any device.
+					</p>
+				</div>
+				<div class="flex flex-col items-center gap-2 text-center">
+					<div
+						class="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-[var(--c-primary)] text-base font-bold text-white shadow-[0_0_0_6px_var(--c-primary)]/10"
+					>
+						3
+					</div>
+					<p class="m-0 text-sm opacity-80" translate>
+						Watch questions, votes, and reactions arrive live.
+					</p>
+				</div>
+			</div>
+		</section>
+
+		<section
+			class="reveal rounded-xl border border-[var(--c-border)] bg-[var(--c-surface)] p-6 text-center sm:p-8"
+		>
+			<div
+				class="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[var(--c-primary)]/10 text-[var(--c-primary)]"
+			>
+				<svg viewBox="0 0 48 48" fill="none" class="h-9 w-9">
+					<circle cx="17" cy="18" r="6" stroke="currentColor" stroke-width="2" />
+					<circle cx="33" cy="18" r="6" stroke="currentColor" stroke-width="2" />
+					<path
+						d="M8 40c0-6.6 4-11 9-11s9 4.4 9 11"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+					/>
+					<path
+						d="M22 40c0-6.6 4-11 9-11s9 4.4 9 11"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+					/>
+				</svg>
+			</div>
+			<h2 class="m-0 mt-3 text-lg font-bold text-[var(--c-text-secondary)] sm:text-xl" translate>Why Conference</h2>
+			<p class="mx-auto mt-2 max-w-[640px] text-sm opacity-80 sm:text-base" translate>
+				Conference brings attendees and speakers together in one place: no lost questions, live poll results,
+				and a handy event schedule always at hand.
+			</p>
+		</section>
+
+	</div>
+
+	<footer class="border-t border-[var(--c-border)] bg-[var(--c-bg-secondary)]">
+		<div class="mx-auto grid w-full max-w-[960px] gap-10 px-6 pt-12 pb-8 sm:grid-cols-[1.3fr_1fr_1fr]">
+			<div class="flex flex-col gap-3">
+				<a
+					routerLink="/"
+					class="inline-flex w-fit items-center gap-2 text-[var(--c-text-secondary)] no-underline"
+					[attr.aria-label]="company.name"
+				>
+					<span class="inline-flex h-10 w-10 items-center justify-center overflow-hidden">
+						<icon-spider width="40px" />
+					</span>
+					<span class="text-lg font-semibold">{{ company.name }}</span>
+				</a>
+				<p class="m-0 max-w-[320px] text-sm text-[var(--c-text-muted)]">{{ company.description }}</p>
+				<button pButton type="button" size="small" class="mt-1 w-fit" (click)="openDemoEvent()">
 					<i class="pi pi-play"></i>
 					<span translate>Try a live demo</span>
 				</button>
-				<a pButton [outlined]="true" routerLink="/sign">
-					<span translate>Create your event</span>
-				</a>
 			</div>
 
-			<div class="mt-1 flex flex-wrap justify-center gap-3">
-				<a pButton [text]="true" size="small" routerLink="/for-attendees">
-					<span translate>For attendees</span>
-				</a>
-				<a pButton [text]="true" size="small" routerLink="/for-hosts">
-					<span translate>For hosts</span>
-				</a>
-			</div>
-		</section>
-
-		<section class="grid gap-4 sm:grid-cols-3">
-			<p-card>
-				<i class="pi pi-comments text-xl"></i>
-				<div class="mt-2 font-semibold" translate>Audience Q&A</div>
-				<p class="mt-1 text-sm opacity-80" translate>
-					Visitors ask and upvote questions in real time — no account needed.
-				</p>
-			</p-card>
-			<p-card>
-				<i class="pi pi-chart-bar text-xl"></i>
-				<div class="mt-2 font-semibold" translate>Polls & quizzes</div>
-				<p class="mt-1 text-sm opacity-80" translate>
-					Gauge opinions and knowledge on the spot. Results stay private to you.
-				</p>
-			</p-card>
-			<p-card>
-				<i class="pi pi-book text-xl"></i>
-				<span
-					class="mt-2 inline-flex w-fit items-center rounded-full bg-[var(--c-primary)] px-2 py-0.5 text-sm text-white"
-					translate
-					>For hosts</span
+			<nav class="flex flex-col gap-3">
+				<div class="text-sm font-semibold text-[var(--c-text-secondary)]" translate>Navigation</div>
+				<a routerLink="/" class="text-sm text-[var(--c-text-muted)] no-underline hover:underline" translate
+					>Home</a
 				>
-				<div class="mt-2 font-semibold" translate>Chapter feedback</div>
-				<p class="mt-1 text-sm opacity-80" translate>
-					Get honest per-chapter reactions the audience never sees aggregated.
-				</p>
-			</p-card>
-		</section>
+				<a
+					routerLink="/for-attendees"
+					class="text-sm text-[var(--c-text-muted)] no-underline hover:underline"
+					translate
+					>For attendees</a
+				>
+				<a routerLink="/for-hosts" class="text-sm text-[var(--c-text-muted)] no-underline hover:underline" translate
+					>For hosts</a
+				>
+			</nav>
 
-		<footer class="text-center text-sm opacity-60">
-			<span translate>One link, one page — visitors join instantly.</span>
-		</footer>
-	</div>
+			<nav class="flex flex-col gap-3">
+				<div class="text-sm font-semibold text-[var(--c-text-secondary)]" translate>Account</div>
+				<a routerLink="/sign" class="text-sm text-[var(--c-text-muted)] no-underline hover:underline" translate
+					>Sign in</a
+				>
+				<a routerLink="/sign" class="text-sm text-[var(--c-text-muted)] no-underline hover:underline" translate
+					>Create your event</a
+				>
+			</nav>
+		</div>
+
+		<div class="border-t border-[var(--c-border)]">
+			<div class="mx-auto flex w-full max-w-[960px] justify-center px-6 py-5 text-center">
+				<p class="m-0 text-xs text-[var(--c-text-muted)]">
+					© {{ year }} {{ company.name }} — <span translate>all rights reserved</span>
+				</p>
+			</div>
+		</div>
+	</footer>
 </div>
