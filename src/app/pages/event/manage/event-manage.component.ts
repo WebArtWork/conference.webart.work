@@ -319,7 +319,10 @@ export class EventManageComponent implements OnInit {
 			this._demoQuestionStore.remove(question);
 			return;
 		}
-		this._questionService.removeQuestion(question);
+		this._questionService.removeQuestion(question, () => {
+			this._notifySaveError();
+			this._reloadQuestions();
+		});
 	}
 
 	addNewPollOption(): void {
@@ -342,7 +345,9 @@ export class EventManageComponent implements OnInit {
 			return;
 		}
 
-		this._pollService.create({ ...NEW_POLL, eventId: eventDoc._id, question, options }).subscribe();
+		this._pollService
+			.create({ ...NEW_POLL, eventId: eventDoc._id, question, options })
+			.subscribe({ error: () => this._notifySaveError() });
 		this.newPollQuestion.set('');
 		this.newPollOptions.set(['', '']);
 	}
@@ -391,7 +396,7 @@ export class EventManageComponent implements OnInit {
 			return;
 		}
 
-		this._pollService.update({ ...poll, question, options }).subscribe();
+		this._pollService.update({ ...poll, question, options }).subscribe({ error: () => this._notifySaveError() });
 		this.cancelEditPoll();
 	}
 
@@ -402,7 +407,12 @@ export class EventManageComponent implements OnInit {
 	}
 
 	deletePoll(poll: Poll): void {
-		this._pollService.delete(poll).subscribe();
+		this._pollService.delete(poll).subscribe({
+			error: () => {
+				this._notifySaveError();
+				this._reloadPollsAndQuizzes();
+			},
+		});
 		if (this.editingPollId() === poll._id) {
 			this.cancelEditPoll();
 		}
@@ -437,7 +447,7 @@ export class EventManageComponent implements OnInit {
 				correctOptionIndex: Math.min(this.newQuizCorrectIndex(), options.length - 1),
 				revealAnswer: this.newQuizRevealAnswer(),
 			})
-			.subscribe();
+			.subscribe({ error: () => this._notifySaveError() });
 		this.newQuizQuestion.set('');
 		this.newQuizOptions.set(['', '']);
 		this.newQuizCorrectIndex.set(0);
@@ -498,7 +508,7 @@ export class EventManageComponent implements OnInit {
 				correctOptionIndex: Math.min(this.editQuizCorrectIndex(), options.length - 1),
 				revealAnswer: this.editQuizRevealAnswer(),
 			})
-			.subscribe();
+			.subscribe({ error: () => this._notifySaveError() });
 		this.cancelEditQuiz();
 	}
 
@@ -511,10 +521,39 @@ export class EventManageComponent implements OnInit {
 	}
 
 	deleteQuiz(quiz: Quiz): void {
-		this._quizService.delete(quiz).subscribe();
+		this._quizService.delete(quiz).subscribe({
+			error: () => {
+				this._notifySaveError();
+				this._reloadPollsAndQuizzes();
+			},
+		});
 		if (this.editingQuizId() === quiz._id) {
 			this.cancelEditQuiz();
 		}
+	}
+
+	private _notifySaveError(): void {
+		this._messageService.add({
+			severity: 'error',
+			detail: this.translateService.translate('Failed to save. Please try again.')(),
+		});
+	}
+
+	private _reloadPollsAndQuizzes(): void {
+		const eventDoc = this.event();
+		if (!eventDoc) {
+			return;
+		}
+		this._pollService.loadEvent(eventDoc._id);
+		this._quizService.loadEvent(eventDoc._id);
+	}
+
+	private _reloadQuestions(): void {
+		const eventDoc = this.event();
+		if (!eventDoc || this.isDemoEvent()) {
+			return;
+		}
+		this._questionService.loadEvent(eventDoc.lectureId || eventDoc._id);
 	}
 
 	private _trimOptions(options: string[]): string[] {

@@ -62,7 +62,7 @@ export class QuestionService extends CrudService<Question> {
 	}
 
 	/** Owner-only moderation: removes a question from the public page. */
-	removeQuestion(question: Question): void {
-		this.delete(question).subscribe();
+	removeQuestion(question: Question, onError?: () => void): void {
+		this.delete(question).subscribe({ error: () => onError?.() });
 	}
 }
