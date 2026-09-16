@@ -16,6 +16,18 @@ export class QuizService extends CrudService<Quiz> {
 		return super.beforeCreate({ ...doc, domain: CONFERENCE_DOMAIN } as Quiz, options);
 	}
 
+	// `domain` isn't a persisted schema field, so a doc loaded back from the
+	// server never carries it — only `beforeCreate` set it. Without
+	// re-attaching it here, the backend can't resolve which company this
+	// update/delete belongs to and rejects it with "Unknown company domain".
+	protected override beforeUpdate(doc: Quiz, options: CrudOptions<Quiz>) {
+		return super.beforeUpdate({ ...doc, domain: CONFERENCE_DOMAIN } as Quiz, options);
+	}
+
+	protected override beforeDelete(doc: Quiz, options: CrudOptions<Quiz>) {
+		return super.beforeDelete({ ...doc, domain: CONFERENCE_DOMAIN } as Quiz, options);
+	}
+
 	/** Loads (or reloads) every quiz for one event — owner sees all, visitors only the active ones. */
 	loadEvent(eventId: string): void {
 		this.get({ query: withDomain(`eventId=${encodeURIComponent(eventId)}`) }).subscribe();

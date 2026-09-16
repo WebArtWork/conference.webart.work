@@ -14,6 +14,20 @@ class ConferenceCrud extends CrudService<Conference> {
 	protected override beforeCreate(doc: Conference, options: CrudOptions<Conference>) {
 		return super.beforeCreate({ ...doc, domain: CONFERENCE_DOMAIN } as Conference, options);
 	}
+
+	// `domain` isn't a persisted schema field (see the backend collection), so a
+	// doc loaded back from the server never carries it — only `beforeCreate` set
+	// it. Without re-attaching it here, the backend can't resolve which company
+	// this update/delete belongs to and rejects the request with "Unknown
+	// company domain", which silently failed until the CRUD layer was fixed to
+	// surface write errors.
+	protected override beforeUpdate(doc: Conference, options: CrudOptions<Conference>) {
+		return super.beforeUpdate({ ...doc, domain: CONFERENCE_DOMAIN } as Conference, options);
+	}
+
+	protected override beforeDelete(doc: Conference, options: CrudOptions<Conference>) {
+		return super.beforeDelete({ ...doc, domain: CONFERENCE_DOMAIN } as Conference, options);
+	}
 }
 
 /**

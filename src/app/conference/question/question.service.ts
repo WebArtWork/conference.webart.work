@@ -24,6 +24,14 @@ export class QuestionService extends CrudService<Question> {
 		return super.beforeCreate({ ...doc, domain: CONFERENCE_DOMAIN } as Question, options);
 	}
 
+	// `domain` isn't a persisted schema field, so a doc loaded back from the
+	// server never carries it — only `beforeCreate` set it. Without
+	// re-attaching it here, the backend can't resolve which company this
+	// delete belongs to and rejects it with "Unknown company domain".
+	protected override beforeDelete(doc: Question, options: CrudOptions<Question>) {
+		return super.beforeDelete({ ...doc, domain: CONFERENCE_DOMAIN } as Question, options);
+	}
+
 	/** Loads (or reloads) the public question wall for one event/lecture. */
 	loadEvent(eventId: string): void {
 		this.get({ query: withDomain(`eventId=${encodeURIComponent(eventId)}`) }).subscribe();

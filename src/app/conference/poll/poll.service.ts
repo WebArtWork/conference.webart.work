@@ -15,6 +15,18 @@ export class PollService extends CrudService<Poll> {
 		return super.beforeCreate({ ...doc, domain: CONFERENCE_DOMAIN } as Poll, options);
 	}
 
+	// `domain` isn't a persisted schema field, so a doc loaded back from the
+	// server never carries it — only `beforeCreate` set it. Without
+	// re-attaching it here, the backend can't resolve which company this
+	// update/delete belongs to and rejects it with "Unknown company domain".
+	protected override beforeUpdate(doc: Poll, options: CrudOptions<Poll>) {
+		return super.beforeUpdate({ ...doc, domain: CONFERENCE_DOMAIN } as Poll, options);
+	}
+
+	protected override beforeDelete(doc: Poll, options: CrudOptions<Poll>) {
+		return super.beforeDelete({ ...doc, domain: CONFERENCE_DOMAIN } as Poll, options);
+	}
+
 	/** Loads (or reloads) every poll for one event — owner sees all, visitors only the active ones. */
 	loadEvent(eventId: string): void {
 		this.get({ query: withDomain(`eventId=${encodeURIComponent(eventId)}`) }).subscribe();

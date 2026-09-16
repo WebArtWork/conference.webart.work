@@ -14,6 +14,18 @@ class EventCrud extends CrudService<Event> {
 	protected override beforeCreate(doc: Event, options: CrudOptions<Event>) {
 		return super.beforeCreate({ ...doc, domain: CONFERENCE_DOMAIN } as Event, options);
 	}
+
+	// `domain` isn't a persisted schema field, so a doc loaded back from the
+	// server never carries it — only `beforeCreate` set it. Without
+	// re-attaching it here, the backend can't resolve which company this
+	// update/delete belongs to and rejects it with "Unknown company domain".
+	protected override beforeUpdate(doc: Event, options: CrudOptions<Event>) {
+		return super.beforeUpdate({ ...doc, domain: CONFERENCE_DOMAIN } as Event, options);
+	}
+
+	protected override beforeDelete(doc: Event, options: CrudOptions<Event>) {
+		return super.beforeDelete({ ...doc, domain: CONFERENCE_DOMAIN } as Event, options);
+	}
 }
 
 /**

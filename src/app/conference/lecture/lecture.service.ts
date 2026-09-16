@@ -16,6 +16,18 @@ class LectureCrud extends CrudService<Lecture> {
 	protected override beforeCreate(doc: Lecture, options: CrudOptions<Lecture>) {
 		return super.beforeCreate({ ...doc, domain: CONFERENCE_DOMAIN } as Lecture, options);
 	}
+
+	// `domain` isn't a persisted schema field, so a doc loaded back from the
+	// server never carries it — only `beforeCreate` set it. Without
+	// re-attaching it here, the backend can't resolve which company this
+	// update/delete belongs to and rejects it with "Unknown company domain".
+	protected override beforeUpdate(doc: Lecture, options: CrudOptions<Lecture>) {
+		return super.beforeUpdate({ ...doc, domain: CONFERENCE_DOMAIN } as Lecture, options);
+	}
+
+	protected override beforeDelete(doc: Lecture, options: CrudOptions<Lecture>) {
+		return super.beforeDelete({ ...doc, domain: CONFERENCE_DOMAIN } as Lecture, options);
+	}
 }
 
 /**
