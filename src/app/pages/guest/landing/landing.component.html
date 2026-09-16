@@ -35,23 +35,27 @@
 		</div>
 	</section>
 
-	<div class="mx-auto flex w-full max-w-[960px] flex-col gap-16 px-6 py-16">
-		<section class="reveal flex flex-wrap items-center justify-center gap-3">
-			<button pButton type="button" (click)="openDemoEvent()">
-				<i class="pi pi-play"></i>
-				<span translate>Try a live demo</span>
-			</button>
-			<a pButton [outlined]="true" routerLink="/sign">
-				<span translate>Create your event</span>
-			</a>
-			<a pButton [text]="true" size="small" routerLink="/for-attendees">
-				<span translate>For attendees</span>
-			</a>
-			<a pButton [text]="true" size="small" routerLink="/for-hosts">
-				<span translate>For hosts</span>
-			</a>
-		</section>
+	<section class="reveal mx-auto flex w-full max-w-[1200px] flex-wrap items-center justify-center gap-3 px-6 pt-16">
+		<button pButton type="button" (click)="openDemoEvent()">
+			<i class="pi pi-play"></i>
+			<span translate>Try yourself as an organizer</span>
+		</button>
+		<button pButton type="button" [outlined]="true" (click)="openDemoEventAsAttendee()">
+			<i class="pi pi-user"></i>
+			<span translate>Try yourself as an attendee</span>
+		</button>
+		<a pButton [text]="true" routerLink="/sign">
+			<span translate>Create your event</span>
+		</a>
+		<a pButton [text]="true" size="small" routerLink="/for-attendees">
+			<span translate>For attendees</span>
+		</a>
+		<a pButton [text]="true" size="small" routerLink="/for-hosts">
+			<span translate>For hosts</span>
+		</a>
+	</section>
 
+	<div class="mx-auto flex w-full max-w-[960px] flex-col gap-16 px-6 py-16">
 		<section class="flex flex-col gap-5">
 			<h2 class="reveal m-0 text-center text-xl font-bold text-[var(--c-text-secondary)] sm:text-2xl" translate>
 				Features
@@ -301,7 +305,7 @@
 	</div>
 
 	<footer class="border-t border-[var(--c-border)] bg-[var(--c-bg-secondary)]">
-		<div class="mx-auto grid w-full max-w-[960px] gap-10 px-6 pt-12 pb-8 sm:grid-cols-[1.3fr_1fr_1fr]">
+		<div class="mx-auto grid w-full max-w-[960px] gap-10 px-6 pt-12 pb-8 sm:grid-cols-[1.3fr_1fr_auto]">
 			<div class="flex flex-col gap-3">
 				<a
 					routerLink="/"
@@ -314,16 +318,12 @@
 					<span class="text-lg font-semibold">{{ company.name }}</span>
 				</a>
 				<p class="m-0 max-w-[320px] text-sm text-[var(--c-text-muted)]">{{ company.description }}</p>
-				<button pButton type="button" size="small" class="mt-1 w-fit" (click)="openDemoEvent()">
-					<i class="pi pi-play"></i>
-					<span translate>Try a live demo</span>
-				</button>
 			</div>
 
-			<nav class="flex flex-col gap-3">
+			<nav class="flex flex-col gap-3 pl-6">
 				<div class="text-sm font-semibold text-[var(--c-text-secondary)]" translate>Navigation</div>
-				<a routerLink="/" class="text-sm text-[var(--c-text-muted)] no-underline hover:underline" translate
-					>Home</a
+				<a routerLink="/sign" class="text-sm text-[var(--c-text-muted)] no-underline hover:underline" translate
+					>Register</a
 				>
 				<a
 					routerLink="/for-attendees"
@@ -336,15 +336,16 @@
 				>
 			</nav>
 
-			<nav class="flex flex-col gap-3">
-				<div class="text-sm font-semibold text-[var(--c-text-secondary)]" translate>Account</div>
-				<a routerLink="/sign" class="text-sm text-[var(--c-text-muted)] no-underline hover:underline" translate
-					>Sign in</a
-				>
-				<a routerLink="/sign" class="text-sm text-[var(--c-text-muted)] no-underline hover:underline" translate
-					>Create your event</a
-				>
-			</nav>
+			<div class="flex flex-col items-start gap-3">
+				<button pButton type="button" size="small" class="w-full justify-center whitespace-nowrap" (click)="openDemoEvent()">
+					<i class="pi pi-play"></i>
+					<span translate>Try yourself as an organizer</span>
+				</button>
+				<button pButton type="button" [outlined]="true" size="small" (click)="openDemoEventAsAttendee()">
+					<i class="pi pi-user"></i>
+					<span translate>Try yourself as an attendee</span>
+				</button>
+			</div>
 		</div>
 
 		<div class="border-t border-[var(--c-border)]">

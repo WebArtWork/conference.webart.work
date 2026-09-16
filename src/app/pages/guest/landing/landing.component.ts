@@ -19,11 +19,13 @@ import { companyProfile } from '../../../company/company.data';
 })
 export class LandingComponent implements OnDestroy {
 	private readonly _router = inject(Router);
-	private readonly _elementRef = inject(ElementRef<HTMLElement>);
+	private readonly _elementRef: ElementRef<HTMLElement> = inject(ElementRef);
 
 	private _scrollContainer: HTMLElement | Window = window;
-	private readonly _onScroll = (): void => this._updateHeroOffset();
-	private _revealObserver?: IntersectionObserver;
+	private readonly _onScroll = (): void => this._queueRevealUpdate();
+	private readonly _onResize = (): void => this._queueRevealUpdate();
+	private _revealEntries: { el: HTMLElement; delay: number }[] = [];
+	private _revealFrame: number | null = null;
 
 	readonly company = companyProfile;
 	readonly year = new Date().getFullYear();
@@ -35,27 +37,28 @@ export class LandingComponent implements OnDestroy {
 		afterNextRender(() => {
 			this._scrollContainer = this._findScrollContainer(this._elementRef.nativeElement) ?? window;
 			this._scrollContainer.addEventListener('scroll', this._onScroll, { passive: true });
-			requestAnimationFrame(() => requestAnimationFrame(() => this._updateHeroOffset()));
+			window.addEventListener('resize', this._onResize, { passive: true });
 
-			this._revealObserver = new IntersectionObserver(
-				(entries) => {
-					for (const entry of entries) {
-						if (!entry.isIntersecting) continue;
-						entry.target.classList.add('is-visible');
-						this._revealObserver?.unobserve(entry.target);
-					}
-				},
-				{ threshold: 0.15 },
-			);
-			this._elementRef.nativeElement
-				.querySelectorAll('.reveal, .reveal-stagger')
-				.forEach((el: Element) => this._revealObserver?.observe(el));
+			this._revealEntries = [];
+			this._elementRef.nativeElement.querySelectorAll<HTMLElement>('.reveal').forEach((el) => {
+				this._revealEntries.push({ el, delay: 0 });
+			});
+			this._elementRef.nativeElement.querySelectorAll<HTMLElement>('.reveal-stagger').forEach((group) => {
+				Array.from(group.children).forEach((child, index) => {
+					this._revealEntries.push({ el: child as HTMLElement, delay: index * 40 });
+				});
+			});
+
+			requestAnimationFrame(() => requestAnimationFrame(() => this._updateAll()));
 		});
 	}
 
 	ngOnDestroy(): void {
 		this._scrollContainer.removeEventListener('scroll', this._onScroll);
-		this._revealObserver?.disconnect();
+		window.removeEventListener('resize', this._onResize);
+		if (this._revealFrame !== null) {
+			cancelAnimationFrame(this._revealFrame);
+		}
 	}
 
 	openDemoEvent(): void {
@@ -72,6 +75,42 @@ export class LandingComponent implements OnDestroy {
 		const fadeDistance = window.innerHeight * 0.6;
 		this.heroTitleOpacity.set(Math.max(0, 1 - scrollY / fadeDistance));
 		this.heroTitleOffset.set(-scrollY * 0.4);
+	}
+
+	/** Coalesces scroll/resize bursts into one measurement + paint per frame. */
+	private _queueRevealUpdate(): void {
+		this._updateHeroOffset();
+		if (this._revealFrame !== null) {
+			return;
+		}
+		this._revealFrame = requestAnimationFrame(() => {
+			this._revealFrame = null;
+			this._updateReveals();
+		});
+	}
+
+	private _updateAll(): void {
+		this._updateHeroOffset();
+		this._updateReveals();
+	}
+
+	/**
+	 * Moves every `.reveal`/`.reveal-stagger` element continuously as it
+	 * scrolls through the lower half of the viewport, the same fade+rise
+	 * treatment the hero title gets from `heroTitleOpacity`/`heroTitleOffset`
+	 * — rather than a one-shot "appear once and stay" trigger.
+	 */
+	private _updateReveals(): void {
+		const viewportHeight = window.innerHeight;
+		const start = viewportHeight * 0.92;
+		const end = viewportHeight * 0.5;
+
+		for (const { el, delay } of this._revealEntries) {
+			const top = el.getBoundingClientRect().top - delay * 0.6;
+			const progress = Math.min(1, Math.max(0, (start - top) / (start - end)));
+			el.style.opacity = String(progress);
+			el.style.transform = `translateY(${(1 - progress) * 28}px)`;
+		}
 	}
 
 	private _findScrollContainer(el: HTMLElement | null): HTMLElement | null {
