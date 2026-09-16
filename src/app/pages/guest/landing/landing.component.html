@@ -302,53 +302,110 @@
 			</p>
 		</section>
 
-		<section class="grid grid-cols-1 items-center gap-10 sm:grid-cols-2">
-			<div
-				class="reveal flex flex-col items-center gap-3 rounded-xl border border-[var(--c-border)] bg-[var(--c-surface)] p-6 text-center sm:p-8"
-			>
-				<div
-					class="flex h-16 w-16 items-center justify-center rounded-2xl bg-[var(--c-primary)]/10 text-[var(--c-primary)]"
-				>
-					<svg viewBox="0 0 48 48" fill="none" class="h-9 w-9">
-						<path
-							d="M14 25 21 32 34 17"
-							stroke="currentColor"
-							stroke-width="3"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-						/>
-					</svg>
+		<section
+			class="reveal mx-auto w-full max-w-[640px] rounded-xl border border-[var(--c-border)] bg-[var(--c-surface)] p-6 sm:p-8"
+		>
+			<div class="flex items-center justify-between gap-3">
+				<div class="text-xs font-semibold tracking-wide text-[var(--c-primary)] uppercase" translate>
+					Conference by the numbers
 				</div>
-				<h2 class="m-0 text-lg font-bold text-[var(--c-text-secondary)] sm:text-xl" translate>Ready to use</h2>
-				<p class="m-0 max-w-[320px] text-sm opacity-80" translate>
-					No install or setup needed — open the page and get started in minutes.
-				</p>
+				<span
+					class="inline-flex items-center rounded-full border border-[var(--c-border)] px-2 py-0.5 text-xs text-[var(--c-text-muted)]"
+					translate
+					>Example</span
+				>
 			</div>
+			<h2 class="m-0 mt-2 text-xl font-bold text-[var(--c-text-secondary)] sm:text-2xl" translate>
+				Every interaction has its place.
+			</h2>
 
-			<div class="reveal-stagger grid grid-cols-2 gap-4 text-center">
-				<div
-					class="flex flex-col items-center justify-center gap-1 rounded-xl bg-[var(--c-surface)] p-4"
-				>
-					<div class="text-3xl font-bold text-[var(--c-primary)] sm:text-4xl">0</div>
-					<div class="text-sm opacity-80" translate>Minutes for attendees to sign up</div>
+			<div class="mt-4 flex flex-col divide-y divide-[var(--c-border)]">
+				<div class="flex items-start gap-3 py-4 first:pt-0">
+					<div
+						class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[var(--c-primary)]/10 text-[var(--c-primary)]"
+					>
+						<i class="pi pi-clock"></i>
+					</div>
+					<div class="min-w-0 flex-1">
+						<div class="text-xs font-semibold tracking-wide opacity-60 uppercase" translate>0 minutes</div>
+						<div class="flex items-center justify-between gap-3">
+							<div class="font-semibold" translate>No signup required</div>
+							<span
+								class="inline-flex shrink-0 items-center rounded-full border border-[var(--c-border)] px-2 py-0.5 text-xs text-[var(--c-text-muted)]"
+								translate
+								>Attendees</span
+							>
+						</div>
+						<p class="m-0 mt-1 text-sm opacity-80" translate>
+							Attendees join with one link — no account, no download.
+						</p>
+					</div>
 				</div>
-				<div
-					class="flex flex-col items-center justify-center gap-1 rounded-xl bg-[var(--c-surface)] p-4"
-				>
-					<div class="text-3xl font-bold text-[var(--c-primary)] sm:text-4xl">1</div>
-					<div class="text-sm opacity-80" translate>Link opens the whole event</div>
+
+				<div class="flex items-start gap-3 py-4">
+					<div
+						class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[var(--c-primary)]/10 text-[var(--c-primary)]"
+					>
+						<i class="pi pi-link"></i>
+					</div>
+					<div class="min-w-0 flex-1">
+						<div class="text-xs font-semibold tracking-wide opacity-60 uppercase" translate>1 link</div>
+						<div class="flex items-center justify-between gap-3">
+							<div class="font-semibold" translate>The whole event in one place</div>
+							<span
+								class="inline-flex shrink-0 items-center rounded-full border border-[var(--c-border)] px-2 py-0.5 text-xs text-[var(--c-text-muted)]"
+								translate
+								>Access</span
+							>
+						</div>
+						<p class="m-0 mt-1 text-sm opacity-80" translate>
+							Chapters, polls, and quizzes open the moment attendees arrive.
+						</p>
+					</div>
 				</div>
-				<div
-					class="flex flex-col items-center justify-center gap-1 rounded-xl bg-[var(--c-surface)] p-4"
-				>
-					<div class="text-3xl font-bold text-[var(--c-primary)] sm:text-4xl">100%</div>
-					<div class="text-sm opacity-80" translate>Poll and quiz results stay private to the organizer</div>
+
+				<div class="flex items-start gap-3 py-4">
+					<div
+						class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[var(--c-primary)]/10 text-[var(--c-primary)]"
+					>
+						<i class="pi pi-shield"></i>
+					</div>
+					<div class="min-w-0 flex-1">
+						<div class="text-xs font-semibold tracking-wide opacity-60 uppercase">100%</div>
+						<div class="flex items-center justify-between gap-3">
+							<div class="font-semibold" translate>Private results</div>
+							<span
+								class="inline-flex shrink-0 items-center rounded-full border border-[var(--c-border)] px-2 py-0.5 text-xs text-[var(--c-text-muted)]"
+								translate
+								>Organizer</span
+							>
+						</div>
+						<p class="m-0 mt-1 text-sm opacity-80" translate>
+							Poll and quiz answers are visible to the organizer only.
+						</p>
+					</div>
 				</div>
-				<div
-					class="flex flex-col items-center justify-center gap-1 rounded-xl bg-[var(--c-surface)] p-4"
-				>
-					<div class="text-3xl font-bold text-[var(--c-primary)] sm:text-4xl" translate>Live</div>
-					<div class="text-sm opacity-80" translate>Questions and reactions arrive as they happen</div>
+
+				<div class="flex items-start gap-3 py-4 last:pb-0">
+					<div
+						class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[var(--c-primary)]/10 text-[var(--c-primary)]"
+					>
+						<i class="pi pi-bolt"></i>
+					</div>
+					<div class="min-w-0 flex-1">
+						<div class="text-xs font-semibold tracking-wide opacity-60 uppercase" translate>Live</div>
+						<div class="flex items-center justify-between gap-3">
+							<div class="font-semibold" translate>Instant interaction</div>
+							<span
+								class="inline-flex shrink-0 items-center rounded-full border border-[var(--c-border)] px-2 py-0.5 text-xs text-[var(--c-text-muted)]"
+								translate
+								>Real-time</span
+							>
+						</div>
+						<p class="m-0 mt-1 text-sm opacity-80" translate>
+							Questions and reactions arrive the moment they're sent.
+						</p>
+					</div>
 				</div>
 			</div>
 		</section>
