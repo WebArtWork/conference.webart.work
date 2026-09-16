@@ -212,6 +212,24 @@ export const routes: Routes = [
 						(m) => m.routes,
 					),
 			},
+			{
+				// Not behind `authenticatedGuard` at this parent level — the demo
+				// event (slug `test-1`, linked from the landing page) must be
+				// reachable by anonymous visitors. Real events are still
+				// protected: `EventManageComponent` checks ownership itself and
+				// redirects/hides for anyone who isn't the actual owner.
+				path: 'event/:slug/manage',
+				canActivate: [MetaGuard],
+				data: {
+					meta: {
+						title: 'Керування подією',
+					},
+				},
+				loadComponent: () =>
+					import('./pages/event/manage/event-manage.component').then(
+						(m) => m.EventManageComponent,
+					),
+			},
 		],
 	},
 	{
@@ -294,19 +312,6 @@ export const routes: Routes = [
 				loadChildren: () =>
 					import('./pages/user/translations/translations.routes').then(
 						(m) => m.routes,
-					),
-			},
-			{
-				path: 'event/:slug/manage',
-				canActivate: [MetaGuard],
-				data: {
-					meta: {
-						title: 'Керування подією',
-					},
-				},
-				loadComponent: () =>
-					import('./pages/event/manage/event-manage.component').then(
-						(m) => m.EventManageComponent,
 					),
 			},
 		],

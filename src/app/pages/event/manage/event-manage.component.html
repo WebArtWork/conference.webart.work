@@ -2,13 +2,7 @@
 	@if (isOwner()) {
 		<div class="mx-auto flex w-full max-w-[960px] flex-col gap-4 p-4">
 			@if (fragment() === 'questions') {
-				<div class="flex items-center justify-between gap-3">
-					<h1 class="m-0 text-xl font-semibold" translate>Audience Q&A</h1>
-					<a [routerLink]="['.']" class="flex items-center gap-2 text-sm opacity-70 hover:opacity-100">
-						<i class="pi pi-arrow-left"></i>
-						<span translate>Back to event</span>
-					</a>
-				</div>
+				<h1 class="m-0 text-xl font-semibold" translate>Audience Q&A</h1>
 
 				<p-card>
 					<div class="text-sm font-semibold" translate>Live audience stats</div>

@@ -126,6 +126,8 @@ export class LecturePublicComponent {
 		const ids = this.pollFlowIds();
 		return ids !== null && this.pollFlowIndex() >= ids.length;
 	});
+	/** Guards the auto-open effect below so it only fires once per page load, not every time the flow is closed. */
+	private readonly _pollFlowAutoStarted = signal(false);
 
 	/** Same idea as the poll flow above, for quizzes (plus the reveal-answer pause). */
 	readonly quizFlowIds = signal<string[] | null>(null);
@@ -143,6 +145,8 @@ export class LecturePublicComponent {
 		const ids = this.quizFlowIds();
 		return ids !== null && this.quizFlowIndex() >= ids.length;
 	});
+	/** Guards the auto-open effect below so it only fires once per page load, not every time the flow is closed. */
+	private readonly _quizFlowAutoStarted = signal(false);
 
 	constructor() {
 		effect(() => {
@@ -188,6 +192,28 @@ export class LecturePublicComponent {
 
 		effect(() => {
 			this.nameDraft.set(this.deviceIdService.visitorName());
+		});
+
+		// Polls/quizzes open expanded by default — no "Take poll"/"Take quiz"
+		// click needed — as soon as there's something unanswered to show.
+		effect(() => {
+			if (this._pollFlowAutoStarted() || this.pollFlowIds() !== null) {
+				return;
+			}
+			if (this.activePolls().some((poll) => !this.pollAnswerService.hasAnswered(poll))) {
+				this._pollFlowAutoStarted.set(true);
+				this.goToPolls();
+			}
+		});
+
+		effect(() => {
+			if (this._quizFlowAutoStarted() || this.quizFlowIds() !== null) {
+				return;
+			}
+			if (this.activeQuizzes().some((quiz) => !this.quizAnswerService.hasAnswered(quiz))) {
+				this._quizFlowAutoStarted.set(true);
+				this.goToQuizzes();
+			}
 		});
 
 		// Once every poll/quiz in the flow is answered, fold back to the plain
@@ -251,11 +277,6 @@ export class LecturePublicComponent {
 		});
 	}
 
-	closePollFlow(): void {
-		this.pollFlowIds.set(null);
-		this.pollFlowIndex.set(0);
-	}
-
 	goToQuizzes(): void {
 		const ids = this.activeQuizzes()
 			.filter((quiz) => !this.quizAnswerService.hasAnswered(quiz))
@@ -290,12 +311,6 @@ export class LecturePublicComponent {
 	nextQuiz(): void {
 		this.quizRevealed.set(false);
 		this._advanceQuiz();
-	}
-
-	closeQuizFlow(): void {
-		this.quizFlowIds.set(null);
-		this.quizFlowIndex.set(0);
-		this.quizRevealed.set(false);
 	}
 
 	private _advanceQuiz(): void {

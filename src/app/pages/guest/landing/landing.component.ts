@@ -59,6 +59,10 @@ export class LandingComponent implements OnDestroy {
 	}
 
 	openDemoEvent(): void {
+		this._router.navigate(['/event', 'test-1', 'manage'], { fragment: 'questions' });
+	}
+
+	openDemoEventAsAttendee(): void {
 		this._router.navigate(['/event', 'test-1']);
 	}
 

@@ -26,12 +26,12 @@ import { Quiz } from '../../../conference/quiz/quiz.interface';
 import { QuizService, QuizAnswerService } from '../../../conference/quiz/quiz.service';
 import { NEW_QUIZ } from '../../../conference/quiz/quiz.const';
 import { TimeScrollInputComponent } from '../../../shared/time-scroll-input/time-scroll-input.component';
+import { DemoQuestionStore } from '../event-demo-question.store';
 import {
 	DEMO_EVENT,
 	DEMO_EVENT_SLUG,
 	DEMO_POLLS,
 	DEMO_POLL_RESULTS,
-	DEMO_QUESTIONS,
 	DEMO_QUIZZES,
 	DEMO_QUIZ_RESULTS,
 } from '../event-demo.data';
@@ -76,6 +76,7 @@ export class EventManageComponent implements OnInit {
 	private readonly _pollAnswerService = inject(PollAnswerService);
 	private readonly _quizService = inject(QuizService);
 	private readonly _quizAnswerService = inject(QuizAnswerService);
+	private readonly _demoQuestionStore = inject(DemoQuestionStore);
 	private readonly _changeDetectorRef = inject(ChangeDetectorRef);
 
 	readonly slug = input.required<string>();
@@ -113,41 +114,37 @@ export class EventManageComponent implements OnInit {
 	 */
 	readonly isDemoEvent = computed(() => this.event()?.slug === DEMO_EVENT_SLUG);
 
-	/** Questions live on the scheduled lecture's chat, not the event itself. */
+	/** Questions live on the scheduled lecture's chat, not the event itself — except the demo event, which has no lecture and reads the shared client-only Q&A store instead. */
 	readonly questions = computed(() => {
 		const eventDoc = this.event();
 		if (!eventDoc) {
 			return [];
 		}
-		const real = this._questionService.byEvent(eventDoc.lectureId || eventDoc._id);
-		if (real.length || !this.isDemoEvent()) {
-			return real;
+		if (this.isDemoEvent()) {
+			return this._demoQuestionStore.questions();
 		}
-		return DEMO_QUESTIONS.filter((question) => !this._removedDemoQuestionIds().has(question._id));
+		return this._questionService.byEvent(eventDoc.lectureId || eventDoc._id);
 	});
+	/** The demo event always shows its fixed showcase polls, regardless of any real poll data — same reasoning as `questions` above. */
 	readonly polls = computed(() => {
 		const eventDoc = this.event();
 		if (!eventDoc) {
 			return [];
 		}
-		const real = this._pollService.byEvent(eventDoc._id);
-		return real.length || !this.isDemoEvent() ? real : DEMO_POLLS;
+		return this.isDemoEvent() ? DEMO_POLLS : this._pollService.byEvent(eventDoc._id);
 	});
 	readonly quizzes = computed(() => {
 		const eventDoc = this.event();
 		if (!eventDoc) {
 			return [];
 		}
-		const real = this._quizService.byEvent(eventDoc._id);
-		return real.length || !this.isDemoEvent() ? real : DEMO_QUIZZES;
+		return this.isDemoEvent() ? DEMO_QUIZZES : this._quizService.byEvent(eventDoc._id);
 	});
-
-	private readonly _removedDemoQuestionIds = signal<Set<string>>(new Set());
 
 	/** Live audience-participation counters for the dashboard summary. */
 	readonly stats = computed(() => {
-		const showingDemoPolls = this.isDemoEvent() && this.polls() === DEMO_POLLS;
-		const showingDemoQuizzes = this.isDemoEvent() && this.quizzes() === DEMO_QUIZZES;
+		const showingDemoPolls = this.isDemoEvent();
+		const showingDemoQuizzes = this.isDemoEvent();
 
 		return {
 			questionCount: this.questions().length,
@@ -222,7 +219,9 @@ export class EventManageComponent implements OnInit {
 		this.eventLectureIdDraft.set(eventDoc?.lectureId ?? '');
 
 		if (eventDoc) {
-			this._questionService.loadEvent(eventDoc.lectureId || eventDoc._id);
+			if (!this.isDemoEvent()) {
+				this._questionService.loadEvent(eventDoc.lectureId || eventDoc._id);
+			}
 			this._pollService.loadEvent(eventDoc._id);
 			this._quizService.loadEvent(eventDoc._id);
 			this._pollAnswerService.loadAll();
@@ -316,8 +315,8 @@ export class EventManageComponent implements OnInit {
 	}
 
 	deleteQuestion(question: Question): void {
-		if (question._id.startsWith('demo-')) {
-			this._removedDemoQuestionIds.update((ids) => new Set(ids).add(question._id));
+		if (this.isDemoEvent()) {
+			this._demoQuestionStore.remove(question);
 			return;
 		}
 		this._questionService.removeQuestion(question);

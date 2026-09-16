@@ -15,10 +15,16 @@
 			<p class="m-0 max-w-[420px] text-sm text-white/85 drop-shadow-md sm:text-lg">
 				{{ company.description }}
 			</p>
-			<button pButton type="button" (click)="openDemoEvent()">
-				<i class="pi pi-play"></i>
-				<span translate>Try yourself as an organizer</span>
-			</button>
+			<div class="flex flex-wrap items-center justify-center gap-3">
+				<button pButton type="button" (click)="openDemoEvent()">
+					<i class="pi pi-play"></i>
+					<span translate>Try yourself as an organizer</span>
+				</button>
+				<button pButton type="button" [outlined]="true" (click)="openDemoEventAsAttendee()">
+					<i class="pi pi-user"></i>
+					<span translate>Try yourself as an attendee</span>
+				</button>
+			</div>
 		</div>
 
 		<div
