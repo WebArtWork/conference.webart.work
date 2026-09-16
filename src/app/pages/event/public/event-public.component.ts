@@ -112,8 +112,6 @@ export class EventPublicComponent {
 		return ids !== null && this.pollFlowIndex() >= ids.length;
 	});
 	readonly allPollsAnswered = computed(() => this.activePolls().every((poll) => this.hasAnsweredPoll(poll._id)));
-	/** Guards the auto-open effect below so it only fires once per page load, not every time the flow is closed. */
-	private readonly _pollFlowAutoStarted = signal(false);
 
 	/** Same idea as the poll flow above, for quizzes (plus the reveal-answer pause). */
 	readonly quizFlowIds = signal<string[] | null>(null);
@@ -132,8 +130,6 @@ export class EventPublicComponent {
 		return ids !== null && this.quizFlowIndex() >= ids.length;
 	});
 	readonly allQuizzesAnswered = computed(() => this.activeQuizzes().every((quiz) => this.hasAnsweredQuiz(quiz._id)));
-	/** Guards the auto-open effect below so it only fires once per page load, not every time the flow is closed. */
-	private readonly _quizFlowAutoStarted = signal(false);
 
 	constructor() {
 		effect(() => {
@@ -142,23 +138,23 @@ export class EventPublicComponent {
 
 		// Polls/quizzes open expanded by default — one at a time, in the same
 		// "1/2" flow-card format the lecture page uses — as soon as there's
-		// something unanswered to show.
+		// something unanswered to show. Not gated to "once per page load": if
+		// an organizer activates another poll/quiz later in the same visit,
+		// it opens the same way.
 		effect(() => {
-			if (this._pollFlowAutoStarted() || this.pollFlowIds() !== null) {
+			if (this.pollFlowIds() !== null) {
 				return;
 			}
 			if (this.activePolls().some((poll) => !this.hasAnsweredPoll(poll._id))) {
-				this._pollFlowAutoStarted.set(true);
 				this.goToPolls();
 			}
 		});
 
 		effect(() => {
-			if (this._quizFlowAutoStarted() || this.quizFlowIds() !== null) {
+			if (this.quizFlowIds() !== null) {
 				return;
 			}
 			if (this.activeQuizzes().some((quiz) => !this.hasAnsweredQuiz(quiz._id))) {
-				this._quizFlowAutoStarted.set(true);
 				this.goToQuizzes();
 			}
 		});
