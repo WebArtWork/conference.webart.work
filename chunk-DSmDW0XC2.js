@@ -1,0 +1,1 @@
+var n=[{path:``,loadComponent:()=>import(`./chunk-C5m-7LAR.js`).then(e=>e.ConferencesComponent)},{path:`:conferenceId/share`,data:{shareKind:`conference`},loadChildren:()=>import(`./chunk-CIA5LO76.js`).then(e=>e.routes)},{path:`:conferenceId`,loadChildren:()=>import(`./chunk-0Q3bULN72.js`).then(e=>e.routes)}];export{n as routes};

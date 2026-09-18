@@ -1,0 +1,1 @@
+var t=[{path:``,loadComponent:()=>import(`./chunk-DeFTeo8G2.js`).then(o=>o.TranslationsComponent)}];export{t as routes};

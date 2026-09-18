@@ -1,0 +1,1 @@
+var t=[{path:``,loadComponent:()=>import(`./chunk-BOYpSnTO.js`).then(o=>o.LecturesManageComponent)}];export{t as routes};

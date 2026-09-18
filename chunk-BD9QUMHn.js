@@ -1,0 +1,1 @@
+import{D as e}from"./main-5VQ7FW5S.js";var s=e.contact.slug;function n(t=``){let e=`domain=${encodeURIComponent(s)}`;return t?`${t}&${e}`:e}function c(){return typeof crypto<`u`&&typeof crypto.randomUUID==`function`?crypto.randomUUID():`${Date.now()}-${Math.random().toString(16).slice(2)}`}export{n,s as r,c as t};
