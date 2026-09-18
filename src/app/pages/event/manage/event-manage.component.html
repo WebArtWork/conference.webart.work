@@ -58,7 +58,11 @@
 									<span class="font-semibold">{{ quiz.question }}</span>
 									<div class="mt-2 flex flex-col gap-1 text-sm">
 										@for (result of quizResults(quiz); track result.optionIndex) {
-											<div class="flex justify-between" [class.font-semibold]="result.isCorrect">
+											<div
+												class="flex justify-between rounded px-2 py-1"
+												[class.font-semibold]="result.isCorrect"
+												[class]="result.isCorrect ? 'bg-[var(--c-success,#16a34a)] text-white' : ''"
+											>
 												<span>{{ quiz.options[result.optionIndex] }}@if (result.isCorrect) { <i class="pi pi-check text-xs"></i> }</span>
 												<span>{{ result.votes }}</span>
 											</div>

@@ -1,0 +1,52 @@
+❯ Building...
+✔ Building...
+Initial chunk files                   | Names                     |  Raw size
+styles.css                            | styles                    |  62.82 kB | 
+main.js                               | main                      |  22.99 kB | 
+chunk-BPIZHZYD.js                     | -                         |   1.96 kB | 
+chunk-U67UT3RL.js                     | -                         |   1.85 kB | 
+chunk-Y5RQAIA6.js                     | -                         |   1.55 kB | 
+polyfills.js                          | polyfills                 | 131 bytes | 
+
+                                      | Initial total             |  91.30 kB
+
+Lazy chunk files                      | Names                     |  Raw size
+event-manage.component-IEVWXEJO.js    | event-manage-component    | 118.56 kB | 
+feedback.component-MMH4VAJC.js        | feedback-component        |  63.91 kB | 
+landing.component-JLTVIIG2.js         | landing-component         |  50.25 kB | 
+lecture-public.component-Z2RDWXFF.js  | lecture-public-component  |  49.81 kB | 
+chunk-YK2TEGQF.js                     | -                         |  49.46 kB | 
+event-public.component-PMGCL57J.js    | event-public-component    |  48.28 kB | 
+lectures-manage.component-DLN6JDN5.js | lectures-manage-component |  41.79 kB | 
+settings.routes-NQ5TXQJB.js           | settings-routes           |  29.87 kB | 
+sign.component-NE7DOQYA.js            | sign-component            |  17.95 kB | 
+chunk-RJOFRDT3.js                     | -                         |  17.00 kB | 
+share.component-HFZ5F7GE.js           | share-component           |  16.27 kB | 
+translations.component-6FNM63ZV.js    | translations-component    |  15.67 kB | 
+lecture-detail.component-QVWBVVKN.js  | lecture-detail-component  |  14.76 kB | 
+conferences.component-CZR6OFDE.js     | conferences-component     |  14.46 kB | 
+chunk-BEILI5GQ.js                     | -                         |  13.61 kB | 
+...and 25 more lazy chunks files. Use "--verbose" to show all the files.
+
+Application bundle generation complete. [6.823 seconds] - 2026-09-18T10:49:53.656Z
+
+Watch mode enabled. Watching for file changes...
+NOTE: Raw file sizes do not reflect development server per-request transformations.
+[2m1:49:53 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m Re-optimizing dependencies because vite config has changed
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://localhost:[1m4300[22m/[39m
+[2m1:49:55 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [optimizer] bundling dependencies...
+[2m1:50:35 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mNG0318: `[style.bottom]` was bound to an invalid value. Expected a string, number, SafeValue, null, or undefined, but received `boolean` (`false`). Find more at https://v22.angular.dev/errors/NG0318
+[2m1:50:35 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mNG0318: `[style.bottom]` was bound to an invalid value. Expected a string, number, SafeValue, null, or undefined, but received `boolean` (`false`). Find more at https://v22.angular.dev/errors/NG0318
+[2m1:50:38 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mNG0318: `[style.bottom]` was bound to an invalid value. Expected a string, number, SafeValue, null, or undefined, but received `boolean` (`false`). Find more at https://v22.angular.dev/errors/NG0318
+[2m1:50:38 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mNG0318: `[style.bottom]` was bound to an invalid value. Expected a string, number, SafeValue, null, or undefined, but received `boolean` (`false`). Find more at https://v22.angular.dev/errors/NG0318
+[2m1:50:38 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mNG0318: `[style.bottom]` was bound to an invalid value. Expected a string, number, SafeValue, null, or undefined, but received `boolean` (`false`). Find more at https://v22.angular.dev/errors/NG0318
+[2m1:51:01 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mNG0318: `[style.bottom]` was bound to an invalid value. Expected a string, number, SafeValue, null, or undefined, but received `boolean` (`false`). Find more at https://v22.angular.dev/errors/NG0318
+[2m1:51:01 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mNG0318: `[style.bottom]` was bound to an invalid value. Expected a string, number, SafeValue, null, or undefined, but received `boolean` (`false`). Find more at https://v22.angular.dev/errors/NG0318
+[2m1:51:01 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mNG0318: `[style.bottom]` was bound to an invalid value. Expected a string, number, SafeValue, null, or undefined, but received `boolean` (`false`). Find more at https://v22.angular.dev/errors/NG0318
+[2m1:51:01 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mNG0318: `[style.bottom]` was bound to an invalid value. Expected a string, number, SafeValue, null, or undefined, but received `boolean` (`false`). Find more at https://v22.angular.dev/errors/NG0318
+[2m1:51:01 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mNG0318: `[style.bottom]` was bound to an invalid value. Expected a string, number, SafeValue, null, or undefined, but received `boolean` (`false`). Find more at https://v22.angular.dev/errors/NG0318
+[2m1:51:05 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mNG0318: `[style.bottom]` was bound to an invalid value. Expected a string, number, SafeValue, null, or undefined, but received `boolean` (`false`). Find more at https://v22.angular.dev/errors/NG0318
+[2m1:51:05 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mNG0318: `[style.bottom]` was bound to an invalid value. Expected a string, number, SafeValue, null, or undefined, but received `boolean` (`false`). Find more at https://v22.angular.dev/errors/NG0318
+[2m1:51:05 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mNG0318: `[style.bottom]` was bound to an invalid value. Expected a string, number, SafeValue, null, or undefined, but received `boolean` (`false`). Find more at https://v22.angular.dev/errors/NG0318
+[2m1:51:05 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mNG0318: `[style.bottom]` was bound to an invalid value. Expected a string, number, SafeValue, null, or undefined, but received `boolean` (`false`). Find more at https://v22.angular.dev/errors/NG0318
+[2m1:51:05 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mNG0318: `[style.bottom]` was bound to an invalid value. Expected a string, number, SafeValue, null, or undefined, but received `boolean` (`false`). Find more at https://v22.angular.dev/errors/NG0318
